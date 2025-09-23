@@ -6,7 +6,7 @@
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center">
         <img 
-          src="https://i.ibb.co/0Vd7ws7W/logo-sua-agenda-site.png" 
+          src="https://i.ibb.co/HDLMYtLR/logo-sua-agenda-site.jpg" 
           alt="Sua agenda" 
           
           v-motion="{
@@ -254,12 +254,12 @@ import { ref, onMounted } from 'vue'
 import locals from "~/data/local";
 import servicos from "~/data/servicos";
 
-const themeColor = ref('#C20460') // valor inicial
+const themeColor = ref('#ff6467') // valor inicial
 
 // Simula pegar de uma API
 onMounted(async () => {
   const data = await $fetch('/api/config') // exemplo de API
-  themeColor.value = data.themeColor || '#C20460'
+  themeColor.value = data.themeColor || '#ff6467'
 })
 
 // Aqui estão os contatos, futuramente você pode buscar da API

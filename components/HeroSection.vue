@@ -11,7 +11,7 @@ defineProps({
 </script>
 
 <template>
-  <section class="relative min-h-screen flex flex-col-reverse md:flex-row bg-white overflow-hidden md:pt-20">
+  <section class="relative min-h-screen flex flex-col-reverse md:flex-row bg-white overflow-hidden pt-20">
   <!-- Conteúdo -->
   <div
     class="z-10 w-full md:w-1/2 flex flex-col justify-center items-center text-center px-6 md:px-12"
