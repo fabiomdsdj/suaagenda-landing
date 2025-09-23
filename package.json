@@ -1,0 +1,27 @@
+{
+  "name": "suaagenda-landing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxtjs/recaptcha": "^1.1.2",
+    "@tailwindcss/vite": "^4.1.12",
+    "@vueuse/motion": "^3.0.3",
+    "nuxt": "^3.18.1",
+    "nuxt-simple-sitemap": "^4.4.1",
+    "swiper": "^11.2.6",
+    "tailwindcss": "^4.1.12",
+    "vue": "^3.5.20",
+    "vue-router": "^4.5.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}
