@@ -305,7 +305,7 @@ useHead({
   ],  
   link: [
     // Favicon básico
-    { rel: 'icon', type: 'image/png', sizes: '16x16', href: 'https://ibb.co/Y700y8Y2' },
+    { rel: 'icon', type: 'image/png', sizes: '16x16', href: 'https://i.ibb.co/N6TTmpQx/favicon-16x16.png' },
     { rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180', href: 'https://i.ibb.co/wN3LnJ1S/apple-touch-icon.png' },
     { rel: 'icon', type: 'image/png', sizes: '48x48', href: 'https://i.ibb.co/xxxxxx/favicon-48x48.png' },
     { rel: 'icon', type: 'image/png', sizes: '192x192', href: 'https://i.ibb.co/Qjbynbsc/android-chrome-192x192.png' },
