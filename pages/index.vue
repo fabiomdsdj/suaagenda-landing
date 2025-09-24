@@ -609,18 +609,18 @@ useHead({
       name: 'keywords',
       content: 'imóveis, corretores, leads imobiliários, sistema imobiliário, imóveis de posse, segurança imobiliária, site de corretor, destaque no Google, gestão de imóveis, teste grátis'
     },
-    { property: 'og:title', content: 'Sistema de Imóveis Simples e Seguro para pequenos corretores' },
-    { property: 'og:description', content: 'Controle seus imóveis e leads de forma simples, segura e eficiente. Cadastre imóveis, acompanhe negociações e teste grátis o sistema por 7 dias.' },
+    { property: 'og:title', content: 'Site e Agenda Fácil para Pequenos Salões de Beleza' },
+    { property: 'og:description', content: 'Transforme seu salão em referência no Google! Tenha site profissional, agenda automática no WhatsApp e mais clientes todos os dias. Simples, rápido e feito para pequenos salões de beleza.' },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://empreitador.com.br/landing/' },
-    { property: 'og:image', content: 'https://i.ibb.co/JWDnYBz2/empreitador-logo-e-g.jpg' },
+    { property: 'og:url', content: 'https://suaagenda-landing.onrender.com' },
+    { property: 'og:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Empreitador | Sistema Imobiliário Simples e Seguro' },
-    { name: 'twitter:description', content: 'Gerencie imóveis e leads com eficiência e segurança. Sistema moderno, otimizado para Google e disponível para teste grátis por 7 dias.' },
-    { name: 'twitter:image', content: 'https://i.ibb.co/JWDnYBz2/empreitador-logo-e-g.jpg' }
+    { name: 'twitter:title', content: 'Site e Agenda Fácil para Pequenos Salões de Beleza' },
+    { name: 'twitter:description', content: 'Transforme seu salão em referência no Google! Tenha site profissional, agenda automática no WhatsApp e mais clientes todos os dias. Simples, rápido e feito para pequenos salões de beleza.' },
+    { name: 'twitter:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' }
   ],
   link: [
-    { rel: 'canonical', href: 'https://empreitador.com.br/landing/' }
+    { rel: 'canonical', href: 'https://suaagenda-landing.onrender.com/' }
   ],
   script: [
     {
