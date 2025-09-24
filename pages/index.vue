@@ -123,9 +123,9 @@
           }"
         >
           Lembra quando todo mundo queria ter um site na época do
-          <span class="font-semibold text-amber-400">Orkut</span>? Depois veio o
-          <span class="font-semibold text-amber-400">Facebook</span>, o
-          <span class="font-semibold text-amber-400">Instagram</span>...
+          <span class="font-semibold text-red-400">Orkut</span>? Depois veio o
+          <span class="font-semibold text-red-400">Facebook</span>, o
+          <span class="font-semibold text-red-400">Instagram</span>...
           As redes mudam, o algoritmo muda, mas uma coisa nunca muda:
           <span class="font-bold"
             >quem tem um espaço próprio na internet tem mais força, mais
@@ -136,39 +136,39 @@
         <!-- Cards animados centralizados -->
         <div class="grid md:grid-cols-3 gap-8">
           <div
-            class="p-6 bg-white text-pink-900 rounded-2xl shadow hover:shadow-lg transition"
+            class="p-6 bg-white text-red-400 rounded-2xl shadow hover:shadow-lg transition"
             v-motion="{
               initial: { opacity: 0, y: 40, scale: 0.95 },
               visibleOnce: { opacity: 1, y: 0, scale: 1, transition: { duration: 900, delay: 500 } }
             }"
           >
-            <h3 class="text-xl font-semibold mb-3">Rede social é aluguel</h3>
+            <h3 class="text-xl font-bold mb-3">Rede social é aluguel</h3>
             <p class="text-slate-600">
               Se o algoritmo muda, sua página some. Com um site, o espaço é seu pra sempre.
             </p>
           </div>
 
           <div
-            class="p-6 bg-white text-pink-900 rounded-2xl shadow hover:shadow-lg transition"
+            class="p-6 bg-white text-red-400 rounded-2xl shadow hover:shadow-lg transition"
             v-motion="{
               initial: { opacity: 0, y: 40, scale: 0.95 },
               visibleOnce: { opacity: 1, y: 0, scale: 1, transition: { duration: 900, delay: 700 } }
             }"
           >
-            <h3 class="text-xl font-semibold mb-3">Google traz cliente novo</h3>
+            <h3 class="text-xl font-bold mb-3">Google traz cliente novo</h3>
             <p class="text-slate-600">
               Quem busca “salão perto de mim” vai encontrar você. Mesmo sem te seguir.
             </p>
           </div>
 
           <div
-            class="p-6 bg-white text-pink-900 rounded-2xl shadow hover:shadow-lg transition"
+            class="p-6 bg-white text-red-400 rounded-2xl shadow hover:shadow-lg transition"
             v-motion="{
               initial: { opacity: 0, y: 40, scale: 0.95 },
               visibleOnce: { opacity: 1, y: 0, scale: 1, transition: { duration: 900, delay: 900 } }
             }"
           >
-            <h3 class="text-xl font-semibold mb-3">Mais profissionalismo</h3>
+            <h3 class="text-xl font-bold mb-3">Mais profissionalismo</h3>
             <p class="text-slate-600">
               Um site passa confiança e mostra que o salão é organizado e sério.
             </p>
@@ -235,7 +235,7 @@
     <!-- DEPOIMENTOS -->
     <section class="py-20 px-6 bg-slate-50 text-slate-800">
       <div class="max-w-6xl mx-auto text-center fade-on-scroll">
-        <h2 class="text-3xl md:text-4xl font-bold mb-10">Alguns clientes que aprovam nosso trabalho</h2>
+        <h2 class="text-3xl md:text-4xl font-black mb-10">Alguns clientes que aprovam nosso trabalho</h2>
         <div class="mb-10 flex flex-col items-center gap-2">
           <div class="text-5xl md:text-6xl font-extrabold text-yellow-400">
             {{ mediaRating }}/5
@@ -325,7 +325,7 @@
 
     <section class="bg-red-400 text-white py-20 px-6">
       <div class="max-w-6xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-10 fade-on-scroll">
+        <h2 class="text-3xl md:text-4xl font-black mb-10 fade-on-scroll">
           Perguntas Frequentes
         </h2>
 
