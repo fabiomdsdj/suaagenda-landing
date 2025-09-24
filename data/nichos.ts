@@ -23,11 +23,11 @@ export default [
     ]
   },
   {
-    name: "Cabeleireiras",
-    slug: "cabeleireiras",
-    title: "Agenda Online e Presença Digital para Cabeleireiras",
+    name: "Cabeleireiros",
+    slug: "cabeleireiros",
+    title: "Agenda Online e Presença Digital para Cabeleireiros",
     paragraphs: [
-      "A ferramenta de agendamento online ajuda cabeleireiras a manterem sua rotina organizada e profissional, sem depender de anotações manuais.",
+      "A ferramenta de agendamento online ajuda cabeleireiros a manterem sua rotina organizada e profissional, sem depender de anotações manuais.",
       "É possível oferecer serviços como corte, escova, coloração, hidratação e pacotes completos, cada um com tempo já configurado e lembretes automáticos para clientes.",
       "Além disso, desenvolvemos sites otimizados para Google, aumentando sua visibilidade e trazendo novos clientes de forma orgânica.",
       "Unindo a agenda digital com a presença online, você ganha mais controle, reduz faltas e amplia sua clientela naturalmente."

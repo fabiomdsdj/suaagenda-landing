@@ -8,6 +8,8 @@
       :ctaText="hero.ctaText"
       :ctaLink="hero.ctaLink"
       :image="hero.image"
+      ctaBgColor="bg-red-400"
+      ctaHoverColor="hover:bg-red-600"
     />
 
     <!-- SECTIONS DINÂMICAS -->
@@ -49,7 +51,13 @@
           <ul v-if="item.list" class="space-y-2 mb-6">
             <li v-for="(li, i) in item.list" :key="i">{{ li }}</li>
           </ul>
-          <BotaoAgendar />
+          <BotaoAgendar 
+            text="Quero testar" 
+            href="https://wa.me/..." 
+            bgColor="bg-black" 
+            textColor="text-white" 
+            haloColor="bg-black"
+          />
         </div>
       </div>
     </section>
@@ -162,7 +170,14 @@
             visibleOnce: { opacity: 1, scale: 1, transition: { duration: 600, delay: 1100 } }
           }"
         >
-          <BotaoAgendar class="animate-pulse" />
+          <BotaoAgendar 
+            class="animate-pulse" 
+            text="Quero testar" 
+            href="https://wa.me/..." 
+            bgColor="bg-green-500" 
+            textColor="text-white" 
+            haloColor="bg-green-500"
+          />
         </div>
       </div>
     </section>
@@ -193,7 +208,13 @@
           </div>
         </div>
 
-        <BotaoAgendar />
+        <BotaoAgendar 
+          text="Quero testar" 
+          href="https://wa.me/..." 
+          bgColor="bg-green-500" 
+          textColor="text-white" 
+          haloColor="bg-green-500"
+        />
       </div>
     </section>
 
@@ -306,7 +327,7 @@
             <p>{{ faq.resposta }}</p>
           </div>
         </div>
-        <BotaoAgendar wrapperClass="mx-auto mt-10"/>
+        
       </div>
     </section>
   
