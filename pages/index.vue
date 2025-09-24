@@ -34,12 +34,13 @@
           <img
             :src="item.img"
             :alt="item.alt"
-            class="w-full md:w-3/5 rounded-2xl shadow-lg transition-transform duration-700"
+            class="w-full h-auto object-contain max-h-[500px]"
             :class="index % 2 === 0 
               ? '-rotate-3' 
               : 'rotate-3 hover:rotate-0 hover:-translate-y-2 hover:scale-105'"
           />
         </div>
+
 
         <!-- Texto -->
         <div class="md:w-1/2 text-center md:text-left fade-on-scroll">
@@ -200,7 +201,7 @@
     <!-- DEPOIMENTOS -->
     <section class="py-20 px-6 bg-slate-50 text-slate-800">
       <div class="max-w-6xl mx-auto text-center fade-on-scroll">
-        <h2 class="text-3xl md:text-4xl font-bold mb-10">Somos bem avaliadas</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-10">Alguns clientes que aprovam nosso trabalho</h2>
         <div class="mb-10 flex flex-col items-center gap-2">
           <div class="text-5xl md:text-6xl font-extrabold text-yellow-400">
             {{ mediaRating }}/5
@@ -434,44 +435,44 @@ const sections = [
   {
     title: "Mais clientes para o seu salão",
     desc: "Não importa se o salão é pequeno: com um site próprio, você aparece no Google quando alguém procura por serviços na sua região. Isso passa confiança, mostra profissionalismo e ajuda a conquistar clientes novos todos os dias.",
-    img: "https://i.ibb.co/YB1xLf6G/closeup-de-olho-de-mulher-com-cilios-caindo-na-bochecha.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668031/mulher-bonita-cortando-cabelo-no-cabeleireiro_bwy8e8.png",
     alt: "Site profissional para pequenos salões"
   },
 
   {
     title: "Agenda no WhatsApp",
     desc: "Cliente escolhe o horário, confirma em 1 clique e você não perde tempo respondendo direct.",
-    img: "https://i.ibb.co/zhx7tKHL/mulher-posando-com-fundo-rosa-close-up.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668010/ARTE-AGENDA-WHATSAAPP_ezvzia.png",
     alt: "Agenda online no WhatsApp"
   },
   {
     title: "Mais clientes todo dia",
     desc: "Quem procura salão no Google encontra você primeiro. Resultado: mais clientes entrando sem precisar de anúncio.",
-    img: "https://i.ibb.co/4wm73Chp/modelo-de-tiro-extremo-close-up-olhando-de-soslaio.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668010/ARTE-GOOGLE-SITE_rc1a33.png",
     alt: "Clientes vindos do Google"
   },
   {
     title: "Destaque no Insta",
     desc: "Seu site conecta direto com o Insta, mostrando que você é profissional de verdade.",
-    img: "https://i.ibb.co/B5x3WVjT/vista-superior-mulher-usando-tapa-olhos.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668011/ARTE-mockup-insta_dgz0qv.png",
     alt: "Integração com Instagram"
   },
   {
     title: "Zero dor de cabeça",
     desc: "A gente cuida de tudo: hospedagem, segurança e atualização. Você só usa, simples assim.",
-    img: "https://i.ibb.co/ZPLpFJ4/mulher-caucasiana-em-tratamento-com-microblading.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668014/foto-lash-site_qqdyca.png",
     alt: "Suporte garantido"
   },
   {
     title: "Do jeito do seu salão",
     desc: "Cada salão é único. Montamos seu site e agenda de acordo com seu público e estilo.",
-    img: "https://i.ibb.co/LzP8gsfR/menina-pink.jpg",
-    alt: "Consultoria personalizada"
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668011/ARTE-SITE-LASH_rdq6rh.png",
+    alt: "Site personalizado"
   },
     {
     title: "Sem furo na agenda",
     desc: "Com lembrete automático no WhatsApp, suas clientes não esquecem o horário e você não perde dinheiro.",
-    img: "https://i.ibb.co/rd0r3CV/whatsapp-reminder.jpg",
+    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758670902/mulher-recebendo-confirmacao-no-whats_xi2yfg.png",
     alt: "Lembrete automático de agendamento"
   }
 

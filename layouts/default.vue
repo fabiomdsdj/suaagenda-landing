@@ -182,14 +182,14 @@
         <!-- Links úteis -->
         <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="400">
           <div
-            v-for="local in locals"
-            :key="local.slug"
+            v-for="nicho in nichos"
+            :key="nicho.slug"
           >
-            <h2 class="font-bold text-xl">{{ local.name }}</h2>
+            <h2 class="font-bold text-xl">{{ nicho.name }}</h2>
             <ul class="ml-4">
               <li v-for="servico in servicos" :key="servico.slug">
-                <NuxtLink :to="`/servicos/${servico.slug}/${local.slug}`">
-                  {{ servico.name }} em {{ local.name }}
+                <NuxtLink :to="`/servicos/${servico.slug}/${nicho.slug}`">
+                  {{ servico.name }} para {{ nicho.name }}
                 </NuxtLink>
               </li>
             </ul>
@@ -199,9 +199,9 @@
         <!-- Contato -->
         <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="600">
           <h3 class="text-xl font-semibold mb-4">Localização</h3>
-          <p>Rua Tal de tal, 700 </p>
-          <p>Vila Fulano de Tal </p>
-          <p>São Paulo, SP</p>
+          <p>Av Governador Mario Covas Jr, 4600 </p>
+          <p>Vila Atlântica </p>
+          <p>Mongaguá, SP</p>
         </div>
 
         <!-- Redes sociais -->
@@ -237,12 +237,12 @@
 
       <!-- Direitos -->
       <div class="mt-10 text-center text-slate-400 text-sm">
-        &copy; 2025 Seu studio. Todos os direitos reservados.
+        &copy; 2025 Sua agenda. Todos os direitos reservados.
       </div>
       <!-- Botão Flutuante de WhatsApp -->
       <WhatsappButton 
         :contacts="siteInfo.contacts"
-        defaultMessage="Olá, vim pelo site e gostaria de agendar um horário"
+        defaultMessage="Olá, vim pelo site e gostaria de atendimento"
       />
     </footer>
 
@@ -253,6 +253,7 @@
 import { ref, onMounted } from 'vue'
 import locals from "~/data/local";
 import servicos from "~/data/servicos";
+import nichos from "~/data/nichos";
 
 const themeColor = ref('#ff6467') // valor inicial
 
@@ -329,8 +330,8 @@ const submenuOpen = reactive({}) // objeto vazio que vai guardar cada submenu
 const links = [
   
   { label: "O que oferecemos", submenu: servicos },
-  { label: "Quem ajudamos", to: "/precos" },
-  { label: "Preços", to: "/portal" }
+  { label: "Quem ajudamos", submenu: nichos }, // <- aqui troquei de "to" para "submenu"
+  { label: "Preços", to: "/precos" }
 ]
 
 // Inicializa todas as chaves do submenu
