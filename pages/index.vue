@@ -88,7 +88,20 @@
       </div>
     </section>
 
-    <section class="bg-gradient-to-r from-pink-900 to-pink-700 text-white py-20 px-6">
+    <section 
+      class="relative text-white py-20 px-6"
+      style="
+      background-image: 
+        linear-gradient(45deg, #be185d 25%, transparent 25%),
+        linear-gradient(-45deg, #1d4ed8 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #be185d 75%),
+        linear-gradient(-45deg, transparent 75%, #1d4ed8 75%);
+      background-size: 400px 400px; /* aumenta o tamanho do mosaico */
+      background-color: #111827;
+    "
+    >
+      <!-- Overlay escuro -->
+      <div class="absolute inset-0 bg-black opacity-60"></div>
       <div class="max-w-5xl mx-auto text-center">
         <!-- Título com animação -->
         <h2
