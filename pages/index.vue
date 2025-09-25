@@ -34,7 +34,7 @@
           :class="index % 2 === 0 ? 'justify-start' : 'justify-end'"
         >
           <NuxtImg
-            format="webp"
+            provider="cloudinary"
             :src="item.img"
             :alt="item.alt"
             class="w-full h-auto object-contain max-h-[500px]"
@@ -364,7 +364,7 @@ const hero = {
     subtitle: "Nunca foi tão simples ter o seu salão sob controle, ganhar mais clientes e mostrar profissionalismo.",
     ctaText: "Experimente já",
     ctaLink: "/agendamento",
-    image:"https://i.ibb.co/pB0s5mqH/foto-cabeleireira-2-hero.jpg"
+    image:"v1758666030/foto-cabeleireira-2-700-hero0_gzstbz.png"
 }
 
 const faqs = [
@@ -470,44 +470,44 @@ const sections = [
   {
     title: "Mais clientes para o seu salão",
     desc: "Não importa se o salão é pequeno: com um site próprio, você aparece no Google quando alguém procura por serviços na sua região. Isso passa confiança, mostra profissionalismo e ajuda a conquistar clientes novos todos os dias.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668031/mulher-bonita-cortando-cabelo-no-cabeleireiro_bwy8e8.png",
+    img: "v1758668031/mulher-bonita-cortando-cabelo-no-cabeleireiro_bwy8e8.png",
     alt: "Site profissional para pequenos salões"
   },
 
   {
     title: "Agenda no WhatsApp",
     desc: "Cliente escolhe o horário, confirma em 1 clique e você não perde tempo respondendo direct.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668010/ARTE-AGENDA-WHATSAAPP_ezvzia.png",
+    img: "v1758668010/ARTE-AGENDA-WHATSAAPP_ezvzia.png",
     alt: "Agenda online no WhatsApp"
   },
   {
     title: "Mais clientes todo dia",
     desc: "Quem procura salão no Google encontra você primeiro. Resultado: mais clientes entrando sem precisar de anúncio.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668010/ARTE-GOOGLE-SITE_rc1a33.png",
+    img: "v1758668010/ARTE-GOOGLE-SITE_rc1a33.png",
     alt: "Clientes vindos do Google"
   },
   {
     title: "Destaque no Insta",
     desc: "Seu site conecta direto com o Insta, mostrando que você é profissional de verdade.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668011/ARTE-mockup-insta_dgz0qv.png",
+    img: "v1758668011/ARTE-mockup-insta_dgz0qv.png",
     alt: "Integração com Instagram"
   },
   {
     title: "Zero dor de cabeça",
     desc: "A gente cuida de tudo: hospedagem, segurança e atualização. Você só usa, simples assim.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668014/foto-lash-site_qqdyca.png",
+    img: "v1758668014/foto-lash-site_qqdyca.png",
     alt: "Suporte garantido"
   },
   {
     title: "Do jeito do seu salão",
     desc: "Cada salão é único. Montamos seu site e agenda de acordo com seu público e estilo.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758668011/ARTE-SITE-LASH_rdq6rh.png",
+    img: "v1758668011/ARTE-SITE-LASH_rdq6rh.png",
     alt: "Site personalizado"
   },
     {
     title: "Sem furo na agenda",
     desc: "Com lembrete automático no WhatsApp, suas clientes não esquecem o horário e você não perde dinheiro.",
-    img: "https://res.cloudinary.com/du872kkq0/image/upload/v1758670902/mulher-recebendo-confirmacao-no-whats_xi2yfg.png",
+    img: "v1758670902/mulher-recebendo-confirmacao-no-whats_xi2yfg.png",
     alt: "Lembrete automático de agendamento"
   }
 

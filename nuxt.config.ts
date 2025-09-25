@@ -39,6 +39,9 @@ export default defineNuxtConfig({
 
   modules: ['@vueuse/motion/nuxt', 'nuxt-simple-sitemap', '@nuxt/image'],
   image: {
+    cloudinary: {
+      baseURL: 'https://res.cloudinary.com/du872kkq0/image/upload/'
+    },
     format: ['webp']
   },
   runtimeConfig: {
