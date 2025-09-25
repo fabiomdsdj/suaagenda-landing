@@ -46,7 +46,14 @@ export default defineNuxtConfig({
       baseURL: 'https://res.cloudinary.com/du872kkq0/image/upload/'
     },
     format: ['avif'], // avif ainda mais leve
-    quality: 70
+    quality: 70,
+    screens: {         // breakpoints iguais ao Tailwind
+      sm: 320,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      '2xl': 1536,
+    }
   },
   runtimeConfig: {
     public: {
