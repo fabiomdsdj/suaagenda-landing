@@ -48,8 +48,15 @@ export default defineNuxtConfig({
     cloudinary: {
       baseURL: 'https://res.cloudinary.com/du872kkq0/image/upload/'
     },
-    format: ['avif'], // avif ainda mais leve
+    format: ['avif', 'webp'], // fallback
     quality: 70,
+    screens: {
+      sm: 320,
+      md: 640,
+      lg: 1024,
+      xl: 1280,
+      '2xl': 1536,
+    }
   },
   runtimeConfig: {
     public: {
@@ -65,6 +72,9 @@ export default defineNuxtConfig({
     build: {
       target: 'esnext',
       cssMinify: true,
+      rollupOptions: {
+        treeshake: true
+      }
     },
     esbuild: {
       drop: ['console', 'debugger'] // remove console.log em prod
@@ -94,13 +104,25 @@ export default defineNuxtConfig({
   // ✅ Route rules: SSR para todas as páginas de landing
   
   routeRules: {
-    //'/landing/**': { ssr: true },
-    //'/servico/**': { ssr: true }
     '/fonts/**': {
-      headers: {
-        'cache-control': 'public, max-age=31536000, immutable'
-      }
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' }
+    },
+    '/icons/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' }
+    },
+    '/images/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' }
     }
-  }
+  },  
+
+  vue: {
+    compilerOptions: {
+      whitespace: 'condense',
+      comments: false,
+      // Garante que aria-* nunca seja removido
+      isCustomElement: tag => false
+    }
+  },
+  
   
 })

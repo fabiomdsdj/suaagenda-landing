@@ -2,9 +2,10 @@
   <div class="fixed bottom-4 right-4 z-50">
     <!-- Botão flutuante -->
     <button
+      type="button"
       @click="showModal = !showModal"
       class="pulse bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition cursor-pointer"
-      aria-label="Falar com a gente no WhatsApp"
+      v-bind="$attrs"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
         <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12a11.93 11.93 0 0 0 1.64 6.06L0 24l6.17-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52Z" />
