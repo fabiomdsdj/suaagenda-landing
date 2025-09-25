@@ -5,8 +5,9 @@
     <header class="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 bg-white z-50">
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center">
-        <img 
-          src="https://i.ibb.co/HDLMYtLR/logo-sua-agenda-site.jpg" 
+        <NuxtImg
+          provider="cloudinary"
+          src="v1758665895/logo-sua-agenda-site_u87ec1.jpg" 
           alt="Sua agenda" 
           
           v-motion="{
