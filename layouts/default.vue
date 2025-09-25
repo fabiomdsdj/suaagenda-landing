@@ -81,7 +81,7 @@
 
 
       <!-- Botão hambúrguer -->
-      <button class="md:hidden text-gray-950 z-50" :aria-label="'Abrir menu de navegação'" @click="menuOpen = !menuOpen">
+      <button class="md:hidden text-gray-950 z-50" aria-label="Abrir menu de navegação" @click="menuOpen = !menuOpen">
         <svg v-if="!menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -195,14 +195,6 @@
               </li>
             </ul>
           </div>
-        </div>
-
-        <!-- Contato -->
-        <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="600">
-          <h3 class="text-xl font-semibold mb-4">Localização</h3>
-          <p>Av Governador Mario Covas Jr, 4600 </p>
-          <p>Vila Atlântica </p>
-          <p>Mongaguá, SP</p>
         </div>
 
         <!-- Redes sociais -->
