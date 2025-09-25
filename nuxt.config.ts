@@ -89,8 +89,15 @@ export default defineNuxtConfig({
   },
 
   // ✅ Route rules: SSR para todas as páginas de landing
+  
   routeRules: {
     //'/landing/**': { ssr: true },
     //'/servico/**': { ssr: true }
+    '/fonts/**': {
+      headers: {
+        'cache-control': 'public, max-age=31536000, immutable'
+      }
+    }
   }
+  
 })
