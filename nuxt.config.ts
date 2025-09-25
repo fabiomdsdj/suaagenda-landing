@@ -25,7 +25,7 @@ export default defineNuxtConfig({
       script: [
         {
           src: 'https://www.googletagmanager.com/gtag/js?id=G-MB7JZNQX5L',
-          async: true
+          defer: true // ao invés de async
         },
         {
           innerHTML: `
@@ -45,7 +45,8 @@ export default defineNuxtConfig({
     cloudinary: {
       baseURL: 'https://res.cloudinary.com/du872kkq0/image/upload/'
     },
-    format: ['webp']
+    format: ['webp', 'avif'], // avif ainda mais leve
+    quality: 70
   },
   runtimeConfig: {
     public: {
@@ -58,6 +59,13 @@ export default defineNuxtConfig({
     plugins: [      
       tailwindcss(),    
     ],  
+    build: {
+      target: 'esnext',
+      cssMinify: true,
+    },
+    esbuild: {
+      drop: ['console', 'debugger'] // remove console.log em prod
+    }
   },
 
   appConfig: {
@@ -70,6 +78,8 @@ export default defineNuxtConfig({
 
   // ✅ Nitro: prerender automático de todas as páginas de cidades
   nitro: {
+    compressPublicAssets: true, // gzip/br assets
+    minify: true,
     prerender: {
       routes: [
         //...cidades.map(c => `/landing/${c.slug}`),
