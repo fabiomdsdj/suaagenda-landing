@@ -22,6 +22,9 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ],
+      htmlAttrs: {
+        lang: 'pt-BR'
+      },
       script: [
         {
           src: 'https://www.googletagmanager.com/gtag/js?id=G-MB7JZNQX5L',
