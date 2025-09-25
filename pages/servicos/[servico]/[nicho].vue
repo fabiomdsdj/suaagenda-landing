@@ -1,12 +1,8 @@
 <template>
-  <div class="max-w-4xl mx-auto py-20 px-6">
+  <div class="max-w-4xl mx-auto py-28 px-6">
     <h1 class="text-4xl font-bold mb-4">
-      {{ servicoData.title }} em {{ nichoData.name }}
+      {{ servicoData.title }} para {{ nichoData.name }}
     </h1>
-
-    <p class="text-lg text-gray-700 mb-6">
-      Aqui você encontra tudo sobre {{ servicoData.name }} para {{ nichoData.name }}.
-    </p>
 
     <!-- Renderiza os parágrafos com o nicho injetado -->
     <div class="space-y-4 text-lg text-gray-700 mb-10">

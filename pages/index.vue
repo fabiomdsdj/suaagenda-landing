@@ -33,7 +33,8 @@
           class="md:w-1/2 w-full flex fade-on-scroll"
           :class="index % 2 === 0 ? 'justify-start' : 'justify-end'"
         >
-          <img
+          <NuxtImg
+            format="webp"
             :src="item.img"
             :alt="item.alt"
             class="w-full h-auto object-contain max-h-[500px]"
@@ -304,7 +305,7 @@
                 <!-- Autor -->
                 <div class="flex items-center">
                   <template v-if="depoimento.foto">
-                    <img class="w-12 h-12 rounded-full mr-4" :src="depoimento.foto" :alt="`Foto de ${depoimento.nome}`" />
+                    <NuxtImg class="w-12 h-12 rounded-full mr-4" :src="depoimento.foto" :alt="`Foto de ${depoimento.nome}`" />
                   </template>
                   <template v-else>
                     <div class="w-12 h-12 rounded-full mr-4 bg-pink-600 flex items-center justify-center text-white font-semibold">

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
 
+
   app: {
     baseURL: '/landing/',
     head: {
@@ -36,11 +37,10 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: [
-    '@vueuse/motion/nuxt',
-    'nuxt-simple-sitemap',
-  ],
-
+  modules: ['@vueuse/motion/nuxt', 'nuxt-simple-sitemap', '@nuxt/image'],
+  image: {
+    format: ['webp']
+  },
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || '',

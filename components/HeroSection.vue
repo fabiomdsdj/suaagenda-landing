@@ -70,7 +70,7 @@ defineProps({
 
     <!-- Imagem primeiro no mobile -->
     <div class="w-full md:w-1/2 flex justify-center md:justify-end items-end mt-10 md:mt-0">
-      <img
+      <NuxtImg
         :src="image"
         :alt="title"
         class="block max-w-full h-auto object-contain"
