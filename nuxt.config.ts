@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
 
   app: {
-    baseURL: '/landing/',
+    baseURL: '/',
     head: {
       title: 'Sua agenda', // título padrão caso a página não defina
       titleTemplate: '%s | Sua agenda', // %s será substituído pelo título da página
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/landing/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ],
       script: [
         {
@@ -58,7 +58,7 @@ export default defineNuxtConfig({
   },
 
   appConfig: {
-    siteUrl: 'https://empreitador.com.br/landing',
+    siteUrl: 'https://suaagenda-landing.onrender.com',
   },
 
   sitemap: {
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       routes: [
-        ...cidades.map(c => `/landing/${c.slug}`),
+        //...cidades.map(c => `/landing/${c.slug}`),
         //...tipos.map(t => `/servico/${t.slug}`)
       ]
     }
@@ -77,7 +77,7 @@ export default defineNuxtConfig({
 
   // ✅ Route rules: SSR para todas as páginas de landing
   routeRules: {
-    '/landing/**': { ssr: true },
+    //'/landing/**': { ssr: true },
     //'/servico/**': { ssr: true }
   }
 })

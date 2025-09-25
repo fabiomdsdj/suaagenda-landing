@@ -42,13 +42,30 @@ const formattedParagraphs = servicoData.paragraphs.map(p =>
   p.replaceAll("{NICHO}", nichoData.name)
 );
 
-useHead(() => ({
-  title: `${servicoData.name} em ${nichoData.name} | Seu Studio`,
+const name = `${servicoData.name} para ${nichoData.name}`
+const content = formattedParagraphs?.[0] || `Informações sobre ${servicoData.name} para ${nichoData.name}`
+
+useHead({
+  title: name,
   meta: [
     {
-      name: "description",
-      content: formattedParagraphs?.[0] || `Informações sobre ${servicoData.name} em ${nichoData.name}`
-    }
-  ]
-}));
+      name: 'description',
+      content: content
+    },
+    
+    { property: 'og:title', content: name },
+    { property: 'og:description', content: content },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: 'https://suaagenda-landing.onrender.com' },
+    { property: 'og:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: name },
+    { name: 'twitter:description', content: content },
+    { name: 'twitter:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' }
+  ],
+  link: [
+    { rel: 'canonical', href: `https://suaagenda-landing.onrender.com/servicos/${servicoSlug}/${nichoSlug}/` }
+  ],
+  
+})
 </script>
