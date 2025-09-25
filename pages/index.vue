@@ -35,7 +35,6 @@
         >
           <NuxtImg
             provider="cloudinary"
-            sizes="(max-width: 768px) 100vw, 600px"
             :src="item.img"
             :alt="item.alt"
             class="w-full h-auto object-contain max-h-[500px]"
