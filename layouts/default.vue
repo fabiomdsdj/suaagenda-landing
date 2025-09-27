@@ -197,6 +197,14 @@
           </div>
         </div>
 
+         <!-- Links úteis -->
+         <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="400">
+          <ul class="space-y-2 text-slate-300">
+            <li><NuxtLink to="/privacidade" class="hover:text-green-400 transition">Política de privacidade</NuxtLink></li>
+            <li><NuxtLink to="/termos" class="hover:text-green-400 transition">Termos de serviço</NuxtLink></li>
+          </ul>
+        </div>
+
         <!-- Redes sociais -->
         <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="800">
           <h3 class="text-xl font-semibold mb-4">Estamos nas redes</h3>
@@ -316,7 +324,8 @@ const links = [
   
   { label: "O que oferecemos", submenu: servicos },
   { label: "Quem ajudamos", submenu: nichos }, // <- aqui troquei de "to" para "submenu"
-  { label: "Preços", to: "/precos" }
+  { label: "Preços", to: "/precos" },
+  { label: "Portal", to: "/precos" }
 ]
 
 // Inicializa todas as chaves do submenu
