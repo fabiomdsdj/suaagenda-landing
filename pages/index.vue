@@ -613,7 +613,7 @@ useHead({
     { property: 'og:title', content: 'Site e Agenda Fácil para Pequenos Salões de Beleza' },
     { property: 'og:description', content: 'Transforme seu salão em referência no Google! Tenha site profissional, agenda automática no WhatsApp e mais clientes todos os dias. Simples, rápido e feito para pequenos salões de beleza.' },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://suaagenda-landing.onrender.com' },
+    { property: 'og:url', content: 'https://suaagenda.link' },
     { property: 'og:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Site e Agenda Fácil para Pequenos Salões de Beleza' },
@@ -621,7 +621,7 @@ useHead({
     { name: 'twitter:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' }
   ],
   link: [
-    { rel: 'canonical', href: 'https://suaagenda-landing.onrender.com/' }
+    { rel: 'canonical', href: 'https://suaagenda.link/' }
   ],
   script: [
     {

@@ -72,7 +72,7 @@ useHead({
     { property: 'og:title', content: name },
     { property: 'og:description', content },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: `https://suaagenda-landing.onrender.com/${slug}/` },
+    { property: 'og:url', content: `https://suaagenda.link/${slug}/` },
     { property: 'og:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: name },
@@ -80,7 +80,7 @@ useHead({
     { name: 'twitter:image', content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' }
   ],
   link: [
-    { rel: 'canonical', href: `https://suaagenda-landing.onrender.com/${slug}/` }
+    { rel: 'canonical', href: `suaagenda.link/${slug}/` }
   ]
 })
 </script>
