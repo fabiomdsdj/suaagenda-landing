@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
+import  servicos  from '@/data/servicos'
+import  nichos  from '@/data/nichos'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -86,6 +88,7 @@ export default defineNuxtConfig({
 
   sitemap: {
     sitemapName: 'sitemap.xml',
+    
   },
 
   // ✅ Nitro: prerender automático de todas as páginas de cidades
@@ -96,6 +99,11 @@ export default defineNuxtConfig({
       routes: [
         //...cidades.map(c => `/landing/${c.slug}`),
         //...tipos.map(t => `/servico/${t.slug}`)
+
+        // gera todas as combinações de servico + nicho        
+        ...servicos.flatMap(servico =>
+          nichos.map(nicho => `/servicos/${servico}/${nicho}`)
+        )
       ]
     }
   },
