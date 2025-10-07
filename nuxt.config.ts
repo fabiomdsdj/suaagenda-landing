@@ -3,6 +3,13 @@ import tailwindcss from "@tailwindcss/vite";
 import  servicos  from './data/servicos'
 import  nichos  from './data/nichos'
 
+const dynamicRoutes = [
+  ...servicos.flatMap(s =>
+    nichos.map(n => `/servicos/${s.slug}/${n.slug}`)
+  ),
+  ...nichos.map(n => `/${n.slug}`)
+]
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -83,11 +90,12 @@ export default defineNuxtConfig({
   },
 
   appConfig: {
-    siteUrl: 'https://suaagenda-landing.onrender.com',
+    siteUrl: process.env.NUXT_PUBLIC_API_SITE_URL,
   },
 
   sitemap: {
     sitemapName: 'sitemap.xml',
+    urls: dynamicRoutes,
     
   },
 
@@ -96,15 +104,7 @@ export default defineNuxtConfig({
     compressPublicAssets: true, // gzip/br assets
     minify: true,
     prerender: {
-      routes: [
-        //...cidades.map(c => `/landing/${c.slug}`),
-        //...tipos.map(t => `/servico/${t.slug}`)
-
-        // gera todas as combinações de servico + nicho        
-        ...servicos.flatMap(servico =>
-          nichos.map(nicho => `/servicos/${servico}/${nicho}`)
-        )
-      ]
+      routes: dynamicRoutes
     }
   },
 
