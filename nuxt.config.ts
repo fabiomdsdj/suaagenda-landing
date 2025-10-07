@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
-import  servicos  from '@/data/servicos'
-import  nichos  from '@/data/nichos'
+import  servicos  from './data/servicos'
+import  nichos  from './data/nichos'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
