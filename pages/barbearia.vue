@@ -523,6 +523,10 @@ useHead({
     { property: 'og:title',       content: 'SuaAgenda para Barbearias — Agenda cheia em 5 minutos' },
     { property: 'og:description', content: 'Sua barbearia no Google, confirmação automática via WhatsApp e link de agendamento em 5 minutos.' },
     { property: 'og:image',       content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg' },
+    { property: 'og:url',         content: 'https://suaagenda.link/barbearia' },
+    { property: 'og:type',        content: 'website' },
+    { property: 'fb:app_id',      content: '1288931335787890' },
+    { property: 'og:image:alt',   content: 'SuaAgenda — Sua barbearia no Google' },
     { name: 'twitter:card',       content: 'summary_large_image' },
   ],
   link: [
