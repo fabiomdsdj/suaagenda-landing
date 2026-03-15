@@ -1,3 +1,4 @@
+<!--pages/index.vue-->
 <template>
   <div>
     <!-- HERO -->
@@ -349,6 +350,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: 'barber',
+  middleware: ['redirect']
+})
 import { ref, onMounted, computed } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
