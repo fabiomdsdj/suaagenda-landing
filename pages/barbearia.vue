@@ -522,7 +522,7 @@ useHead({
     { name: 'description', content: 'Sua barbearia no Google, confirmação automática via WhatsApp e link de agendamento em 5 minutos. Parceiros oficiais Meta.' },
     { property: 'og:title',       content: 'SuaAgenda para Barbearias — Agenda cheia em 5 minutos' },
     { property: 'og:description', content: 'Sua barbearia no Google, confirmação automática via WhatsApp e link de agendamento em 5 minutos.' },
-    { property: 'og:image',       content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/og-image_rnumjg.jpg' },
+    { property: 'og:image',       content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-hero-stroked_zuhxar.png' },
     { name: 'twitter:card',       content: 'summary_large_image' },
   ],
   link: [
