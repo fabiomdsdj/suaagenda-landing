@@ -1,7 +1,10 @@
 // data/locations/index.ts
-// Agregador central — adicione novas cidades aqui conforme escalar
-
-import extremoLesteSP from '../extremo-leste-sp'
+import extremoLesteSP from "../extremo-leste-sp"
+import spZonaLeste from "../sp-zona-leste"
+import spZonaNorte from "../sp-zona-norte"
+import spZonaSul from "../sp-zona-sul"
+import spZonaOeste from "../sp-zona-oeste"
+import baixadaSantista from "../baixada-santista"
 
 export interface Neighborhood {
   name: string
@@ -23,11 +26,17 @@ export interface CityData {
 }
 
 // ── Todas as cidades indexadas ─────────────────────────────────────────────
-// Para adicionar nova cidade: importe o arquivo e inclua no array abaixo.
-// As rotas, sitemap e prerender se atualizam automaticamente.
+// Arquivos que exportam um objeto único → colocar direto no array
+// Arquivos que exportam um array (ex: baixada-santista) → usar spread
 export const allCities: CityData[] = [
   extremoLesteSP,
-  // import campinas from '../campinas' → adicionar aqui
+  spZonaLeste,
+  spZonaNorte,
+  spZonaSul,
+  spZonaOeste,
+  ...baixadaSantista,
+  // Adicionar novas zonas de SP aqui conforme criar os arquivos:
+  
 ]
 
 // ── Lookup por cidade + bairro ─────────────────────────────────────────────
@@ -47,7 +56,7 @@ export function getNeighborhoodData(
 
 // ── Geração de rotas ───────────────────────────────────────────────────────
 
-/** /barbearias/sao-paulo/itaquera, /barbearias/sao-paulo/cidade-lider ... */
+/** /barbearias/santos/gonzaga, /barbearias/sao-paulo/itaquera ... */
 export function getAllNeighborhoodRoutes(): string[] {
   const routes: string[] = []
   for (const city of allCities) {
@@ -60,12 +69,27 @@ export function getAllNeighborhoodRoutes(): string[] {
   return routes
 }
 
-/** /barbearias/sao-paulo */
+/** /barbearias/santos, /barbearias/sao-paulo ... */
 export function getAllCityRoutes(): string[] {
-  return allCities.map((c) => `/barbearias/${c.citySlug}`)
+  // Deduplica caso mesma cidade apareça em múltiplos arquivos de zona
+  const seen = new Set<string>()
+  return allCities
+    .filter((c) => {
+      if (seen.has(c.citySlug)) return false
+      seen.add(c.citySlug)
+      return true
+    })
+    .map((c) => `/barbearias/${c.citySlug}`)
 }
 
-/** /barbeiros/sao-paulo */
+/** /barbeiros/santos, /barbeiros/sao-paulo ... */
 export function getAllBarbeirosRoutes(): string[] {
-  return allCities.map((c) => `/barbeiros/${c.citySlug}`)
+  const seen = new Set<string>()
+  return allCities
+    .filter((c) => {
+      if (seen.has(c.citySlug)) return false
+      seen.add(c.citySlug)
+      return true
+    })
+    .map((c) => `/barbeiros/${c.citySlug}`)
 }
