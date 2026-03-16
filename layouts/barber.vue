@@ -286,39 +286,65 @@
 
       </div>
 
-      <!-- ── Links locais SEO — gerados automaticamente do allCities ── -->
+      <!-- ── Links locais SEO ── -->
       <div class="border-t border-white/[.04] px-6 py-10">
         <div class="max-w-6xl mx-auto">
           <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-6">
             Barbearias por bairro
           </p>
-          <div class="space-y-8">
+
+          <div class="space-y-10">
             <div v-for="city in allCities" :key="city.citySlug">
-              <!-- Cidade -->
-              <div class="flex items-center gap-3 mb-4">
-                <NuxtLink
-                  :to="`/barbearias/${city.citySlug}`"
-                  class="text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors"
+
+              <!-- Cabeçalho da cidade -->
+              <NuxtLink
+                :to="`/barbearias/${city.citySlug}`"
+                class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
+              >
+                📍 {{ city.city }}
+              </NuxtLink>
+
+              <!-- SP: agrupa por zone -->
+              <template v-if="hasZones(city)">
+                <div
+                  v-for="(districts, zoneName) in districtsByZone(city)"
+                  :key="String(zoneName)"
+                  class="mb-6"
                 >
-                  📍 {{ city.city }}
-                </NuxtLink>
-                <span class="text-gray-800 text-[11px]">{{ city.region }}</span>
-              </div>
-              <!-- Todos os bairros de todos os distritos, flat -->
-              <div class="flex flex-wrap gap-x-5 gap-y-2">
-                <NuxtLink
-                  v-for="neighborhood in allNeighborhoods(city)"
-                  :key="neighborhood.slug"
-                  :to="`/barbearias/${city.citySlug}/${neighborhood.slug}`"
-                  class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
-                >
-                  {{ neighborhood.name }}
-                </NuxtLink>
-              </div>
+                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">
+                    {{ zoneName }}
+                  </p>
+                  <div class="flex flex-wrap gap-x-5 gap-y-2">
+                    <NuxtLink
+                      v-for="neighborhood in flatNeighborhoods(districts)"
+                      :key="neighborhood.slug"
+                      :to="`/barbearias/${city.citySlug}/${neighborhood.slug}`"
+                      class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                    >
+                      {{ neighborhood.name }}
+                    </NuxtLink>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Outras cidades (Baixada Santista etc): flat -->
+              <template v-else>
+                <div class="flex flex-wrap gap-x-5 gap-y-2">
+                  <NuxtLink
+                    v-for="neighborhood in allNeighborhoods(city)"
+                    :key="neighborhood.slug"
+                    :to="`/barbearias/${city.citySlug}/${neighborhood.slug}`"
+                    class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                  >
+                    {{ neighborhood.name }}
+                  </NuxtLink>
+                </div>
+              </template>
+
             </div>
           </div>
 
-          <!-- Linha de barbeiros por cidade -->
+          <!-- Barbeiros por cidade -->
           <div class="mt-8 pt-6 border-t border-white/[.04]">
             <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">
               Barbeiros por cidade
@@ -348,7 +374,6 @@
         </div>
       </div>
 
-      <!-- WhatsappButton do projeto -->
       <WhatsappButton
         :contacts="[
           { name: 'Vendas',  phone: '+5511941649284', availableTimes: ['10:30','14:00','16:00'] },
@@ -364,14 +389,35 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { allCities, type CityData } from '~/data/locations'
+import { allCities, type CityData, type District, type Neighborhood } from '~/data/locations'
 
 const mobileOpen = ref(false)
 const year = new Date().getFullYear()
 
-// Achata todos os bairros de uma cidade num array único para o footer
-function allNeighborhoods(city: CityData) {
+// Bairros flat — cidades sem zone (Baixada Santista etc)
+function allNeighborhoods(city: CityData): Neighborhood[] {
   return city.districts.flatMap((d) => d.neighborhoods)
+}
+
+// Bairros flat de um array de distritos — usado dentro de cada zona de SP
+function flatNeighborhoods(districts: District[]): Neighborhood[] {
+  return districts.flatMap((d) => d.neighborhoods)
+}
+
+// SP tem district.zone definido via spZone() no index.ts
+function hasZones(city: CityData): boolean {
+  return city.districts.some((d) => d.zone != null)
+}
+
+// Agrupa distritos por zone — { "Zona Leste": [...], "Zona Norte": [...] }
+function districtsByZone(city: CityData): Record<string, District[]> {
+  const groups: Record<string, District[]> = {}
+  for (const district of city.districts) {
+    const zone = district.zone ?? 'Outras regiões'
+    if (!groups[zone]) groups[zone] = []
+    groups[zone].push(district)
+  }
+  return groups
 }
 
 const navLinks = [
@@ -383,13 +429,13 @@ const navLinks = [
 ]
 
 const recursosLinks = [
-  { emoji: '📅', label: 'Agenda online', href: '/recursos/agenda-online' },
+  { emoji: '📅', label: 'Agenda online',       href: '/recursos/agenda-online' },
   { emoji: '👥', label: 'Controle de clientes', href: '/recursos/controle-clientes' },
-  { emoji: '🔗', label: 'Link de agendamento', href: '/recursos/link-agendamento' },
+  { emoji: '🔗', label: 'Link de agendamento',  href: '/recursos/link-agendamento' },
 ]
 
 const blogLinks = [
-  { emoji: '📣', label: 'Como divulgar barbearia', href: '/blog/como-divulgar-barbearia' },
+  { emoji: '📣', label: 'Como divulgar barbearia',    href: '/blog/como-divulgar-barbearia' },
   { emoji: '💡', label: 'Como conseguir mais clientes', href: '/blog/como-conseguir-clientes-barbearia' },
 ]
 
@@ -401,14 +447,14 @@ const footerProduto = [
 ]
 
 const footerRecursos = [
-  { label: 'Agenda online',         href: '/recursos/agenda-online' },
-  { label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
-  { label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
+  { label: 'Agenda online',        href: '/recursos/agenda-online' },
+  { label: 'Controle de clientes', href: '/recursos/controle-clientes' },
+  { label: 'Link de agendamento',  href: '/recursos/link-agendamento' },
 ]
 
 const footerBlog = [
-  { label: 'Como divulgar barbearia',        href: '/blog/como-divulgar-barbearia' },
-  { label: 'Como conseguir mais clientes',   href: '/blog/como-conseguir-clientes-barbearia' },
+  { label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
+  { label: 'Como conseguir mais clientes', href: '/blog/como-conseguir-clientes-barbearia' },
 ]
 
 const footerDiretorio = [
@@ -417,9 +463,9 @@ const footerDiretorio = [
 ]
 
 const footerEmpresa = [
-  { label: 'Planos',                    to: '/precos' },
-  { label: 'Política de privacidade',   to: '/privacidade' },
-  { label: 'Termos de serviço',         to: '/termos' },
+  { label: 'Planos',                  to: '/precos' },
+  { label: 'Política de privacidade', to: '/privacidade' },
+  { label: 'Termos de serviço',       to: '/termos' },
 ]
 </script>
 
