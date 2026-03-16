@@ -23,6 +23,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css", "~/assets/css/fonts.css"],
+  site: {
+    url: "https://suaagenda.link",
+    name: "Sua Agenda",
+  },
   app: {
     baseURL: "/",
     head: {
