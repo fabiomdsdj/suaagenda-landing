@@ -237,7 +237,7 @@
         aria-label="Falar com a gente no WhatsApp"
       />
     </footer>
-
+    <CookieBanner />
   </div>
 </template>
 
