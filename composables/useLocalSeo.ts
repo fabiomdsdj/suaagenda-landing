@@ -57,16 +57,16 @@ export function useLocalSeo(
 
     // ── H1 e Meta ──────────────────────────────────────────────────────────
     const h1 = service
-      ? `${serviceName} em ${neighborhoodName}, ${cityName}`
-      : `Barbearias em ${neighborhoodName}, ${cityName}`
+      ? `${serviceName} perto de mim em ${neighborhoodName}, ${cityName}`
+      : `Barbearia mais pŕoxima em ${neighborhoodName}, ${cityName}`
 
     const metaTitle = service
-      ? `${serviceName} em ${neighborhoodName} — Agende Online | SuaAgenda`
-      : `Barbearias em ${neighborhoodName} — Agende Online | SuaAgenda`
+      ? `${serviceName} em ${neighborhoodName}`
+      : `Barbearias em ${neighborhoodName}`
 
     const metaDescription = service
-      ? `Encontre profissionais de ${serviceName.toLowerCase()} em ${neighborhoodName}, ${districtName}, ${cityName}. Agende horário online, sem fila, direto pelo WhatsApp.`
-      : `Encontre barbearias em ${neighborhoodName}, ${districtName}, ${cityName}. Agende horário online, sem fila, direto pelo WhatsApp. Profissionais com agenda digital.`
+      ? `Encontre profissionais de ${serviceName.toLowerCase()} em ${neighborhoodName}, ${districtName}, ${cityName}. Agende horário online, sem fila.`
+      : `Encontre barbearias próximas em ${neighborhoodName}, ${districtName}, ${cityName}. Agende horário online, sem fila. Profissionais com agenda digital.`
 
     const canonicalUrl = service
       ? `https://suaagenda.link/barbearias/${ufSlugValue}/${city.citySlug}/${neighborhoodSlug}/${serviceSlug}`
@@ -75,7 +75,7 @@ export function useLocalSeo(
     // ── Parágrafos ─────────────────────────────────────────────────────────
     const introParagraph = service
       ? `Se você procura ${serviceName.toLowerCase()} em ${neighborhoodName}, ${cityName}, existem diversos profissionais que atendem a região. A procura por ${serviceName.toLowerCase()} em ${districtName} cresceu nos últimos anos, e cada vez mais barbeiros do bairro apostam em ferramentas digitais para organizar a agenda e receber novos clientes.`
-      : `Se você procura barbearias em ${neighborhoodName}, ${cityName}, existem diversos profissionais que atendem a região. A procura por serviços de barbearia em ${districtName} cresceu nos últimos anos, e cada vez mais barbeiros do bairro apostam em ferramentas digitais para organizar a agenda e receber novos clientes.`
+      : `Se você procura uma barbearia próxima de você em ${neighborhoodName}, ${cityName}, existem diversos profissionais que atendem a região. A procura por serviços de barbearia em ${districtName} cresceu nos últimos anos, e cada vez mais barbeiros do bairro apostam em ferramentas digitais para organizar a agenda e receber novos clientes.`
 
     const secondParagraph = service
       ? `Muitos profissionais de ${serviceName.toLowerCase()} do bairro ${neighborhoodName} já utilizam agenda online para organizar horários e evitar filas. Com um sistema de agendamento, os barbeiros conseguem receber marcações diretamente pelo celular — enquanto estão na cadeira atendendo — e reduzir faltas com confirmação automática pelo WhatsApp.`

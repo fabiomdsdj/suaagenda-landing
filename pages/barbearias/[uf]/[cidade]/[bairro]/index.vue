@@ -9,7 +9,7 @@
             <span class="text-gray-700">/</span>
             <NuxtLink to="/barbearias" class="hover:text-green-400 transition-colors">Barbearias</NuxtLink>
             <span class="text-gray-700">/</span>
-            <NuxtLink :to="`/barbearias/${seo.citySlug}`" class="hover:text-green-400 transition-colors">
+            <NuxtLink :to="`/barbearias/${seo.ufSlug}/${seo.citySlug}`" class="hover:text-green-400 transition-colors">
               {{ seo.cityName }}
             </NuxtLink>
             <span class="text-gray-700">/</span>
@@ -36,7 +36,7 @@
             class="font-black leading-none mb-6 text-white"
             style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em"
           >
-            BARBEARIAS EM<br>
+            BARBEARIA PERTO DE MIM EM<br>
             <span class="text-green-400">{{ seo.neighborhoodName.toUpperCase() }}</span>
           </h1>
   
@@ -166,10 +166,10 @@
                 <NuxtLink
                   v-for="n in seo.nearbyNeighborhoods"
                   :key="n.slug"
-                  :to="`/barbearias/${seo.citySlug}/${n.slug}`"
+                  :to="`/barbearias/${seo.ufSlug}/${seo.citySlug}/${n.slug}`"
                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-gray-400 bg-white/[.04] border border-white/[.06] hover:border-green-400/30 hover:text-green-400 transition-colors"
                 >
-                  📍 {{ n.name }}
+                  {{ n.name }}
                 </NuxtLink>
               </div>
             </div>

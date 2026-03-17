@@ -11,15 +11,15 @@
           <NuxtLink to="/barbearias" class="hover:text-green-400 transition-colors">Barbearias</NuxtLink>
           <span class="text-gray-700">/</span>
           <NuxtLink :to="`/barbearias/${ufSlug}`" class="hover:text-green-400 transition-colors">
-            {{ ufSlug.toUpperCase() }}
+            {{ ufLabel }}
           </NuxtLink>
           <span class="text-gray-700">/</span>
           <NuxtLink :to="`/barbearias/${ufSlug}/${citySlug}`" class="hover:text-green-400 transition-colors">
-            {{ neighborhoodData?.city.city }}
+            {{ cityLabel }}
           </NuxtLink>
           <span class="text-gray-700">/</span>
           <NuxtLink :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`" class="hover:text-green-400 transition-colors">
-            {{ neighborhoodData?.neighborhood.name }}
+            {{ neighborhoodLabel }}
           </NuxtLink>
           <span class="text-gray-700">/</span>
           <span class="text-gray-400">{{ barbershop.name }}</span>
@@ -38,7 +38,7 @@
             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-yellow-400 bg-yellow-400/10 border border-yellow-400/20"
           >⭐ DESTAQUE</span>
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">
-            📍 {{ neighborhoodData?.neighborhood.name }}, {{ neighborhoodData?.city.city }}
+            📍 {{ neighborhoodLabel }}, {{ cityLabel }}
           </span>
           <span
             v-if="barbershop.googleRating"
@@ -61,7 +61,7 @@
 
         <div class="flex flex-wrap gap-4">
           
-          <a  v-if="barbershop.phone"
+          <a v-if="barbershop.phone"
             :href="`https://wa.me/55${barbershop.phone.replace(/\D/g, '')}`"
             target="_blank" rel="noopener noreferrer"
             class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5"
@@ -69,7 +69,7 @@
           <NuxtLink
             :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
             class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
-          >← Ver outras em {{ neighborhoodData?.neighborhood.name }}</NuxtLink>
+          >← Ver outras em {{ neighborhoodLabel }}</NuxtLink>
         </div>
       </div>
     </section>
@@ -126,10 +126,10 @@
           style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)"
         >AGENDE JÁ<br>SEU <span class="text-green-400">HORÁRIO</span></h2>
         <p class="mb-8 text-[17px] leading-relaxed text-gray-400">
-          Atendimento profissional em {{ neighborhoodData?.neighborhood.name }}. Agende direto pelo WhatsApp.
+          Atendimento profissional em {{ neighborhoodLabel }}. Agende direto pelo WhatsApp.
         </p>
         
-        <a  v-if="barbershop.phone"
+        <a v-if="barbershop.phone"
           :href="`https://wa.me/55${barbershop.phone.replace(/\D/g, '')}`"
           target="_blank" rel="noopener noreferrer"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105"
@@ -155,24 +155,56 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBarbershopBySlug } from '~/data/barbershops'
 import { getNeighborhoodData } from '~/data/locations'
+import { allCities } from '~/data/locations'
 
 definePageMeta({ layout: 'barber' })
 
 const route = useRoute()
-const ufSlug          = route.params.uf as string
-const citySlug        = route.params.cidade as string
+const ufSlug = route.params.uf as string
+const citySlug = route.params.cidade as string
 const neighborhoodSlug = route.params.bairro as string
-const barbershopSlug  = route.params.slug as string
+const barbershopSlug = route.params.slug as string
 
+// ✅ Buscar barbearia
 const barbershop = computed(() =>
   getBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
 )
 
+// ✅ Buscar dados de localização
 const neighborhoodData = computed(() =>
   getNeighborhoodData(ufSlug, citySlug, neighborhoodSlug)
 )
 
-// Horários formatados — chave curta do mock → label PT
+// ✅ Labels legíveis (com fallback para os dados da barbearia)
+const ufLabel = computed(() => {
+  if (neighborhoodData.value) return neighborhoodData.value.city.uf
+  if (barbershop.value) return barbershop.value.uf
+  return ufSlug.toUpperCase()
+})
+
+const cityLabel = computed(() => {
+  if (neighborhoodData.value) return neighborhoodData.value.city.city
+  if (barbershop.value) return barbershop.value.city
+  // Fallback: buscar na lista de cidades
+  const city = allCities.find(c => c.citySlug === citySlug)
+  return city?.city ?? citySlug
+})
+
+const neighborhoodLabel = computed(() => {
+  if (neighborhoodData.value) return neighborhoodData.value.neighborhood.name
+  if (barbershop.value) return barbershop.value.neighborhood
+  // Fallback: buscar na lista de cidades
+  const city = allCities.find(c => c.citySlug === citySlug)
+  if (city) {
+    for (const district of city.districts) {
+      const neighborhood = district.neighborhoods.find(n => n.slug === neighborhoodSlug)
+      if (neighborhood) return neighborhood.name
+    }
+  }
+  return neighborhoodSlug
+})
+
+// Horários formatados
 const daysMap: Record<string, string> = {
   mon: 'segunda',
   tue: 'terça',
@@ -199,24 +231,23 @@ const formattedHours = computed(() => {
 // SEO
 useHead(
   computed(() => {
-    if (!barbershop.value || !neighborhoodData.value) return { title: 'Barbearia não encontrada' }
+    if (!barbershop.value) return { title: 'Barbearia não encontrada' }
 
-    const b  = barbershop.value
-    const nd = neighborhoodData.value
+    const b = barbershop.value
 
     return {
-      title: `${b.name} — Barbearia em ${nd.neighborhood.name}, ${nd.city.city} | SuaAgenda`,
+      title: `${b.name} — Barbearia em ${neighborhoodLabel.value}, ${cityLabel.value} | SuaAgenda`,
       meta: [
         {
           name: 'description',
-          content: b.description ?? `${b.name} em ${nd.neighborhood.name}, ${nd.city.city}. Agende horário online direto pelo WhatsApp.`,
+          content: b.description ?? `${b.name} em ${neighborhoodLabel.value}, ${cityLabel.value}. Agende horário online direto pelo WhatsApp.`,
         },
-        { property: 'og:title',       content: `${b.name} — ${nd.neighborhood.name}` },
-        { property: 'og:type',        content: 'business.business' },
-        { name:     'robots',         content: 'index, follow' },
+        { property: 'og:title', content: `${b.name} — ${neighborhoodLabel.value}` },
+        { property: 'og:type', content: 'business.business' },
+        { name: 'robots', content: 'index, follow' },
       ],
       link: [
-        { rel: 'canonical', href: `https://suaagenda.link/barbearias/${nd.city.ufSlug}/${nd.city.citySlug}/${nd.neighborhood.slug}/${b.slug}` },
+        { rel: 'canonical', href: `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/${b.slug}` },
       ],
       script: [
         {
@@ -227,16 +258,16 @@ useHead(
             name: b.name,
             image: b.photos?.[0],
             address: {
-              '@type':           'PostalAddress',
-              streetAddress:     b.address,
-              addressLocality:   nd.city.city,
-              addressRegion:     nd.city.uf,
-              addressCountry:    'BR',
+              '@type': 'PostalAddress',
+              streetAddress: b.address,
+              addressLocality: cityLabel.value,
+              addressRegion: ufLabel.value,
+              addressCountry: 'BR',
             },
             aggregateRating: b.googleRating ? {
-              '@type':      'AggregateRating',
-              ratingValue:  b.googleRating,
-              reviewCount:  b.googleReviewCount ?? 0,
+              '@type': 'AggregateRating',
+              ratingValue: b.googleRating,
+              reviewCount: b.googleReviewCount ?? 0,
             } : undefined,
             telephone: b.phone,
           }),

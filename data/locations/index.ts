@@ -9,6 +9,8 @@ import baixadaSantista from "../baixada-santista"
 import abcPaulista  from "../abc-paulista"
 import altoTiete from "../alto-tiete"
 
+import rioDeJaneiroRJ from "../rio-de-janeiro-rj"
+
 export interface Neighborhood {
   name: string
   slug: string
@@ -105,6 +107,7 @@ const rawSources: CityData[] = [
   spZone(spZonaOeste),
   ...addUF(abcPaulista),
   ...addUF(baixadaSantista),
+  ...rioDeJaneiroRJ,
 ]
 
 export const allCities: CityData[] = mergeCities(rawSources)

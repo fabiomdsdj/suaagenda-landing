@@ -197,7 +197,7 @@ useHead(computed(() => {
   if (!cityData.value) return { title: 'Cidade não encontrada' }
   const c = cityData.value
   return {
-    title: `Barbearias em ${c.city}, ${c.uf} — Agende Online | SuaAgenda`,
+    title: `Barbearia perto de mim em ${c.city}, ${c.uf}`,
     meta: [
       { name: 'description', content: `Encontre barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.` },
       { name: 'robots', content: 'index, follow' },
