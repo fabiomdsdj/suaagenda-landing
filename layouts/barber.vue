@@ -298,7 +298,7 @@
 
               <!-- Cabeçalho da cidade -->
               <NuxtLink
-                :to="`/barbearias/${city.citySlug}`"
+                :to="`/barbearias/${city.ufSlug}/${city.citySlug}`"
                 class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
               >
                 📍 {{ city.city }}
@@ -318,7 +318,7 @@
                     <NuxtLink
                       v-for="neighborhood in flatNeighborhoods(districts)"
                       :key="neighborhood.slug"
-                      :to="`/barbearias/${city.citySlug}/${neighborhood.slug}`"
+                      :to="`/barbearias/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
                       class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
                     >
                       {{ neighborhood.name }}
@@ -333,7 +333,7 @@
                   <NuxtLink
                     v-for="neighborhood in allNeighborhoods(city)"
                     :key="neighborhood.slug"
-                    :to="`/barbearias/${city.citySlug}/${neighborhood.slug}`"
+                    :to="`/barbearias/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
                     class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
                   >
                     {{ neighborhood.name }}
@@ -353,7 +353,7 @@
               <NuxtLink
                 v-for="city in allCities"
                 :key="city.citySlug"
-                :to="`/barbeiros/${city.citySlug}`"
+                :to="`/barbeiros/${city.ufSlug}/${city.citySlug}`"
                 class="text-[13px] text-gray-600 hover:text-green-400 transition-colors"
               >
                 Barbeiros em {{ city.city }}

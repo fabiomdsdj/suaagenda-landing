@@ -79,7 +79,8 @@ export default {
           { name: "Jardim Vitória", slug: "jardim-vitoria" },
           { name: "Conjunto Prestes Maia", slug: "conjunto-prestes-maia" }
         ]
-      }
-  
+      },
+
+      
     ]
   }

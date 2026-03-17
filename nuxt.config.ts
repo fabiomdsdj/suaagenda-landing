@@ -1,32 +1,58 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-import tailwindcss from "@tailwindcss/vite";
-import servicos from "./data/servicos";
-import nichos from "./data/nichos";
-import { getAllNeighborhoodRoutes, getAllCityRoutes, getAllBarbeirosRoutes } from "./data/locations";
+// nuxt.config.ts — VERSÃO FINAL
 
-// Rotas existentes (servicos x nichos)
+import tailwindcss from "@tailwindcss/vite"
+import servicos from "./data/servicos"
+import nichos from "./data/nichos"
+import {
+  getAllNeighborhoodRoutes,
+  getAllServiceRoutes,
+  getAllCityRoutes,
+  getAllUFRoutes,
+  getAllBarbeirosRoutes,
+  getOldNeighborhoodRoutes,
+  getOldCityRoutes,
+  getOldBarbeirosRoutes,
+} from "./data/locations"
+import { getAllBarbershopRoutes } from "./data/barbershops"
+
+// ── Rotas serviço x nicho (existentes) ────────────────────────
 const servicoNichoRoutes = [
   ...servicos.flatMap((s) => nichos.map((n) => `/servicos/${s.slug}/${n.slug}`)),
   ...nichos.map((n) => `/${n.slug}`),
-];
+]
 
-// ✅ Rotas de SEO local — geradas automaticamente dos dados
+// ── Rotas SEO local ────────────────────────────────────────────
 const localSeoRoutes = [
-  ...getAllNeighborhoodRoutes(), // /barbearias/sao-paulo/itaquera, etc.
-  ...getAllCityRoutes(),          // /barbearias/sao-paulo, etc.
-  ...getAllBarbeirosRoutes(),     // /barbeiros/sao-paulo, etc.
-];
+  ...getAllUFRoutes(),              // /barbearias/sp
+  ...getAllCityRoutes(),            // /barbearias/sp/sao-paulo
+  ...getAllNeighborhoodRoutes(),    // /barbearias/sp/sao-paulo/itaquera
+  ...getAllServiceRoutes(),         // /barbearias/sp/sao-paulo/itaquera/s/corte-de-cabelo  ✅ /s/
+  ...getAllBarbershopRoutes(),      // /barbearias/sp/peruibe/centro/barbearia-do-ze         ✅ mock
+  ...getAllBarbeirosRoutes(),       // /barbeiros/sp/sao-paulo
+]
 
-const dynamicRoutes = [...servicoNichoRoutes, ...localSeoRoutes];
+const dynamicRoutes = [...servicoNichoRoutes, ...localSeoRoutes]
+
+// ── Redirects 301 ──────────────────────────────────────────────
+const redirectRules: Record<string, { redirect: string }> = {}
+for (const { from, to } of [
+  ...getOldNeighborhoodRoutes(),
+  ...getOldCityRoutes(),
+  ...getOldBarbeirosRoutes(),
+]) {
+  redirectRules[from] = { redirect: to }
+}
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css", "~/assets/css/fonts.css"],
+
   site: {
     url: "https://suaagenda.link",
     name: "Sua Agenda",
   },
+
   app: {
     baseURL: "/",
     head: {
@@ -38,7 +64,9 @@ export default defineNuxtConfig({
       script: [],
     },
   },
+
   modules: ["@vueuse/motion/nuxt", "nuxt-simple-sitemap", "@nuxt/image"],
+
   image: {
     cloudinary: {
       baseURL: "https://res.cloudinary.com/du872kkq0/image/upload/",
@@ -53,12 +81,14 @@ export default defineNuxtConfig({
       "2xl": 1536,
     },
   },
+
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "",
-      apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
+      apiKey:  process.env.NUXT_PUBLIC_API_KEY      || "",
     },
   },
+
   vite: {
     plugins: [tailwindcss()],
     build: {
@@ -70,14 +100,16 @@ export default defineNuxtConfig({
       drop: ["console", "debugger"],
     },
   },
+
   appConfig: {
     siteUrl: process.env.NUXT_PUBLIC_API_SITE_URL,
   },
+
   sitemap: {
     sitemapName: "sitemap.xml",
     urls: dynamicRoutes,
   },
-  // ✅ Prerender todas as rotas dinâmicas (SSG)
+
   nitro: {
     compressPublicAssets: true,
     minify: true,
@@ -85,30 +117,23 @@ export default defineNuxtConfig({
       routes: dynamicRoutes,
     },
   },
-  // ✅ Route rules: cache longo pra assets estáticos
+
   routeRules: {
-    "/fonts/**": {
-      headers: { "cache-control": "public, max-age=31536000, immutable" },
-    },
-    "/icons/**": {
-      headers: { "cache-control": "public, max-age=31536000, immutable" },
-    },
-    "/images/**": {
-      headers: { "cache-control": "public, max-age=31536000, immutable" },
-    },
-    // Cache moderado pra páginas de SEO local (revalidação diária)
-    "/barbearias/**": {
-      headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" },
-    },
-    "/barbeiros/**": {
-      headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" },
-    },
+    "/fonts/**":      { headers: { "cache-control": "public, max-age=31536000, immutable" } },
+    "/icons/**":      { headers: { "cache-control": "public, max-age=31536000, immutable" } },
+    "/images/**":     { headers: { "cache-control": "public, max-age=31536000, immutable" } },
+    "/barbearias/**": { headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" } },
+    "/barbeiros/**":  { headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" } },
+
+    // Redirects 301
+    ...redirectRules,
   },
+
   vue: {
     compilerOptions: {
       whitespace: "condense",
-      comments: false,
+      comments:   false,
       isCustomElement: () => false,
     },
   },
-});
+})

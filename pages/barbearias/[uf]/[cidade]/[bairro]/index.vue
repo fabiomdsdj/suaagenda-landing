@@ -258,10 +258,11 @@
   definePageMeta({ layout: 'barber' })
   
   const route = useRoute()
+  const ufSlug = route.params.uf as string        // ← adiciona isso
   const citySlug = route.params.cidade as string
   const neighborhoodSlug = route.params.bairro as string
   
-  const { data: seo } = useLocalSeo(citySlug, neighborhoodSlug)
+  const { data: seo } = useLocalSeo(ufSlug, citySlug, neighborhoodSlug)
   
   // useHead reativo
   useHead(

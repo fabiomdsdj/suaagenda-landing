@@ -1,3 +1,4 @@
+<!-- barbeiros/[uf]/[cidade].vue-->
 <template>
     <div v-if="cityData" class="text-[15px]">
   
