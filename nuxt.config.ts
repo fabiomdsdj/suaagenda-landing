@@ -1,40 +1,19 @@
-// nuxt.config.ts — VERSÃO FINAL
+// nuxt.config.ts
 
 import tailwindcss from "@tailwindcss/vite"
-import servicos from "./data/servicos"
-import nichos from "./data/nichos"
+
 import {
-  getAllNeighborhoodRoutes,
-  getAllServiceRoutes,
-  getAllCityRoutes,
-  getAllUFRoutes,
-  getAllBarbeirosRoutes,
   getOldNeighborhoodRoutes,
   getOldCityRoutes,
   getOldBarbeirosRoutes,
 } from "./data/locations"
-import { getAllBarbershopRoutes } from "./data/barbershops"
 
-// ── Rotas serviço x nicho (existentes) ────────────────────────
-const servicoNichoRoutes = [
-  ...servicos.flatMap((s) => nichos.map((n) => `/servicos/${s.slug}/${n.slug}`)),
-  ...nichos.map((n) => `/${n.slug}`),
-]
+// ─────────────────────────────────────────────
+// Redirects 301
+// ─────────────────────────────────────────────
 
-// ── Rotas SEO local ────────────────────────────────────────────
-const localSeoRoutes = [
-  ...getAllUFRoutes(),              // /barbearias/sp
-  ...getAllCityRoutes(),            // /barbearias/sp/sao-paulo
-  ...getAllNeighborhoodRoutes(),    // /barbearias/sp/sao-paulo/itaquera
-  ...getAllServiceRoutes(),         // /barbearias/sp/sao-paulo/itaquera/s/corte-de-cabelo  ✅ /s/
-  ...getAllBarbershopRoutes(),      // /barbearias/sp/peruibe/centro/barbearia-do-ze         ✅ mock
-  ...getAllBarbeirosRoutes(),       // /barbeiros/sp/sao-paulo
-]
-
-const dynamicRoutes = [...servicoNichoRoutes, ...localSeoRoutes]
-
-// ── Redirects 301 ──────────────────────────────────────────────
 const redirectRules: Record<string, { redirect: string }> = {}
+
 for (const { from, to } of [
   ...getOldNeighborhoodRoutes(),
   ...getOldCityRoutes(),
@@ -44,9 +23,19 @@ for (const { from, to } of [
 }
 
 export default defineNuxtConfig({
+
   compatibilityDate: "2025-07-15",
+
   devtools: { enabled: true },
-  css: ["~/assets/css/main.css", "~/assets/css/fonts.css"],
+
+  css: [
+    "~/assets/css/main.css",
+    "~/assets/css/fonts.css"
+  ],
+
+  // ─────────────────────────────────────────────
+  // SITE
+  // ─────────────────────────────────────────────
 
   site: {
     url: "https://suaagenda.link",
@@ -58,14 +47,31 @@ export default defineNuxtConfig({
     head: {
       title: "Sua agenda",
       titleTemplate: "%s | Sua agenda",
-      meta: [{ name: "viewport", content: "width=device-width, initial-scale=1" }],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
-      htmlAttrs: { lang: "pt-BR" },
-      script: [],
+      meta: [
+        { name: "viewport", content: "width=device-width, initial-scale=1" }
+      ],
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" }
+      ],
+      htmlAttrs: {
+        lang: "pt-BR",
+      },
     },
   },
 
-  modules: ["@vueuse/motion/nuxt", "nuxt-simple-sitemap", "@nuxt/image"],
+  // ─────────────────────────────────────────────
+  // MODULES
+  // ─────────────────────────────────────────────
+
+  modules: [
+    "@vueuse/motion/nuxt",
+    "nuxt-simple-sitemap",
+    "@nuxt/image",
+  ],
+
+  // ─────────────────────────────────────────────
+  // IMAGE
+  // ─────────────────────────────────────────────
 
   image: {
     cloudinary: {
@@ -82,58 +88,124 @@ export default defineNuxtConfig({
     },
   },
 
+  // ─────────────────────────────────────────────
+  // RUNTIME CONFIG
+  // ─────────────────────────────────────────────
+
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "",
-      apiKey:  process.env.NUXT_PUBLIC_API_KEY      || "",
+      apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
     },
   },
 
+  // ─────────────────────────────────────────────
+  // VITE
+  // ─────────────────────────────────────────────
+
   vite: {
     plugins: [tailwindcss()],
+
     build: {
       target: "esnext",
       cssMinify: true,
-      rollupOptions: { treeshake: true },
+      rollupOptions: {
+        treeshake: true,
+      },
     },
+
     esbuild: {
       drop: ["console", "debugger"],
     },
   },
 
+  // ─────────────────────────────────────────────
+  // APP CONFIG
+  // ─────────────────────────────────────────────
+
   appConfig: {
     siteUrl: process.env.NUXT_PUBLIC_API_SITE_URL,
   },
 
+  // ─────────────────────────────────────────────
+  // SITEMAP DINÂMICO
+  // ─────────────────────────────────────────────
+
   sitemap: {
-    sitemapName: "sitemap.xml",
-    urls: dynamicRoutes,
+    sources: [
+      "/api/sitemap"
+    ]
   },
+
+  // ─────────────────────────────────────────────
+  // NITRO
+  // ─────────────────────────────────────────────
 
   nitro: {
+
     compressPublicAssets: true,
+
     minify: true,
+
     prerender: {
-      routes: dynamicRoutes,
-    },
+      crawlLinks: false,
+      routes: []
+    }
+
   },
+
+  // ─────────────────────────────────────────────
+  // CACHE HEADERS
+  // ─────────────────────────────────────────────
 
   routeRules: {
-    "/fonts/**":      { headers: { "cache-control": "public, max-age=31536000, immutable" } },
-    "/icons/**":      { headers: { "cache-control": "public, max-age=31536000, immutable" } },
-    "/images/**":     { headers: { "cache-control": "public, max-age=31536000, immutable" } },
-    "/barbearias/**": { headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" } },
-    "/barbeiros/**":  { headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" } },
 
-    // Redirects 301
+    "/fonts/**": {
+      headers: {
+        "cache-control": "public, max-age=31536000, immutable",
+      },
+    },
+
+    "/icons/**": {
+      headers: {
+        "cache-control": "public, max-age=31536000, immutable",
+      },
+    },
+
+    "/images/**": {
+      headers: {
+        "cache-control": "public, max-age=31536000, immutable",
+      },
+    },
+
+    "/barbearias/**": {
+      headers: {
+        "cache-control":
+          "public, max-age=86400, stale-while-revalidate=3600",
+      },
+    },
+
+    "/barbeiros/**": {
+      headers: {
+        "cache-control":
+          "public, max-age=86400, stale-while-revalidate=3600",
+      },
+    },
+
+    // redirects SEO
     ...redirectRules,
   },
+
+  // ─────────────────────────────────────────────
+  // VUE COMPILER
+  // ─────────────────────────────────────────────
 
   vue: {
     compilerOptions: {
       whitespace: "condense",
-      comments:   false,
+      comments: false,
       isCustomElement: () => false,
     },
   },
+
 })
