@@ -39,7 +39,7 @@ export default defineNuxtConfig({
 
   site: {
     url: "https://suaagenda.link",
-    name: "Sua Agenda",
+    name: "SuaAgenda",
   },
 
   app: {

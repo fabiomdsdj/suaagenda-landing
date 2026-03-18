@@ -417,11 +417,22 @@ import { ref } from 'vue'
 import { allCities, type CityData, type District, type Neighborhood } from '~/data/locations'
 
 useHead({
-  
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap' },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'SuaAgenda',
+        alternateName: 'Sua Agenda',
+        url: 'https://suaagenda.link',
+      }),
+    },
   ],
 })
 
