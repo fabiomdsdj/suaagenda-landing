@@ -261,6 +261,10 @@ import { useDebounceFn } from '@vueuse/core'
 import { allCities } from '~/data/locations'
 
 definePageMeta({ layout: 'barber' })
+ 
+// ✅ Bloqueia indexação do Google — página admin interna
+useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+ 
 
 const isDev = import.meta.dev
 const api   = useScrapingApi()

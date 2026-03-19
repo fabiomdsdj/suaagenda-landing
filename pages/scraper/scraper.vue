@@ -322,6 +322,10 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'barber' })
+ 
+// ✅ Bloqueia indexação do Google — página admin interna
+useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+ 
 import slugify from 'slugify'
 import { useScraping } from '~/composables/useScraping'
 import { geocodeExact, reverseGeocode } from '~/composables/useGeocoding'

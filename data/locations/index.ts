@@ -8,6 +8,7 @@ import spZonaOeste    from "../sp-zona-oeste"
 import baixadaSantista from "../baixada-santista"
 import abcPaulista  from "../abc-paulista"
 import altoTiete from "../alto-tiete"
+import regiaoAtibaia from "../regiao-atibaia"
 
 import rioDeJaneiroRJ from "../rio-de-janeiro-rj"
 
@@ -107,6 +108,7 @@ const rawSources: CityData[] = [
   spZone(spZonaOeste),
   ...addUF(abcPaulista),
   ...addUF(baixadaSantista),
+  ...addUF(regiaoAtibaia),
   ...rioDeJaneiroRJ,
 ]
 
