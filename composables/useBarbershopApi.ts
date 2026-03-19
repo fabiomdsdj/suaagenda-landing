@@ -1,10 +1,4 @@
 // composables/useBarbershopApi.ts
-//
-// Busca barbearias na API real e normaliza para o mesmo shape
-// que o mock `useBarbershopSearch` já entrega pro portal.
-//
-// Uso:
-//   const { data, meta, suggestions, pending, error, fetch } = useBarbershopApi(params)
 
 import type { Barbershop } from '~/data/barbershops'
 import type { SearchParams, SearchResult } from '~/composables/useBarbershops'
@@ -71,7 +65,6 @@ interface ApiBarbershop {
   openingHours: Record<string, { open: string; close: string } | null> | null
   services?: ApiService[]
   photos?:   ApiPhoto[]
-  // campos extras que a API pode retornar
   featured?: boolean
   ufSlug?: string
   address?: string
@@ -99,18 +92,52 @@ interface ApiPaginatedResponse {
   }
 }
 
-// ─── Normalização: ApiBarbershop → Barbershop (shape do mock) ────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// ✅ FIX PRINCIPAL: configs resolvidas UMA VEZ no topo do módulo, fora de
+// qualquer função. useRuntimeConfig() funciona aqui porque este módulo é
+// avaliado durante o setup do Nuxt — sem depender de contexto de componente.
+// Assim fetchBarbershopBySlug e fetchNearbyBarbershops podem ser chamadas
+// de qualquer lugar (onMounted, event handlers, etc.) sem quebrar.
+// ─────────────────────────────────────────────────────────────────────────────
+let _baseUrl = ''
+let _apiKey  = ''
+
+function getApiConfig() {
+  // Lazy init: resolve na primeira chamada real (garante SSR + client)
+  if (!_baseUrl) {
+    const config = useRuntimeConfig()
+    _baseUrl = (config.public.apiBase as string) || ''
+    _apiKey  = (config.public.apiKey  as string) || ''
+  }
+  return { baseUrl: _baseUrl, apiKey: _apiKey }
+}
+
+function apiHeaders() {
+  const { apiKey } = getApiConfig()
+  return apiKey ? { 'x-api-key': apiKey } : {}
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function buildAddress(raw: ApiBarbershop): string {
+  return [raw.street, raw.number, raw.complement].filter(Boolean).join(', ')
+}
+
+function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+// ─── Normalização: ApiBarbershop → Barbershop ────────────────────────────────
 function normalizeShop(raw: ApiBarbershop): Barbershop {
-  // Deriva ufSlug (lowercase da UF) se a API não mandar
   const ufSlug = raw.ufSlug ?? raw.state.toLowerCase()
 
-  // Deriva neighborhoodSlug se a API não mandar
   const neighborhoodSlug =
-    raw.neighborhoodSlug ??
-    slugify(raw.neighborhood ?? '')
+    raw.neighborhoodSlug ?? slugify(raw.neighborhood ?? '')
 
-  // ✅ FIX: neighborhood com fallback — se vier null do banco, capitaliza o slug
-  // Ex: null + "vila-madalena" → "Vila Madalena"
   const neighborhood =
     raw.neighborhood ||
     (raw.neighborhoodSlug
@@ -120,7 +147,6 @@ function normalizeShop(raw: ApiBarbershop): Barbershop {
           .join(' ')
       : '')
 
-  // Normaliza services para o shape do mock
   const services = (raw.services ?? []).map(s => ({
     id:          s.id,
     name:        s.name,
@@ -146,83 +172,48 @@ function normalizeShop(raw: ApiBarbershop): Barbershop {
     plan:              raw.plan   as Barbershop['plan'],
     isClaimed:         Boolean(raw.isClaimed),
     featured:          raw.featured ?? false,
-
-    // Contato
-    phone:    raw.phone    ?? undefined,
-    whatsapp: raw.whatsapp ?? undefined,
-    email:    raw.email    ?? undefined,
-    website:  raw.website  ?? undefined,
-
-    // Endereço
-    street:           raw.street       ?? undefined,
-    number:           raw.number       ?? undefined,
-    complement:       raw.complement   ?? undefined,
-    // ✅ FIX: usa o neighborhood já resolvido acima
+    phone:             raw.phone    ?? undefined,
+    whatsapp:          raw.whatsapp ?? undefined,
+    email:             raw.email    ?? undefined,
+    website:           raw.website  ?? undefined,
+    street:            raw.street       ?? undefined,
+    number:            raw.number       ?? undefined,
+    complement:        raw.complement   ?? undefined,
     neighborhood,
     neighborhoodSlug,
-    city:             raw.city,
-    citySlug:         raw.citySlug,
-    state:            raw.state,
+    city:              raw.city,
+    citySlug:          raw.citySlug,
+    state:             raw.state,
     ufSlug,
-    zipCode:          raw.zipCode ?? undefined,
-    country:          raw.country,
-
-    // Endereço formatado (se não vier da API, monta aqui)
-    address: raw.address ?? buildAddress(raw),
-
-    // Geo
-    latitude:  raw.latitude  ?? undefined,
-    longitude: raw.longitude ?? undefined,
-
-    // Conteúdo
-    description:      raw.description      ?? undefined,
-    metaTitle:        raw.metaTitle        ?? undefined,
-    metaDescription:  raw.metaDescription  ?? undefined,
-    coverImageUrl:    raw.coverImageUrl    ?? undefined,
-    logoUrl:          raw.logoUrl          ?? undefined,
-
-    // Google
-    googlePlaceId:      raw.googlePlaceId  ?? undefined,
-    googleRating:       raw.googleRating   ?? undefined,
-    googleReviewCount:  raw.googleReviewCount,
-    nativeRating:       raw.nativeRating   ?? undefined,
-    nativeReviewCount:  raw.nativeReviewCount,
-
-    // Horários
-    openingHours: raw.openingHours ?? undefined,
-
-    // Serviços
+    zipCode:           raw.zipCode ?? undefined,
+    country:           raw.country,
+    address:           raw.address ?? buildAddress(raw),
+    latitude:          raw.latitude  ?? undefined,
+    longitude:         raw.longitude ?? undefined,
+    description:       raw.description      ?? undefined,
+    metaTitle:         raw.metaTitle        ?? undefined,
+    metaDescription:   raw.metaDescription  ?? undefined,
+    coverImageUrl:     raw.coverImageUrl    ?? undefined,
+    logoUrl:           raw.logoUrl          ?? undefined,
+    googlePlaceId:     raw.googlePlaceId  ?? undefined,
+    googleRating:      raw.googleRating   ?? undefined,
+    googleReviewCount: raw.googleReviewCount,
+    nativeRating:      raw.nativeRating   ?? undefined,
+    nativeReviewCount: raw.nativeReviewCount,
+    openingHours:      raw.openingHours ?? undefined,
     services,
-
-    // Fotos — normaliza pra array de URLs ordenado (capa primeiro)
     photos: (raw.photos ?? [])
       .sort((a, b) => {
         if (Number(b.isCover) !== Number(a.isCover)) return Number(b.isCover) - Number(a.isCover)
         return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
       })
       .map(p => p.url),
-
-    // Timestamps
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
   }
 }
 
-function buildAddress(raw: ApiBarbershop): string {
-  const parts = [raw.street, raw.number, raw.complement].filter(Boolean)
-  return parts.join(', ')
-}
-
-function slugify(str: string): string {
-  return str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-// ─── Monta query string a partir dos SearchParams do portal ──────────────────
+// ─── Query builder ────────────────────────────────────────────────────────────
 function buildQuery(params: SearchParams): Record<string, string | number | boolean> {
   const q: Record<string, string | number | boolean> = {}
   if (params.q)            q.q            = params.q
@@ -240,8 +231,9 @@ function buildQuery(params: SearchParams): Record<string, string | number | bool
   return q
 }
 
-// ─── Composable principal ────────────────────────────────────────────────────
+// ─── Composable principal (busca paginada) ────────────────────────────────────
 export function useBarbershopApi(initialParams?: SearchParams) {
+  // ✅ Aqui useRuntimeConfig é seguro — estamos dentro de um composable
   const config  = useRuntimeConfig()
   const baseUrl = config.public.apiBase as string
   const apiKey  = config.public.apiKey  as string
@@ -259,7 +251,6 @@ export function useBarbershopApi(initialParams?: SearchParams) {
 
   async function fetch(newParams?: SearchParams) {
     if (newParams) params.value = newParams
-
     pending.value = true
     error.value   = null
 
@@ -275,26 +266,16 @@ export function useBarbershopApi(initialParams?: SearchParams) {
         page:  raw.meta.page,
         limit: raw.meta.limit,
         pages: raw.meta.pages,
-        stats: raw.meta.stats ?? {
-          avgRating: null,
-          avgPrice:  null,
-          hasPhotos: 0,
-          proCount:  0,
-        },
+        stats: raw.meta.stats ?? { avgRating: null, avgPrice: null, hasPhotos: 0, proCount: 0 },
       }
-      suggestions.value = raw.suggestions ?? {
-        nearbyNeighborhoods: [],
-        relatedServices: [],
-      }
+      suggestions.value = raw.suggestions ?? { nearbyNeighborhoods: [], relatedServices: [] }
     } catch (err: any) {
       error.value = err?.data?.error ?? err?.message ?? 'Erro ao buscar barbearias'
-      // Deixa data/meta com o que tinha — não quebra a UI
     } finally {
       pending.value = false
     }
   }
 
-  // Resultado no mesmo shape do useBarbershopSearch
   const result = computed<SearchResult>(() => ({
     data:        data.value,
     meta:        meta.value ?? { total: 0, page: 1, limit: 20, pages: 0, stats: { avgRating: null, avgPrice: null, hasPhotos: 0, proCount: 0 } },
@@ -304,10 +285,9 @@ export function useBarbershopApi(initialParams?: SearchParams) {
   return { result, data, meta, suggestions, pending, error, fetch }
 }
 
-// ─── Busca de barbearia individual ───────────────────────────────────────────
-// Exporta como composable (use*) para o Nuxt auto-importar corretamente.
-// O [slug].vue chama: const { fetchBySlug } = useBarbershopSlug()
+// ─── Composable para página de barbearia individual ───────────────────────────
 export function useBarbershopSlug() {
+  // ✅ Seguro — dentro de composable
   const config  = useRuntimeConfig()
   const baseUrl = config.public.apiBase as string
   const apiKey  = config.public.apiKey  as string
@@ -332,17 +312,17 @@ export function useBarbershopSlug() {
   return { fetchBySlug }
 }
 
-// Mantém o export nomeado para compatibilidade com imports explícitos existentes
+// ─── fetchBarbershopBySlug ────────────────────────────────────────────────────
+// ✅ FIX: usa getApiConfig() (lazy singleton) em vez de useRuntimeConfig()
+// direto — assim funciona em onMounted, event handlers e qualquer contexto
+// fora do setup do Vue sem lançar "nuxt instance unavailable".
 export async function fetchBarbershopBySlug(
   uf: string,
   city: string,
   neighborhood: string,
   slug: string,
 ): Promise<Barbershop | null> {
-  const config  = useRuntimeConfig()
-  const baseUrl = config.public.apiBase as string
-  const apiKey  = config.public.apiKey  as string
-
+  const { baseUrl, apiKey } = getApiConfig()
   try {
     const raw = await $fetch<ApiBarbershop>(
       `${baseUrl}/barbershops/${uf}/${city}/${neighborhood}/${slug}`,
@@ -351,5 +331,27 @@ export async function fetchBarbershopBySlug(
     return normalizeShop(raw)
   } catch {
     return null
+  }
+}
+
+// ─── fetchNearbyBarbershops ───────────────────────────────────────────────────
+// Retorna outras barbearias do mesmo bairro (excluindo o slug atual).
+// Usado pela seção de internal linking no [slug].vue.
+export async function fetchNearbyBarbershops(
+  uf: string,
+  city: string,
+  neighborhood: string,
+  excludeSlug: string,
+  limit = 6,
+): Promise<Barbershop[]> {
+  const { baseUrl, apiKey } = getApiConfig()
+  try {
+    const raw = await $fetch<ApiPaginatedResponse>(`${baseUrl}/barbershops`, {
+      params: { uf, city, neighborhood, limit, exclude: excludeSlug },
+      headers: apiKey ? { 'x-api-key': apiKey } : {},
+    })
+    return raw.data.map(normalizeShop)
+  } catch {
+    return []
   }
 }
