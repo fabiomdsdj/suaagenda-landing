@@ -12,7 +12,6 @@
         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
-      <!-- Placeholder sem foto -->
       <div v-else class="h-full w-full flex items-center justify-center">
         <span class="text-5xl opacity-10">✂️</span>
       </div>
@@ -33,6 +32,23 @@
         </svg>
         {{ googleRating!.toFixed(1) }}
         <span class="text-white/40 font-normal">({{ formatCount(shop.googleReviewCount) }})</span>
+      </div>
+
+      <!-- ✅ Status de funcionamento flutuante (canto inferior esquerdo da foto) -->
+      <div
+        v-if="opening.status !== 'closed' || opening.sublabel"
+        class="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/75 backdrop-blur text-[11px] font-bold"
+        :class="opening.color"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+          :class="{
+            'bg-green-400 animate-pulse': opening.status === 'open',
+            'bg-amber-400 animate-pulse': opening.status === 'closing_soon',
+            'bg-red-400':                 opening.status === 'closed',
+          }"
+        />
+        {{ opening.label }}
       </div>
     </div>
 
@@ -59,31 +75,32 @@
           v-for="svc in topServices"
           :key="svc.id"
           class="px-2 py-0.5 rounded-md text-[11px] text-gray-400 bg-white/[.04] border border-white/[.05]"
-        >
-          {{ svc.name }}
-        </span>
+        >{{ svc.name }}</span>
         <span v-if="extraServicesCount > 0" class="px-2 py-0.5 rounded-md text-[11px] text-gray-600 bg-white/[.04] border border-white/[.05]">
           +{{ extraServicesCount }}
         </span>
       </div>
 
-      <!-- Rodapé: preço + CTA -->
-      <div class="mt-auto flex items-center justify-between">
-        <div>
+      <!-- Rodapé: preço + sublabel de horário + CTA -->
+      <div class="mt-auto flex items-center justify-between gap-2">
+        <div class="min-w-0">
           <p v-if="minPriceVal" class="text-xs text-gray-500">a partir de</p>
           <p v-if="minPriceVal" class="text-[15px] font-bold text-white">
             R$ {{ Number(minPriceVal).toFixed(2).replace('.', ',') }}
           </p>
           <p v-else class="text-xs text-gray-600 italic">Consulte valores</p>
+          <!-- Sublabel do horário (ex: "Fecha em 30 min", "Abre amanhã às 9h") -->
+          <p v-if="opening.sublabel" class="text-[11px] text-gray-600 mt-0.5 truncate">
+            {{ opening.sublabel }}
+          </p>
         </div>
 
-        <!-- WhatsApp se tiver, senão link interno -->
         <a
           v-if="shop.whatsapp"
           :href="whatsappHref"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-green-400/10 border border-green-400/20 text-green-400 text-xs font-bold hover:bg-green-400 hover:text-black transition-all"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-green-400/10 border border-green-400/20 text-green-400 text-xs font-bold hover:bg-green-400 hover:text-black transition-all flex-shrink-0"
           @click.stop
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -91,7 +108,7 @@
           </svg>
           Agendar
         </a>
-        <span v-else class="text-xs text-gray-600 group-hover:text-green-400 transition-colors">
+        <span v-else class="text-xs text-gray-600 group-hover:text-green-400 transition-colors flex-shrink-0">
           Ver mais →
         </span>
       </div>
@@ -104,12 +121,15 @@
 
 <script setup lang="ts">
 import type { Barbershop } from '~/data/barbershops'
+import { useOpeningStatus } from '~/composables/useOpeningStatus'
 
 const props = defineProps<{ shop: Barbershop }>()
 
+// ✅ Status de funcionamento
+const opening = computed(() => useOpeningStatus(props.shop.openingHours))
+
 const isPro = computed(() => props.shop.plan === 'pro' || props.shop.plan === 'enterprise')
 
-// URL do card
 const cardUrl = computed(() => {
   const { ufSlug, citySlug, neighborhoodSlug, slug } = props.shop
   if (ufSlug && citySlug && neighborhoodSlug && slug) {
@@ -118,59 +138,45 @@ const cardUrl = computed(() => {
   return `/barbearias?q=${encodeURIComponent(props.shop.name)}`
 })
 
-// Foto de capa — tenta coverImageUrl, depois primeiro item de photos
 const coverSrc = computed(() =>
   props.shop.coverImageUrl
   ?? (props.shop.photos?.length ? props.shop.photos[0] : null)
   ?? null
 )
 
-// ✅ FIX: Localização legível — se neighborhood vier null/vazio, capitaliza o slug
 const locationLabel = computed(() => {
   const b = props.shop
-
-  // Tenta neighborhood (nome legível já normalizado pelo useBarbershopApi)
   const hood =
     b.neighborhood ||
     (b.neighborhoodSlug
-      ? b.neighborhoodSlug
-          .split('-')
-          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ')
+      ? b.neighborhoodSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
       : null)
-
   const parts = [hood, b.city].filter(Boolean)
   return parts.join(', ') || b.state || ''
 })
 
-// Serviços ativos — mostra até 3, resto vira "+N"
 const activeServices = computed(() =>
   (props.shop.services ?? [])
     .filter(s => s.isActive)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
-const topServices = computed(() => activeServices.value.slice(0, 3))
+const topServices        = computed(() => activeServices.value.slice(0, 3))
 const extraServicesCount = computed(() => Math.max(0, activeServices.value.length - 3))
 
-// Menor preço dos serviços ativos
 const minPriceVal = computed(() => {
   const prices = activeServices.value.map(s => Number(s.price)).filter(p => p > 0)
   return prices.length ? Math.min(...prices) : null
 })
 
-// googleRating como número seguro
 const googleRating = computed(() =>
   props.shop.googleRating != null ? Number(props.shop.googleRating) : null
 )
 
-// ✅ FIX: WhatsApp com mensagem pré-preenchida incluindo nome da barbearia
 const whatsappHref = computed(() => {
   if (!props.shop.whatsapp) return '#'
-  const raw = props.shop.whatsapp.replace(/\D/g, '')
+  const raw    = props.shop.whatsapp.replace(/\D/g, '')
   const number = raw.startsWith('55') ? raw : `55${raw}`
-  const msg = encodeURIComponent(
-    `Olá! Vim pelo Portal SuaAgenda e gostaria de agendar um horário na ${props.shop.name}. 😊`
-  )
+  const msg    = encodeURIComponent(`Olá! Vim pelo Portal SuaAgenda e gostaria de agendar um horário na ${props.shop.name}. 😊`)
   return `https://wa.me/${number}?text=${msg}`
 })
 

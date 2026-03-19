@@ -36,6 +36,30 @@
             <span v-if="googleRating" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">
               ⭐ {{ googleRating.toFixed(1) }} ({{ barbershop.googleReviewCount }} avaliações)
             </span>
+
+            <!-- ✅ Status de funcionamento -->
+            <span
+              v-if="opening.status !== 'closed' || opening.sublabel"
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border"
+              :class="{
+                'text-green-400 bg-green-400/10 border-green-400/20': opening.status === 'open',
+                'text-amber-400 bg-amber-400/10 border-amber-400/20': opening.status === 'closing_soon',
+                'text-red-400   bg-red-400/10   border-red-400/20':   opening.status === 'closed',
+                'text-gray-500  bg-white/[.04]  border-white/[.06]':  opening.status === 'closed' && !opening.sublabel,
+              }"
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                :class="{
+                  'bg-green-400 animate-pulse': opening.status === 'open',
+                  'bg-amber-400 animate-pulse': opening.status === 'closing_soon',
+                  'bg-red-400':                 opening.status === 'closed',
+                  'bg-gray-500':                opening.status === 'closed' && !opening.sublabel,
+                }"
+              />
+              {{ opening.label }}
+              <span v-if="opening.sublabel" class="font-normal opacity-70">· {{ opening.sublabel }}</span>
+            </span>
           </div>
 
           <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
@@ -83,29 +107,19 @@
     <section v-if="!barbershop.isClaimed" class="w-full px-6 md:px-16 bg-[#0a0a0a] pb-2">
       <div class="max-w-6xl mx-auto">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/[.04] px-6 py-4">
-          <!-- Info comunidade -->
           <div class="flex items-start gap-3">
             <span class="text-xl mt-0.5">🌐</span>
             <div>
-              <p class="text-sm font-semibold text-white leading-snug">
-                Esta página foi criada pela comunidade SuaAgenda
-              </p>
-              <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                As informações podem estar desatualizadas. Dados coletados de fontes públicas.
-              </p>
+              <p class="text-sm font-semibold text-white leading-snug">Esta página foi criada pela comunidade SuaAgenda</p>
+              <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">As informações podem estar desatualizadas. Dados coletados de fontes públicas.</p>
             </div>
           </div>
-
-          <!-- CTA proprietário -->
           <div class="flex-shrink-0 flex flex-col sm:items-end gap-1">
             <a
               :href="`https://wa.me/5511941649284?text=${encodeURIComponent(`Olá! Sou proprietário da ${barbershop.name} e quero reivindicar ou editar minha página no Portal SuaAgenda. 😊`)}`"
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-green-400/10 border border-green-400/30 text-green-400 text-sm font-bold hover:bg-green-400 hover:text-black transition-all whitespace-nowrap"
-            >
-              ✏️ Sou o dono — quero editar
-            </a>
+            >✏️ Sou o dono — quero editar</a>
             <p class="text-[11px] text-gray-600 text-center sm:text-right">Reivindicar · Atualizar · Destacar</p>
           </div>
         </div>
@@ -153,7 +167,6 @@
         </div>
       </div>
 
-      <!-- Lightbox -->
       <Teleport to="body">
         <Transition name="fade">
           <div
@@ -201,11 +214,30 @@
     <!-- HORÁRIOS -->
     <section v-if="barbershop.openingHours" class="w-full py-16 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
-        <h2 class="font-black leading-none mb-8 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3vw,42px)">HORÁRIOS DE FUNCIONAMENTO</h2>
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3vw,42px)">HORÁRIOS DE FUNCIONAMENTO</h2>
+          <!-- Status inline na seção de horários -->
+          <div class="flex items-center gap-2 pb-1">
+            <span
+              class="w-2 h-2 rounded-full flex-shrink-0"
+              :class="{
+                'bg-green-400 animate-pulse': opening.status === 'open',
+                'bg-amber-400 animate-pulse': opening.status === 'closing_soon',
+                'bg-red-400':                 opening.status === 'closed',
+                'bg-gray-500':                opening.status === 'closed' && !opening.sublabel,
+              }"
+            />
+            <span class="text-sm font-semibold" :class="opening.color">{{ opening.label }}</span>
+            <span v-if="opening.sublabel" class="text-xs text-gray-500">· {{ opening.sublabel }}</span>
+          </div>
+        </div>
         <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-8 max-w-md">
           <div v-for="(entry, day) in formattedHours" :key="day" class="flex justify-between py-3 border-b border-white/[.05] last:border-0">
             <span class="text-gray-400 capitalize">{{ entry.label }}</span>
-            <span class="font-medium" :class="entry.hours === 'Fechado' ? 'text-gray-600' : 'text-white'">{{ entry.hours }}</span>
+            <span class="font-medium" :class="entry.isToday ? opening.color : entry.hours === 'Fechado' ? 'text-gray-600' : 'text-white'">
+              {{ entry.hours }}
+              <span v-if="entry.isToday" class="ml-1 text-[10px] font-bold opacity-60">← hoje</span>
+            </span>
           </div>
         </div>
       </div>
@@ -253,12 +285,12 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchBarbershopBySlug } from '~/composables/useBarbershopApi'
 import { getNeighborhoodData, allCities } from '~/data/locations'
+import { useOpeningStatus } from '~/composables/useOpeningStatus'
 
 definePageMeta({ layout: 'barber' })
 
 const route = useRoute()
 
-// ✅ FIX: normaliza params na origem — evita mismatch de case com o banco
 const ufSlug           = (route.params.uf     as string).toLowerCase().trim()
 const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
@@ -273,13 +305,14 @@ onMounted(async () => {
   pending.value = false
 })
 
+// ── Status de funcionamento ───────────────────────────────────────────────────
+const opening = computed(() => useOpeningStatus(barbershop.value?.openingHours))
+
 // ── Labels de localização ─────────────────────────────────────────────────────
 const neighborhoodData = computed(() => getNeighborhoodData(ufSlug, citySlug, neighborhoodSlug))
 
 const ufLabel = computed(() =>
-  neighborhoodData.value?.city.uf
-  ?? barbershop.value?.state
-  ?? ufSlug.toUpperCase()
+  neighborhoodData.value?.city.uf ?? barbershop.value?.state ?? ufSlug.toUpperCase()
 )
 
 const cityLabel = computed(() =>
@@ -299,11 +332,7 @@ const neighborhoodLabel = computed(() => {
       if (n) return n.name
     }
   }
-  // Capitaliza o slug como último fallback
-  return neighborhoodSlug
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
+  return neighborhoodSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 })
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -312,9 +341,7 @@ const googleRating = computed(() =>
 )
 
 const coverSrc = computed(() =>
-  barbershop.value?.coverImageUrl
-  ?? barbershop.value?.photos?.[0]
-  ?? null
+  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? null
 )
 
 const fullAddress = computed(() => {
@@ -324,7 +351,6 @@ const fullAddress = computed(() => {
   return parts.length ? parts.join(', ') : null
 })
 
-// Preferência: whatsapp > phone
 const whatsappNumber = computed(() => {
   const b = barbershop.value
   if (!b) return null
@@ -333,19 +359,15 @@ const whatsappNumber = computed(() => {
   return raw.startsWith('55') ? raw : `55${raw}`
 })
 
-// WhatsApp com mensagem pré-preenchida incluindo nome da barbearia
 const whatsappHref = computed(() => {
   if (!whatsappNumber.value) return null
-  const msg = encodeURIComponent(
-    `Olá! Vim pelo Portal SuaAgenda e gostaria de agendar um horário na ${barbershop.value?.name}. 😊`
-  )
+  const msg = encodeURIComponent(`Olá! Vim pelo Portal SuaAgenda e gostaria de agendar um horário na ${barbershop.value?.name}. 😊`)
   return `https://wa.me/${whatsappNumber.value}?text=${msg}`
 })
 
 const showLightbox  = ref(false)
 const lightboxIndex = ref(0)
 
-// Todas as fotos: da tabela photos + coverImageUrl como fallback
 const allPhotos = computed(() => {
   const b = barbershop.value
   if (!b) return []
@@ -361,32 +383,35 @@ const activeServices = computed(() =>
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
 
-// ── Horários ──────────────────────────────────────────────────────────────────
+// ── Horários formatados — com flag isToday ────────────────────────────────────
+const DAY_KEYS_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 const daysMap: Record<string, string> = {
-  mon: 'Segunda', tue: 'Terça', wed: 'Quarta',
-  thu: 'Quinta',  fri: 'Sexta', sat: 'Sábado', sun: 'Domingo',
+  mon: 'Segunda', tue: 'Terça',  wed: 'Quarta',
+  thu: 'Quinta',  fri: 'Sexta',  sat: 'Sábado', sun: 'Domingo',
 }
+// Índice JS (0=dom) → chave interna
+const jsDayToKey = ['sun','mon','tue','wed','thu','fri','sat'] as const
 
 const formattedHours = computed(() => {
   const hours = barbershop.value?.openingHours
   if (!hours) return {}
-  return Object.entries(hours).reduce((acc, [key, val]) => {
+  const todayKey = jsDayToKey[new Date().getDay()]
+  return DAY_KEYS_ORDER.reduce((acc, key) => {
+    const val = hours[key] ?? null
     acc[key] = {
-      label: daysMap[key] ?? key,
-      hours: val ? `${val.open} – ${val.close}` : 'Fechado',
+      label:   daysMap[key] ?? key,
+      hours:   val ? `${val.open} – ${val.close}` : 'Fechado',
+      isToday: key === todayKey,
     }
     return acc
-  }, {} as Record<string, { label: string; hours: string }>)
+  }, {} as Record<string, { label: string; hours: string; isToday: boolean }>)
 })
 
 // ── SEO ───────────────────────────────────────────────────────────────────────
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
-// ✅ FIX: og:image em cascata — foto de capa → primeira da galeria → fallback genérico
 const ogImage = computed(() =>
-  barbershop.value?.coverImageUrl
-  ?? barbershop.value?.photos?.[0]
-  ?? OG_FALLBACK
+  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? OG_FALLBACK
 )
 
 useHead(computed(() => {
@@ -400,53 +425,39 @@ useHead(computed(() => {
       { property: 'og:title',      content: `${b.name} — ${neighborhoodLabel.value}` },
       { property: 'og:type',       content: 'business.business' },
       { property: 'og:url',        content: canonical },
-      // ✅ FIX: imagem real da barbearia — capa ou primeira foto da galeria
       { property: 'og:image',      content: ogImage.value },
       { name: 'twitter:card',      content: 'summary_large_image' },
       { name: 'twitter:image',     content: ogImage.value },
       { name: 'robots',            content: 'index, follow' },
     ],
     link: [{ rel: 'canonical', href: canonical }],
-    script: [{
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify(buildJsonLd(b, canonical)),
-    }],
+    script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(buildJsonLd(b, canonical)) }],
   }
 }))
 
-// ── JSON-LD completo ──────────────────────────────────────────────────────────
 function buildJsonLd(b: any, canonical: string) {
   const services = (b.services ?? []).filter((s: any) => Boolean(s.isActive))
-
-  // Faixa de preço: pega min e max de todos os serviços ativos
   const prices = services.map((s: any) => Number(s.price)).filter((p: number) => p > 0)
   const priceMin = prices.length ? Math.min(...prices) : null
-  const priceMax = prices.length ? Math.max(...prices) : null
 
-  // Mapeia dias da semana do formato interno pro schema.org
   const daySchemaMap: Record<string, string> = {
-    mon: 'https://schema.org/Monday',
-    tue: 'https://schema.org/Tuesday',
-    wed: 'https://schema.org/Wednesday',
-    thu: 'https://schema.org/Thursday',
-    fri: 'https://schema.org/Friday',
-    sat: 'https://schema.org/Saturday',
+    mon: 'https://schema.org/Monday', tue: 'https://schema.org/Tuesday',
+    wed: 'https://schema.org/Wednesday', thu: 'https://schema.org/Thursday',
+    fri: 'https://schema.org/Friday', sat: 'https://schema.org/Saturday',
     sun: 'https://schema.org/Sunday',
   }
 
-  // Converte openingHours para OpeningHoursSpecification
   const openingHoursSpec = b.openingHours
     ? Object.entries(b.openingHours as Record<string, { open: string; close: string } | null>)
         .filter(([, val]) => val !== null)
         .map(([day, val]) => ({
-          '@type':    'OpeningHoursSpecification',
-          dayOfWeek:  daySchemaMap[day] ?? day,
-          opens:      (val as any).open,
-          closes:     (val as any).close,
+          '@type':   'OpeningHoursSpecification',
+          dayOfWeek: daySchemaMap[day] ?? day,
+          opens:     (val as any).open,
+          closes:    (val as any).close,
         }))
     : undefined
 
-  // Converte serviços para hasOfferCatalog
   const offerCatalog = services.length
     ? {
         '@type': 'OfferCatalog',
@@ -456,86 +467,42 @@ function buildJsonLd(b: any, canonical: string) {
           itemOffered: {
             '@type': 'Service',
             name: s.name,
-            ...(s.description ? { description: s.description } : {}),
+            ...(s.description  ? { description: s.description }     : {}),
             ...(s.durationMin  ? { duration: `PT${s.durationMin}M` } : {}),
           },
-          price:         Number(s.price).toFixed(2),
+          price: Number(s.price).toFixed(2),
           priceCurrency: 'BRL',
         })),
       }
     : undefined
 
-  // Todas as fotos da galeria como array no image
-  const images = (b.photos ?? []).length > 0
-    ? (b.photos as string[])
-    : (b.coverImageUrl ? [b.coverImageUrl] : [ogImage.value])
-
-  // sameAs: Google Maps se tiver placeId
-  const sameAs = b.googlePlaceId
-    ? [`https://maps.google.com/?cid=${b.googlePlaceId}`]
-    : undefined
+  const images = (b.photos ?? []).length > 0 ? (b.photos as string[]) : (b.coverImageUrl ? [b.coverImageUrl] : [ogImage.value])
+  const sameAs = b.googlePlaceId ? [`https://maps.google.com/?cid=${b.googlePlaceId}`] : undefined
 
   return {
     '@context': 'https://schema.org',
-    '@type':    ['HairSalon', 'LocalBusiness'],  // HairSalon é subtipo mais específico para barbearia
+    '@type':    ['HairSalon', 'LocalBusiness'],
     name:       b.name,
     image:      images.length === 1 ? images[0] : images,
     url:        canonical,
-
-    // Endereço
     address: {
-      '@type':           'PostalAddress',
-      streetAddress:     fullAddress.value,
-      addressLocality:   cityLabel.value,
-      addressRegion:     ufLabel.value,
-      postalCode:        b.zipCode ?? undefined,
-      addressCountry:    'BR',
+      '@type':         'PostalAddress',
+      streetAddress:   fullAddress.value,
+      addressLocality: cityLabel.value,
+      addressRegion:   ufLabel.value,
+      postalCode:      b.zipCode ?? undefined,
+      addressCountry:  'BR',
     },
-
-    // Geo — habilita pin no Google Maps
-    ...(b.latitude && b.longitude ? {
-      geo: {
-        '@type':    'GeoCoordinates',
-        latitude:   Number(b.latitude),
-        longitude:  Number(b.longitude),
-      },
-    } : {}),
-
-    // Contato
+    ...(b.latitude && b.longitude ? { geo: { '@type': 'GeoCoordinates', latitude: Number(b.latitude), longitude: Number(b.longitude) } } : {}),
     telephone: whatsappNumber.value ?? undefined,
-    ...(b.email   ? { email:   b.email }   : {}),
-    ...(b.website ? { sameAs:  [b.website, ...(sameAs ?? [])] } : (sameAs ? { sameAs } : {})),
-
-    // Faixa de preço (símbolo $ que o Google exibe)
-    // R$ até 50 = $, até 100 = $$, até 200 = $$$, acima = $$$$
-    ...(priceMin !== null ? {
-      priceRange: priceMin <= 50 ? 'R$' : priceMin <= 100 ? 'R$$' : priceMin <= 200 ? 'R$$$' : 'R$$$$',
-    } : {}),
-
-    // Avaliação Google
-    ...(googleRating.value ? {
-      aggregateRating: {
-        '@type':       'AggregateRating',
-        ratingValue:   googleRating.value,
-        reviewCount:   b.googleReviewCount ?? 0,
-        bestRating:    5,
-        worstRating:   1,
-      },
-    } : {}),
-
-    // Horários de funcionamento
+    ...(b.email   ? { email: b.email }                                                      : {}),
+    ...(b.website ? { sameAs: [b.website, ...(sameAs ?? [])] } : (sameAs ? { sameAs } : {})),
+    ...(priceMin  ? { priceRange: priceMin <= 50 ? 'R$' : priceMin <= 100 ? 'R$$' : priceMin <= 200 ? 'R$$$' : 'R$$$$' } : {}),
+    ...(googleRating.value ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: googleRating.value, reviewCount: b.googleReviewCount ?? 0, bestRating: 5, worstRating: 1 } } : {}),
     ...(openingHoursSpec?.length ? { openingHoursSpecification: openingHoursSpec } : {}),
-
-    // Catálogo de serviços com preços
     ...(offerCatalog ? { hasOfferCatalog: offerCatalog } : {}),
-
-    // Descrição
     ...(b.description ? { description: b.description } : {}),
-
-    // Marca / logo
-    ...(b.logoUrl ? {
-      logo: { '@type': 'ImageObject', url: b.logoUrl },
-    } : {}),
+    ...(b.logoUrl     ? { logo: { '@type': 'ImageObject', url: b.logoUrl } } : {}),
   }
 }
 </script>
