@@ -30,7 +30,8 @@ export default defineNuxtConfig({
 
   css: [
     "~/assets/css/main.css",
-    "~/assets/css/fonts.css"
+    "~/assets/css/fonts.css",
+    'leaflet/dist/leaflet.css',
   ],
 
   // ─────────────────────────────────────────────
@@ -94,8 +95,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011",
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
+      scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN  ?? '',
     },
   },
 
@@ -116,6 +118,10 @@ export default defineNuxtConfig({
 
     esbuild: {
       drop: ["console", "debugger"],
+    },
+
+    optimizeDeps: {
+      include: ['leaflet'],
     },
   },
 

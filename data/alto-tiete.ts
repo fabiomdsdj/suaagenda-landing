@@ -163,7 +163,8 @@ const altoTiete = [
           neighborhoods: [
             { name: "Centro", slug: "centro-ferraz" },
             { name: "Vila Romanópolis", slug: "vila-romanopolis" },
-            { name: "Vila Correa", slug: "vila-correa" }
+            { name: "Vila Correa", slug: "vila-correa" },
+            { name: "Jardim Bela Vista", slug: "jardim-bela-vista" }
           ]
         },
         {

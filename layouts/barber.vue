@@ -516,6 +516,7 @@ const footerEmpresa = [
 </script>
 
 <style>
+:root { --nav-h: 68px; }
 .slide-down-enter-active, .slide-down-leave-active { transition: opacity .2s, transform .2s; }
 .slide-down-enter-from, .slide-down-leave-to       { opacity: 0; transform: translateY(-8px); }
 </style>
