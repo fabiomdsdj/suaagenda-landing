@@ -295,6 +295,7 @@ const baixadaSantista = [
         neighborhoods: [
           { name: "Centro", slug: "centro" },
           { name: "Vera Cruz", slug: "vera-cruz" },
+          { name: "Vila Atlântica", slug: "vila-atlantica" },
           { name: "Jardim Praia Grande", slug: "jardim-praia-grande" },
         ],
       },

@@ -296,6 +296,29 @@
             <div class="grid grid-cols-2 gap-3">
               <div class="field required"><label>Nome</label><input v-model="svc.name" type="text" placeholder="Corte degradê" @input="autoSvcSlug(i)" /></div>
               <div class="field"><label>Slug</label><input v-model="svc.slug" type="text" placeholder="corte-degrade" /></div>
+
+              <!-- ✅ Campo seoTag — dropdown com os canônicos do allServices -->
+              <div class="field col-span-2">
+                <label>
+                  Tag canônica (SEO)
+                  <span class="text-[11px] text-gray-600 font-normal normal-case">
+                    — liga ao portal de busca por serviço
+                  </span>
+                </label>
+                <select v-model="svc.seoTag">
+                  <option value="">— nenhuma —</option>
+                  <option value="corte-de-cabelo">✂️ Corte de Cabelo</option>
+                  <option value="barba">🧔 Barba</option>
+                  <option value="corte-e-barba">💈 Corte e Barba</option>
+                  <option value="sobrancelha">👁️ Sobrancelha</option>
+                  <option value="pigmentacao">🎨 Pigmentação</option>
+                  <option value="relaxamento">😌 Relaxamento</option>
+                </select>
+                <span v-if="svc.seoTag" class="hint text-green-400/60">
+                  → /barbearias/.../s/{{ svc.seoTag }}
+                </span>
+              </div>
+
               <div class="field">
                 <label>Categoria</label>
                 <select v-model="svc.category">
@@ -426,6 +449,53 @@ const weekDays = [
   { key: 'sun', label: 'Dom' },
 ]
 
+// ── seoTag canonical map (inline — espelho do backend) ────────────────────
+// Mantido em sync com utils/serviceCanonicalMap.js no backend.
+const CANONICAL_MAP: Record<string, string> = {
+  'corte':                   'corte-de-cabelo',
+  'corte-de-cabelo':         'corte-de-cabelo',
+  'corte-masculino':         'corte-de-cabelo',
+  'corte-social':            'corte-de-cabelo',
+  'corte-degrade':           'corte-de-cabelo',
+  'corte-navalhado':         'corte-de-cabelo',
+  'corte-infantil':          'corte-de-cabelo',
+  'corte-feminino':          'corte-de-cabelo',
+  'corte-e-acabamento':      'corte-de-cabelo',
+  'cabelo':                  'corte-de-cabelo',
+  'barba':                   'barba',
+  'barba-completa':          'barba',
+  'barba-tradicional':       'barba',
+  'barba-navalhada':         'barba',
+  'aparar-barba':            'barba',
+  'modelagem-de-barba':      'barba',
+  'corte-e-barba':           'corte-e-barba',
+  'corte-barba':             'corte-e-barba',
+  'combo':                   'corte-e-barba',
+  'cabelo-e-barba':          'corte-e-barba',
+  'sobrancelha':             'sobrancelha',
+  'design-de-sobrancelha':   'sobrancelha',
+  'sobrancelha-masculina':   'sobrancelha',
+  'pigmentacao':             'pigmentacao',
+  'pigmentacao-de-barba':    'pigmentacao',
+  'coloracao':               'pigmentacao',
+  'tonalizacao':             'pigmentacao',
+  'relaxamento':             'relaxamento',
+  'relaxamento-capilar':     'relaxamento',
+  'progressiva':             'relaxamento',
+  'hidratacao':              'relaxamento',
+}
+
+function resolveCanonicalTag(nameOrSlug: string): string {
+  if (!nameOrSlug) return ''
+  const normalized = nameOrSlug
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return CANONICAL_MAP[normalized] ?? ''
+}
+
 // ── Geo helpers ───────────────────────────────────────────────────────────
 const geocoding     = ref(false)
 const geocodingMode = ref<'address' | 'reverse' | 'browser' | null>(null)
@@ -530,7 +600,6 @@ async function checkSlug(slug: string) {
 }
 
 // ── SEO auto-fill via useEstabelecimentoSeo ───────────────────────────────
-// Requer nome + bairro + cidade — não depende de base de dados local
 const canAutoFillSeo = computed(() =>
   !!(form.name?.trim() && form.neighborhood?.trim() && form.city?.trim() && form.state?.trim())
 )
@@ -547,19 +616,14 @@ function buildSeoInput() {
   }
 }
 
-// Preenche automaticamente se os campos estiverem vazios
 function tryAutoFillSeo() {
   if (!canAutoFillSeo.value) return
-
   const seo = useEstabelecimentoSeo(buildSeoInput())
-
-  // Só preenche se o campo ainda estiver vazio — não sobrescreve edição manual
   if (!form.metaTitle)       form.metaTitle       = seo.metaTitle
   if (!form.metaDescription) form.metaDescription = seo.metaDescription
   if (!form.description)     form.description     = seo.description
 }
 
-// Botão "✨ Gerar automaticamente" — sobrescreve sempre
 function applyAutoSeo() {
   if (!canAutoFillSeo.value) return
   const seo = useEstabelecimentoSeo(buildSeoInput())
@@ -631,7 +695,8 @@ onMounted(async () => {
       durationMin: s.durationMin ?? 30,
       isActive:    Boolean(s.isActive),
       isFeatured:  Boolean(s.isFeatured),
-      seoTag:      s.seoTag      ?? '',
+      // ✅ Carrega seoTag do banco, com fallback automático se vier vazio
+      seoTag:      s.seoTag || resolveCanonicalTag(s.slug) || resolveCanonicalTag(s.name) || '',
       sortOrder:   s.sortOrder   ?? 0,
     }))
 
@@ -662,7 +727,6 @@ function autoSlug() {
   form.slug = makeSlug(form.name)
 }
 
-// Dispara slug + tentativa de SEO quando nome muda
 function onNameInput() {
   autoSlug()
   tryAutoFillSeo()
@@ -678,11 +742,29 @@ function toggleDay(key: string) {
     ? { open: '09:00', close: '20:00' }
     : null
 }
+
+// ✅ addService inclui seoTag vazio por padrão
 function addService() {
-  form.services.push({ name: '', slug: '', category: '', description: '', price: 0, priceMin: null, priceMax: null, durationMin: 30, isActive: true, isFeatured: false, sortOrder: form.services.length })
+  form.services.push({
+    name: '', slug: '', category: '', description: '',
+    price: 0, priceMin: null, priceMax: null,
+    durationMin: 30, isActive: true, isFeatured: false,
+    seoTag: '',
+    sortOrder: form.services.length,
+  })
 }
+
 function removeService(i: number) { form.services.splice(i, 1) }
-function autoSvcSlug(i: number) { form.services[i].slug = makeSlug(form.services[i].name) }
+
+// ✅ autoSvcSlug resolve o seoTag automaticamente pelo nome digitado
+function autoSvcSlug(i: number) {
+  form.services[i].slug = makeSlug(form.services[i].name)
+  // Só auto-preenche seoTag se ainda estiver vazio — não sobrescreve escolha manual
+  if (!form.services[i].seoTag) {
+    form.services[i].seoTag = resolveCanonicalTag(form.services[i].slug)
+      || resolveCanonicalTag(form.services[i].name)
+  }
+}
 
 const photoInput = ref('')
 function addPhoto() {
@@ -746,7 +828,24 @@ async function handleSubmit() {
     googleReviewCount: form.googleReviewCount,
     nativeRating:      form.nativeRating     ?? undefined,
     openingHours:      form.openingHours,
-    services: form.services.length > 0 ? form.services : undefined,
+    services: form.services.length > 0
+      ? form.services.map(s => ({
+          ...(s.id ? { id: s.id } : {}),
+          name:        s.name,
+          slug:        s.slug || makeSlug(s.name),
+          category:    s.category    || undefined,
+          description: s.description || undefined,
+          price:       s.price,
+          priceMin:    s.priceMin    ?? undefined,
+          priceMax:    s.priceMax    ?? undefined,
+          durationMin: s.durationMin,
+          isActive:    s.isActive,
+          isFeatured:  s.isFeatured,
+          // ✅ Envia seoTag no payload — backend salva direto sem precisar resolver
+          seoTag:      s.seoTag      || undefined,
+          sortOrder:   s.sortOrder,
+        }))
+      : undefined,
     photos: form.photos.length > 0
       ? form.photos.map((p, i) => ({
           ...(p.id ? { id: p.id } : {}),
