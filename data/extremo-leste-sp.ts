@@ -16,7 +16,10 @@ export default {
           { name: "José Bonifácio", slug: "jose-bonifacio" },
           { name: "Parque do Carmo", slug: "parque-do-carmo" },
           { name: "Vila Carmosina", slug: "vila-carmosina" },
-          { name: "Artur Alvim", slug: "artur-alvim" }
+          { name: "Artur Alvim", slug: "artur-alvim" },
+          { name: "Cidade A.E Carvalho", slug: "cidade-a-e-carvalho" },
+          { name: "Parque Guarani", slug: "parque-guarani" },
+          
         ]
       },
   
