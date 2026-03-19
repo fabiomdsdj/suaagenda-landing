@@ -165,6 +165,8 @@ export default defineNuxtConfig({
   // ─────────────────────────────────────────────
 
   routeRules: {
+    '/scraper':    { headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    '/scraper/**': { headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
 
     "/fonts/**": {
       headers: {

@@ -523,9 +523,20 @@ async function geocodeFromAddress() {
   const q = [form.street, form.number, form.neighborhood, form.city, form.state, 'Brasil'].filter(Boolean).join(', ')
   geocoding.value = true; geocodingMode.value = 'address'; geoError.value = null
   try {
-    const res = await geocodeExact(q)
-    if (res) { form.latitude = res.lat; form.longitude = res.lon }
-    else geoError.value = 'Endereço não encontrado.'
+    // ✅ Passa CEP e número pra ativar cascata ViaCEP + Nominatim quando disponível
+    const res = await geocodeExact(q, { cep: form.zipCode || undefined, number: form.number || undefined })
+    if (res) {
+      form.latitude  = res.lat || form.latitude
+      form.longitude = res.lon || form.longitude
+      // Se veio do ViaCEP, aproveita pra preencher campos que estiverem vazios
+      if (!form.street       && res.street)       form.street       = res.street
+      if (!form.neighborhood && res.neighborhood) form.neighborhood = res.neighborhood
+      if (!form.city         && res.city)         form.city         = res.city
+      if (!form.state        && res.state)        form.state        = res.state
+      if (!form.zipCode      && res.zipCode)      form.zipCode      = res.zipCode
+    } else {
+      geoError.value = 'Endereço não encontrado.'
+    }
   } finally { geocoding.value = false; geocodingMode.value = null }
 }
 

@@ -132,16 +132,41 @@
     </section>
 
     <!-- MAPA -->
-    <section v-if="barbershop.latitude && barbershop.longitude" class="w-full py-12 px-6 md:px-16 bg-[#0a0a0a]">
+    <section v-if="barbershop.latitude && barbershop.longitude || fullAddress" class="w-full py-12 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
         <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-6">Localização</span>
+
+        <!-- Tem coordenadas → mapa interativo -->
         <BarbershopMap
+          v-if="barbershop.latitude && barbershop.longitude"
           :lat="Number(barbershop.latitude)"
           :lng="Number(barbershop.longitude)"
           :name="barbershop.name"
           :address="fullAddress"
           :height="300"
         />
+
+        <!-- Sem coordenadas mas tem endereço → fallback com link Google Maps -->
+        <div v-else-if="fullAddress" class="rounded-2xl border border-white/[.06] bg-[#181818] p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p class="text-sm text-gray-400 flex items-center gap-2 mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+              </svg>
+              {{ fullAddress }}
+            </p>
+            <p class="text-xs text-gray-600">Coordenadas ainda não cadastradas para este endereço.</p>
+          </div>
+          <a
+            :href="`https://www.google.com/maps/search/${encodeURIComponent(fullAddress ?? '')}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-gray-400 hover:border-green-400/30 hover:text-green-400 transition-colors whitespace-nowrap"
+          >
+            Ver no Google Maps →
+          </a>
+        </div>
       </div>
     </section>
 
