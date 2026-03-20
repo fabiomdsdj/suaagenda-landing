@@ -98,6 +98,8 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011",
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN  ?? '',
+      weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',
+      dailyRegistrationGoal:  process.env.NUXT_PUBLIC_DAILY_REGISTRATION_GOAL  || '0',
     },
   },
 
@@ -138,9 +140,10 @@ export default defineNuxtConfig({
   // ─────────────────────────────────────────────
 
   sitemap: {
-    sources: [
-      "/api/sitemap"
-    ]
+    sources: ["/api/sitemap"],
+    // ✅ Cache de 1 hora — atualiza automaticamente sem rebuild
+    // Remove se quiser sempre fresh (mais lento)
+    cacheMaxAgeSeconds: 3600,
   },
 
   // ─────────────────────────────────────────────

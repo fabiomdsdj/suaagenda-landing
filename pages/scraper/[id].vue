@@ -32,6 +32,38 @@
         </div>
       </div>
 
+      <!-- ── Analytics ────────────────────────────────────────────── -->
+      <div v-if="!isNew && analytics" class="grid grid-cols-3 gap-3 mb-6">
+        <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
+          <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">{{ analytics.pageviews }}</p>
+          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Views 30d</p>
+        </div>
+        <div class="rounded-xl border border-green-400/20 bg-green-400/[.04] p-4 text-center">
+          <p class="text-2xl font-black text-green-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.whatsapp_clicks }}</p>
+          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">WhatsApp 30d</p>
+        </div>
+        <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
+          <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">
+            {{ analytics.pageviews > 0 ? Math.round(analytics.whatsapp_clicks / analytics.pageviews * 100) : 0 }}%
+          </p>
+          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Conversão</p>
+        </div>
+      </div>
+
+      <!-- ── Mini gráfico de views ───────────────────────────────── -->
+      <div v-if="!isNew && dailyViews.length" class="mb-6 rounded-xl border border-white/[.06] bg-[#111] p-4">
+        <p class="text-[11px] font-bold tracking-widest uppercase text-gray-500 mb-3">Views diárias — últimos 30 dias</p>
+        <div class="flex items-end gap-0.5 h-12">
+          <div
+            v-for="point in dailyViews"
+            :key="point.date"
+            class="flex-1 bg-green-400/40 rounded-sm hover:bg-green-400/70 transition-colors min-h-[2px]"
+            :style="{ height: maxDailyViews > 0 ? `${Math.max(2, Math.round(point.count / maxDailyViews * 100))}%` : '2px' }"
+            :title="`${point.date}: ${point.count} views`"
+          />
+        </div>
+      </div>
+
       <!-- ── Loading ─────────────────────────────────────────────── -->
       <div v-if="fetching" class="flex items-center justify-center py-32">
         <div class="w-8 h-8 border-2 border-green-400/30 border-t-green-400 rounded-full animate-spin" />
@@ -422,14 +454,14 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'barber' })
- 
+
 // ✅ Bloqueia indexação do Google — página admin interna
 useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
- 
 import slugify from 'slugify'
 import { geocodeExact, reverseGeocode } from '~/composables/useGeocoding'
 import type { GeoSuggestion } from '~/composables/useGeocoding'
 import { useEstabelecimentoSeo } from '~/composables/useEstabelecimentoSeo'
+import { useAnalytics } from '~/composables/useAnalytics'
 
 const route  = useRoute()
 const router = useRouter()
@@ -732,7 +764,25 @@ onMounted(async () => {
   } finally {
     fetching.value = false
   }
+
+  // Analytics — carrega em background após buscar barbearia
+  if (!isNew && id) loadAnalytics(id)
 })
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+const { fetchSummary, fetchDaily, fetchBulkSummary } = useAnalytics()
+const analytics     = ref<any>(null)
+const dailyViews    = ref<{ date: string; count: number }[]>([])
+const maxDailyViews = computed(() => Math.max(...dailyViews.value.map(p => p.count), 1))
+
+async function loadAnalytics(shopId: string) {
+  const [summary, daily] = await Promise.all([
+    fetchSummary(shopId, 30),
+    fetchDaily(shopId, 30, 'pageview'),
+  ])
+  analytics.value  = summary
+  dailyViews.value = daily?.data ?? []
+}
 
 // ── Helpers de form ───────────────────────────────────────────────────────
 function makeSlug(str: string) { return slugify(str, { lower: true, strict: true }) }

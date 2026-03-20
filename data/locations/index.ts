@@ -112,7 +112,13 @@ const rawSources: CityData[] = [
   ...rioDeJaneiroRJ,
 ]
 
+// ✅ Sort por citySlug (ASCII puro) — 100% determinístico entre Node e browser.
+// Sem localeCompare, sem Intl.Collator — elimina hydration mismatch no SSR.
+// ✅ Sort por citySlug (ASCII puro) — 100% determinístico em qualquer ambiente
+// Garante ordem idêntica entre SSR (Node) e client (browser), eliminando hydration mismatch
 export const allCities: CityData[] = mergeCities(rawSources)
+  .sort((a, b) => (a.citySlug < b.citySlug ? -1 : a.citySlug > b.citySlug ? 1 : 0))
+  .sort((a, b) => (a.citySlug < b.citySlug ? -1 : a.citySlug > b.citySlug ? 1 : 0))
 
 // ═══════════════════════════════════════════════════════════════
 // Lookups

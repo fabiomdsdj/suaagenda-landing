@@ -90,6 +90,7 @@
               :href="whatsappHref"
               target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5"
+              @click="onWhatsappClick"
             >💬 Agendar pelo WhatsApp</a>
             <NuxtLink
               :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
@@ -165,7 +166,7 @@
             class="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-gray-400 hover:border-green-400/30 hover:text-green-400 transition-colors whitespace-nowrap"
           >
             Ver no Google Maps →
-          </a>
+            </a>
         </div>
       </div>
     </section>
@@ -438,7 +439,8 @@
           :href="whatsappHref"
           target="_blank" rel="noopener noreferrer"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105"
-        >💬 Falar no WhatsApp</a>
+              @click="onWhatsappClick"
+            >💬 Falar no WhatsApp</a>
       </div>
     </section>
 
@@ -466,6 +468,7 @@ import { useRoute } from 'vue-router'
 import { fetchBarbershopBySlug, fetchNearbyBarbershops } from '~/composables/useBarbershopApi'
 import { getNeighborhoodData, allCities, allServices } from '~/data/locations'
 import { useOpeningStatus } from '~/composables/useOpeningStatus'
+import { useAnalytics } from '~/composables/useAnalytics'
 
 definePageMeta({ layout: 'barber' })
 
@@ -481,10 +484,17 @@ const pending           = ref(true)
 const barbershop        = ref<Awaited<ReturnType<typeof fetchBarbershopBySlug>>>(null)
 const nearbyBarbershops = ref<any[]>([])
 
+const { trackBarbershopView, trackWhatsappClick, trackMapsClick } = useAnalytics()
+
 onMounted(async () => {
   // Principal — aguarda antes de renderizar
   barbershop.value = await fetchBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
   pending.value    = false
+
+  // ✅ Rastreia pageview — dispara GA4 + backend juntos
+  if (barbershop.value?.id) {
+    trackBarbershopView(barbershop.value.id, barbershop.value.name)
+  }
 
   // Secundário — fire-and-forget, nunca trava a página
   fetchNearbyBarbershops(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
@@ -577,6 +587,14 @@ const activeServices = computed(() =>
     .filter(s => Boolean(s.isActive))
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
+
+// ── Tracking helpers ─────────────────────────────────────────────────────────
+function onWhatsappClick() {
+  if (barbershop.value?.id) trackWhatsappClick(barbershop.value.id, barbershop.value.name)
+}
+function onMapsClick() {
+  if (barbershop.value?.id) trackMapsClick(barbershop.value.id, barbershop.value.name)
+}
 
 // ── Texto corrido de serviços ─────────────────────────────────────────────────
 const servicesSummary = computed(() => {

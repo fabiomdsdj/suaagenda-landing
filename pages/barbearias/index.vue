@@ -529,7 +529,6 @@ function buildQuery(overrides: Record<string, any> = {}): Record<string, string>
   if (currentUf.value)                  q.uf           = currentUf.value
   if (currentNeighborhood.value)        q.neighborhood = currentNeighborhood.value
   
-  // Aplicar overrides (remove undefined)
   Object.entries(overrides).forEach(([key, val]) => {
     if (val === undefined) delete q[key]
     else q[key] = String(val)
@@ -832,7 +831,8 @@ const ufs = computed(() => {
     if (!ex) map.set(city.ufSlug, { uf: city.uf, ufSlug: city.ufSlug, totalCidades: 1, totalBairros: bairros })
     else { ex.totalCidades++; ex.totalBairros += bairros }
   }
-  return Array.from(map.values()).sort((a, b) => a.uf.localeCompare(b.uf))
+  // ✅ Sort por ufSlug (ASCII) — determinístico em qualquer ambiente
+  return Array.from(map.values()).sort((a, b) => (a.ufSlug < b.ufSlug ? -1 : 1))
 })
 
 const featuredCities = computed(() =>
@@ -842,7 +842,8 @@ const featuredCities = computed(() =>
       totalDistritos: c.districts.length,
       totalBairros: c.districts.reduce((a, d) => a + d.neighborhoods.length, 0),
     }))
-    .sort((a, b) => b.totalBairros - a.totalBairros)
+    // ✅ Desempata por citySlug — garante ordem idêntica server/client quando totalBairros for igual
+    .sort((a, b) => b.totalBairros - a.totalBairros || (a.citySlug < b.citySlug ? -1 : 1))
     .slice(0, 6)
 )
 
@@ -865,7 +866,6 @@ useHead(computed(() => ({
 </script>
 
 <style scoped>
-/* Animações dos chips */
 .chip-enter-active,
 .chip-leave-active {
   transition: all 0.3s ease;
@@ -879,7 +879,6 @@ useHead(computed(() => ({
   transform: scale(0.8);
 }
 
-/* Animação dropdown */
 .dropdown-enter-active, .dropdown-leave-active {
   transition: opacity .15s, transform .15s;
 }

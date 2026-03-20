@@ -40,6 +40,228 @@
         </div>
       </div>
 
+      <!-- ✅ Card de metas: semanal + diária -->
+      <div v-if="weeklyGoal > 0 || dailyGoal > 0" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+        <!-- Meta semanal -->
+        <div
+          v-if="weeklyGoal > 0"
+          class="rounded-2xl border p-5"
+          :class="goalWeekly.done
+            ? 'border-green-400/30 bg-green-400/[.04]'
+            : goalWeekly.pct >= 80
+              ? 'border-amber-400/20 bg-amber-400/[.03]'
+              : 'border-white/[.06] bg-[#111]'"
+        >
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-1">Meta semanal</p>
+              <p class="text-sm font-bold text-white">
+                {{ goalWeekly.done ? 'Meta batida!' : `${weeklyGoal} cadastros` }}
+              </p>
+            </div>
+            <p
+              class="font-black leading-none flex-shrink-0"
+              style="font-family:'Bebas Neue',sans-serif;font-size:36px"
+              :class="goalWeekly.done ? 'text-green-400' : 'text-white'"
+            >{{ Math.min(goalWeekly.pct, 999) }}%</p>
+          </div>
+
+          <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden mb-2">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              :class="goalWeekly.done ? 'bg-green-400' : goalWeekly.pct >= 80 ? 'bg-amber-400' : 'bg-green-400/60'"
+              :style="{ width: `${Math.min(goalWeekly.pct, 100)}%` }"
+            />
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-gray-600">
+            <span>
+              <span class="text-white font-medium">{{ goalWeekly.current }}</span>
+              / {{ weeklyGoal }}
+            </span>
+            <span
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+              :class="goalWeekly.done
+                ? 'bg-green-400/10 text-green-400 border-green-400/20'
+                : goalWeekly.pct >= 80
+                  ? 'bg-amber-400/10 text-amber-400 border-amber-400/20'
+                  : 'bg-white/[.04] text-gray-600 border-white/[.08]'"
+            >
+              {{ goalWeekly.done
+                ? `+${goalWeekly.extra} extra`
+                : goalWeekly.daysLeft > 0
+                  ? `${goalWeekly.daysLeft}d restantes`
+                  : 'último dia' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Meta diária -->
+        <div
+          v-if="dailyGoal > 0"
+          class="rounded-2xl border p-5"
+          :class="goalDaily.done
+            ? 'border-green-400/30 bg-green-400/[.04]'
+            : goalDaily.pct >= 80
+              ? 'border-amber-400/20 bg-amber-400/[.03]'
+              : 'border-white/[.06] bg-[#111]'"
+        >
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-1">Meta diária</p>
+              <p class="text-sm font-bold text-white">
+                {{ goalDaily.done ? 'Meta batida!' : `${dailyGoal} cadastros` }}
+              </p>
+            </div>
+            <p
+              class="font-black leading-none flex-shrink-0"
+              style="font-family:'Bebas Neue',sans-serif;font-size:36px"
+              :class="goalDaily.done ? 'text-green-400' : 'text-white'"
+            >{{ Math.min(goalDaily.pct, 999) }}%</p>
+          </div>
+
+          <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden mb-2">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              :class="goalDaily.done ? 'bg-green-400' : goalDaily.pct >= 80 ? 'bg-amber-400' : 'bg-green-400/60'"
+              :style="{ width: `${Math.min(goalDaily.pct, 100)}%` }"
+            />
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-gray-600">
+            <span>
+              <span class="text-white font-medium">{{ goalDaily.current }}</span>
+              / {{ dailyGoal }} hoje
+            </span>
+            <span
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+              :class="goalDaily.done
+                ? 'bg-green-400/10 text-green-400 border-green-400/20'
+                : goalDaily.pct >= 80
+                  ? 'bg-amber-400/10 text-amber-400 border-amber-400/20'
+                  : 'bg-white/[.04] text-gray-600 border-white/[.08]'"
+            >
+              {{ goalDaily.done
+                ? `+${goalDaily.extra} extra`
+                : goalDaily.remaining > 0
+                  ? `faltam ${goalDaily.remaining}`
+                  : 'zerado' }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ✅ Card de cobertura de bairros -->
+      <div v-if="coverageStats" class="mb-6">
+
+        <!-- Header expansível -->
+        <div
+          class="rounded-2xl border border-white/[.06] bg-[#111] p-5 cursor-pointer select-none"
+          @click="showCoverage = !showCoverage"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+              <div>
+                <p class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-1">Cobertura de bairros</p>
+                <p class="text-sm font-bold text-white">
+                  {{ coverageStats.coveredNeighborhoods }}
+                  <span class="text-gray-500 font-normal">/ {{ coverageStats.totalNeighborhoods }} bairros</span>
+                  <span class="ml-2 text-gray-600 font-normal text-xs">em {{ coverageStats.totalCities }} cidades</span>
+                </p>
+              </div>
+              <!-- Barra geral -->
+              <div class="flex-1 max-w-xs hidden sm:block">
+                <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all duration-700"
+                    :class="coverageStats.pct >= 80 ? 'bg-green-400' : coverageStats.pct >= 50 ? 'bg-amber-400' : 'bg-green-400/50'"
+                    :style="{ width: `${coverageStats.pct}%` }"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <p
+                class="font-black leading-none"
+                style="font-family:'Bebas Neue',sans-serif;font-size:32px"
+                :class="coverageStats.pct >= 80 ? 'text-green-400' : coverageStats.pct >= 50 ? 'text-amber-400' : 'text-white'"
+              >{{ coverageStats.pct }}%</p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600 transition-transform duration-200"
+                :class="showCoverage ? 'rotate-180' : ''"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalhe por cidade (expansível) -->
+        <Transition name="coverage">
+          <div v-if="showCoverage" class="mt-2 space-y-2">
+            <div
+              v-for="city in coverageStats.cities"
+              :key="city.citySlug"
+              class="rounded-xl border border-white/[.05] bg-[#0d0d0d] p-4"
+            >
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <div class="flex items-center gap-2 min-w-0">
+                  <NuxtLink
+                    :to="`/barbearias/${city.ufSlug}/${city.citySlug}`"
+                    class="text-sm font-semibold text-white hover:text-green-400 transition-colors truncate"
+                    target="_blank"
+                  >{{ city.name }}</NuxtLink>
+                  <span class="text-[10px] text-gray-600 uppercase tracking-widest flex-shrink-0">{{ city.ufSlug.toUpperCase() }}</span>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-xs text-gray-500">{{ city.covered }}/{{ city.total }}</span>
+                  <span
+                    class="text-xs font-bold px-2 py-0.5 rounded-full border"
+                    :class="city.pct >= 80
+                      ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                      : city.pct >= 50
+                        ? 'text-amber-400 bg-amber-400/10 border-amber-400/20'
+                        : 'text-gray-500 bg-white/[.04] border-white/[.06]'"
+                  >{{ city.pct }}%</span>
+                </div>
+              </div>
+
+              <!-- Barra da cidade -->
+              <div class="h-1 rounded-full bg-white/[.06] overflow-hidden mb-3">
+                <div
+                  class="h-full rounded-full transition-all duration-700"
+                  :class="city.pct >= 80 ? 'bg-green-400' : city.pct >= 50 ? 'bg-amber-400' : 'bg-green-400/40'"
+                  :style="{ width: `${city.pct}%` }"
+                />
+              </div>
+
+              <!-- Chips de bairros: verde = coberto, cinza = sem cobertura -->
+              <!-- Cobertos são clicáveis e filtram a lista -->
+              <div class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="n in city.neighborhoods"
+                  :key="n.slug"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] border transition-all"
+                  :class="n.covered
+                    ? 'bg-green-400/10 border-green-400/20 text-green-400/80 hover:bg-green-400/20 hover:text-green-400 cursor-pointer'
+                    : 'bg-white/[.02] border-white/[.05] text-gray-700 cursor-default'"
+                  :title="n.covered
+                    ? `${n.count} barbearia${n.count !== 1 ? 's' : ''} em ${n.name} — clique para filtrar`
+                    : `${n.name} — sem cobertura`"
+                  @click="n.covered && filterByNeighborhood(city, n)"
+                >
+                  {{ n.name }}
+                  <span v-if="n.covered" class="ml-1.5 text-[10px] font-bold text-green-400/60">{{ n.count }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
       <!-- ── Filtros ─────────────────────────────────────────────── -->
       <div class="flex flex-wrap items-center gap-3 mb-4">
         <div class="relative flex-1 min-w-[200px] max-w-sm">
@@ -71,6 +293,16 @@
         <select v-model="filters.city" class="filter-select" @change="onCityChange">
           <option value="">Todas as cidades</option>
           <option v-for="c in cityOptions" :key="c" :value="c">{{ c }}</option>
+        </select>
+
+        <!-- ✅ Filtro de data de cadastro -->
+        <select v-model="filters.dateRange" class="filter-select" @change="fetchList">
+          <option value="">Qualquer data</option>
+          <option value="today">Hoje</option>
+          <option value="yesterday">Ontem</option>
+          <option value="last7">Últimos 7 dias</option>
+          <option value="last30">Últimos 30 dias</option>
+          <option value="thisMonth">Este mês</option>
         </select>
 
         <button
@@ -149,6 +381,12 @@
                 {{ [shop.neighborhood, shop.city, shop.state].filter(Boolean).join(', ') }}
                 <span v-if="shop.googleRating" class="ml-2 text-yellow-400">★ {{ Number(shop.googleRating).toFixed(1) }}</span>
                 <span v-if="shop.services?.length" class="ml-2 text-gray-600">{{ shop.services.length }} serviços</span>
+                <span v-if="shop.createdAt" class="ml-2 text-gray-700" :title="formatDateFull(shop.createdAt)">· {{ formatRelative(shop.createdAt) }}</span>
+                <!-- ✅ Analytics inline -->
+                <span v-if="analyticsMap[shop.id]" class="ml-2 text-gray-600 flex items-center gap-2">
+                  <span title="Views 30 dias">👁 {{ analyticsMap[shop.id].pageviews }}</span>
+                  <span title="Cliques WhatsApp 30 dias">💬 {{ analyticsMap[shop.id].whatsapp_clicks }}</span>
+                </span>
               </p>
             </div>
 
@@ -259,12 +497,12 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import { allCities } from '~/data/locations'
+import { useAnalytics } from '~/composables/useAnalytics'
 
 definePageMeta({ layout: 'barber' })
- 
+
 // ✅ Bloqueia indexação do Google — página admin interna
 useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
- 
 
 const isDev = import.meta.dev
 const api   = useScrapingApi()
@@ -281,6 +519,7 @@ const filters = reactive({
   claimed:      '',
   city:         '',
   neighborhood: '',
+  dateRange:    '',
   page:         1,
 })
 
@@ -302,11 +541,11 @@ const neighborhoodChips = computed(() => {
       }
     }
   }
-  return chips.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+  return chips.sort((a, b) => (a.slug < b.slug ? -1 : 1))
 })
 
 const hasFilters = computed(() =>
-  !!filters.q || !!filters.status || !!filters.claimed || !!filters.city || !!filters.neighborhood
+  !!filters.q || !!filters.status || !!filters.claimed || !!filters.city || !!filters.neighborhood || !!filters.dateRange
 )
 
 // ── Thumb ─────────────────────────────────────────────────────────────────
@@ -329,10 +568,14 @@ async function fetchList() {
     if (filters.city)           params.city         = filters.city
     // ✅ Passa neighborhood como filtro pra API quando selecionado
     if (filters.neighborhood)   params.neighborhood = filters.neighborhood
+    if (filters.dateRange)      params.dateRange    = filters.dateRange
 
     const res = await api.listBarbershops(params)
     rows.value = res.data ?? []
     meta.value = res.meta ?? meta.value
+    // Busca analytics das barbearias listadas (fire-and-forget)
+    const ids = (res.data ?? []).map((r: any) => r.id).filter(Boolean)
+    fetchAnalytics(ids)
   } catch (e) {
     console.error(e)
   } finally {
@@ -368,8 +611,156 @@ function clearFilters() {
   filters.claimed      = ''
   filters.city         = ''
   filters.neighborhood = ''
+  filters.dateRange    = ''
   filters.page         = 1
   fetchList()
+}
+
+// ── Analytics ────────────────────────────────────────────────────────────
+const { fetchBulkSummary } = useAnalytics()
+const analyticsMap = ref<Record<string, any>>({})
+
+async function fetchAnalytics(ids: string[]) {
+  if (!ids.length) return
+  analyticsMap.value = await fetchBulkSummary(ids, 30)
+}
+
+// ── Metas de cadastros (semanal + diária) ────────────────────────────────────
+// Configurável via .env:
+//   NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL=50  → meta semanal (0 = oculta)
+//   NUXT_PUBLIC_DAILY_REGISTRATION_GOAL=10   → meta diária  (0 = oculta)
+const { public: runtimeConfig } = useRuntimeConfig()
+
+const weeklyGoal = computed(() => {
+  const raw = (runtimeConfig as any).weeklyRegistrationGoal
+  return raw ? parseInt(String(raw)) : 0
+})
+
+const dailyGoal = computed(() => {
+  const raw = (runtimeConfig as any).dailyRegistrationGoal
+  return raw ? parseInt(String(raw)) : 0
+})
+
+// Hoje no formato YYYY-MM-DD pra bater com o DATE() do MySQL
+function todayStr(): string {
+  return new Date().toISOString().split('T')[0]
+}
+
+// Segunda-feira desta semana
+function mondayStr(): string {
+  const now = new Date()
+  const dayOfWeek = now.getDay()
+  const daysSince = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  const monday = new Date(now)
+  monday.setDate(monday.getDate() - daysSince)
+  monday.setHours(0, 0, 0, 0)
+  return monday.toISOString().split('T')[0]
+}
+
+// Contagem desta semana (seg → hoje)
+const weeklyCount = computed(() => {
+  if (!stats.value?.byDay) return 0
+  const mon = mondayStr()
+  return (stats.value.byDay as Array<{ date: string; count: number }>)
+    .filter(d => d.date >= mon)
+    .reduce((acc, d) => acc + Number(d.count), 0)
+})
+
+// Contagem de hoje
+const dailyCount = computed(() => {
+  if (!stats.value?.byDay) return 0
+  const today = todayStr()
+  const entry = (stats.value.byDay as Array<{ date: string; count: number }>)
+    .find(d => d.date === today)
+  return entry ? Number(entry.count) : 0
+})
+
+// Helper que monta o objeto de status para qualquer meta
+function makeGoalStatus(current: number, goal: number, daysLeft = 0) {
+  const pct       = goal > 0 ? Math.round((current / goal) * 100) : 0
+  const done      = current >= goal
+  const remaining = done ? 0 : goal - current
+  const extra     = done ? current - goal : 0
+  return { current, pct, done, remaining, extra, daysLeft }
+}
+
+const goalWeekly = computed(() => {
+  const now       = new Date()
+  const dayOfWeek = now.getDay()
+  const daysLeft  = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
+  return makeGoalStatus(weeklyCount.value, weeklyGoal.value, daysLeft)
+})
+
+const goalDaily = computed(() =>
+  makeGoalStatus(dailyCount.value, dailyGoal.value)
+)
+
+// ── Cobertura de bairros ─────────────────────────────────────────────────────
+const showCoverage = ref(false)
+
+const coverageStats = computed(() => {
+  if (!stats.value?.neighborhoodsByCity) return null
+
+  // Backend retorna { citySlug: { neighborhoodSlug: count } }
+  const covered = stats.value.neighborhoodsByCity as Record<string, Record<string, number>>
+  let totalNeighborhoods = 0
+  let coveredNeighborhoods = 0
+
+  const cities = allCities.map(city => {
+    const allNeighborhoodsOfCity = city.districts.flatMap(d => d.neighborhoods)
+    const cityMap = covered[city.citySlug] ?? {}
+
+    const neighborhoods = allNeighborhoodsOfCity.map(n => ({
+      name:    n.name,
+      slug:    n.slug,
+      covered: !!cityMap[n.slug],
+      count:   cityMap[n.slug] ?? 0,
+    }))
+
+    const total   = neighborhoods.length
+    const cov     = neighborhoods.filter(n => n.covered).length
+    const pct     = total > 0 ? Math.round((cov / total) * 100) : 0
+
+    totalNeighborhoods   += total
+    coveredNeighborhoods += cov
+
+    return {
+      name:          city.city,
+      citySlug:      city.citySlug,
+      ufSlug:        city.ufSlug,
+      total,
+      covered:       cov,
+      pct,
+      neighborhoods: neighborhoods.sort((a, b) => {
+        // Cobertos primeiro, depois alfabético
+        if (a.covered !== b.covered) return b.covered ? 1 : -1
+        return a.name.localeCompare(b.name, 'pt-BR')
+      }),
+    }
+  })
+  // Ordena cidades por cobertura % desc
+  .sort((a, b) => b.pct - a.pct || b.covered - a.covered)
+
+  const totalCities = cities.length
+  const pct = totalNeighborhoods > 0
+    ? Math.round((coveredNeighborhoods / totalNeighborhoods) * 100)
+    : 0
+
+  return { cities, totalCities, totalNeighborhoods, coveredNeighborhoods, pct }
+})
+
+// Clique no chip de bairro — seta filtro city + neighborhood e fecha coverage
+function filterByNeighborhood(city: any, neighborhood: any) {
+  filters.city         = city.citySlug
+  filters.neighborhood = neighborhood.slug
+  filters.page         = 1
+  showCoverage.value   = false
+  fetchList()
+  // Scroll suave pra lista
+  nextTick(() => {
+    document.querySelector('.rounded-2xl.border.border-white\/\[\.06\].overflow-hidden')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
 }
 
 // ── Fetch stats ───────────────────────────────────────────────────────────
@@ -400,6 +791,30 @@ async function doDelete() {
   } finally {
     deleting.value = false
   }
+}
+
+// ── Formatação de data ───────────────────────────────────────────────────
+function formatRelative(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now   = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60_000)
+  const diffH   = Math.floor(diffMs / 3_600_000)
+  const diffD   = Math.floor(diffMs / 86_400_000)
+
+  if (diffMin < 1)   return 'agora mesmo'
+  if (diffMin < 60)  return `há ${diffMin} min`
+  if (diffH   < 24)  return `há ${diffH}h`
+  if (diffD   === 1) return `ontem às ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+  if (diffD   < 7)   return `há ${diffD} dias`
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+}
+
+function formatDateFull(dateStr: string): string {
+  return new Date(dateStr).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
@@ -444,4 +859,7 @@ onMounted(() => {
 
 .fade-enter-active, .fade-leave-active { transition: opacity .2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.coverage-enter-active, .coverage-leave-active { transition: opacity .2s, transform .2s; }
+.coverage-enter-from, .coverage-leave-to { opacity: 0; transform: translateY(-6px); }
 </style>
