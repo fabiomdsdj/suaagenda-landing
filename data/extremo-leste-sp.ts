@@ -17,6 +17,7 @@ export default {
           { name: "Parque do Carmo", slug: "parque-do-carmo" },
           { name: "Vila Carmosina", slug: "vila-carmosina" },
           { name: "Artur Alvim", slug: "artur-alvim" },
+          { name: "Vila Campanela", slug: "vila-campanela" },
           { name: "Cidade A.E Carvalho", slug: "cidade-a-e-carvalho" },
           { name: "Conjunto Habitacional A E Carvalho", slug: "conjunto-habitacional-a-e-carvalho" },
           { name: "Parque Guarani", slug: "parque-guarani" },
