@@ -57,6 +57,22 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "pt-BR",
       },
+      // ✅ Google Analytics
+      script: [
+        {
+          src: "https://www.googletagmanager.com/gtag/js?id=G-MB7JZNQX5L",
+          async: true,
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-MB7JZNQX5L');
+          `,
+          type: "text/javascript",
+        },
+      ],
     },
   },
 

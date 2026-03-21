@@ -449,17 +449,34 @@
       </div>
 
       <!-- ── Paginação ────────────────────────────────────────────── -->
-      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
-        <button
-          v-for="p in meta.pages"
-          :key="p"
-          class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
-          :class="meta.page === p
-            ? 'bg-green-400 text-black'
-            : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
-          @click="goPage(p)"
-        >{{ p }}</button>
-      </div>
+<div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
+  <!-- Anterior -->
+  <button
+    class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+    :disabled="meta.page === 1"
+    @click="goPage(meta.page - 1)"
+  >‹</button>
+
+  <!-- Páginas truncadas -->
+  <template v-for="p in paginationPages" :key="p">
+    <span v-if="p === '...'" class="w-9 h-9 flex items-center justify-center text-gray-600 text-sm">…</span>
+    <button
+      v-else
+      class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
+      :class="meta.page === p
+        ? 'bg-green-400 text-black'
+        : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
+      @click="goPage(p)"
+    >{{ p }}</button>
+  </template>
+
+  <!-- Próximo -->
+  <button
+    class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+    :disabled="meta.page === meta.pages"
+    @click="goPage(meta.page + 1)"
+  >›</button>
+</div>
 
     </div>
 
@@ -547,6 +564,34 @@ const neighborhoodChips = computed(() => {
 const hasFilters = computed(() =>
   !!filters.q || !!filters.status || !!filters.claimed || !!filters.city || !!filters.neighborhood || !!filters.dateRange
 )
+
+//PAGNACAO
+const paginationPages = computed(() => {
+  const current = meta.value.page
+  const total   = meta.value.pages
+  const delta   = 2 // quantas páginas mostrar ao redor da atual
+
+  const pages: (number | string)[] = []
+  const range: number[] = []
+
+  for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+    range.push(i)
+  }
+
+  // Sempre mostra primeira
+  pages.push(1)
+
+  if (range[0] > 2) pages.push('...')
+
+  pages.push(...range)
+
+  if (range[range.length - 1] < total - 1) pages.push('...')
+
+  // Sempre mostra última
+  if (total > 1) pages.push(total)
+
+  return pages
+})
 
 // ── Thumb ─────────────────────────────────────────────────────────────────
 function getThumb(shop: any): string | null {
