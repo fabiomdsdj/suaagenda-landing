@@ -121,7 +121,7 @@ export default defineNuxtConfig({
     },
 
     esbuild: {
-      drop: ["console", "debugger"],
+      //drop: ["console", "debugger"],
     },
 
     optimizeDeps: {
