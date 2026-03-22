@@ -229,7 +229,6 @@
                 </div>
               </div>
 
-              <!-- Barra da cidade -->
               <div class="h-1 rounded-full bg-white/[.06] overflow-hidden mb-3">
                 <div
                   class="h-full rounded-full transition-all duration-700"
@@ -238,8 +237,6 @@
                 />
               </div>
 
-              <!-- Chips de bairros: verde = coberto, cinza = sem cobertura -->
-              <!-- Cobertos são clicáveis e filtram a lista -->
               <div class="flex flex-wrap gap-1.5">
                 <button
                   v-for="n in city.neighborhoods"
@@ -295,7 +292,6 @@
           <option v-for="c in cityOptions" :key="c" :value="c">{{ c }}</option>
         </select>
 
-        <!-- ✅ Filtro de data de cadastro -->
         <select v-model="filters.dateRange" class="filter-select" @change="fetchList">
           <option value="">Qualquer data</option>
           <option value="today">Hoje</option>
@@ -316,12 +312,37 @@
         </p>
       </div>
 
-      <!-- ✅ Dropdown de bairro — só aparece quando cidade está selecionada -->
+      <!-- Dropdown de bairro -->
       <div v-if="filters.city && neighborhoodChips.length" class="flex flex-wrap items-center gap-3 mb-6">
         <select v-model="filters.neighborhood" class="filter-select" @change="onNeighborhoodChange">
           <option value="">Todos os bairros</option>
           <option v-for="n in neighborhoodChips" :key="n.slug" :value="n.slug">{{ n.name }}</option>
         </select>
+      </div>
+
+      <!-- ── Paginação (topo) ────────────────────────────────────── -->
+      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 my-6">
+        <button
+          class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          :disabled="meta.page === 1"
+          @click="goPage(meta.page - 1)"
+        >‹</button>
+        <template v-for="p in paginationPages" :key="p">
+          <span v-if="p === '...'" class="w-9 h-9 flex items-center justify-center text-gray-600 text-sm">…</span>
+          <button
+            v-else
+            class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
+            :class="meta.page === p
+              ? 'bg-green-400 text-black'
+              : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
+            @click="goPage(p)"
+          >{{ p }}</button>
+        </template>
+        <button
+          class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          :disabled="meta.page === meta.pages"
+          @click="goPage(meta.page + 1)"
+        >›</button>
       </div>
 
       <!-- ── Tabela ──────────────────────────────────────────────── -->
@@ -356,7 +377,6 @@
               <div v-else class="w-full h-full flex items-center justify-center text-lg opacity-20">✂️</div>
             </div>
 
-            <!-- Info -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
                 <p class="text-sm font-semibold text-white truncate">{{ shop.name }}</p>
@@ -382,7 +402,6 @@
                 <span v-if="shop.googleRating" class="ml-2 text-yellow-400">★ {{ Number(shop.googleRating).toFixed(1) }}</span>
                 <span v-if="shop.services?.length" class="ml-2 text-gray-600">{{ shop.services.length }} serviços</span>
                 <span v-if="shop.createdAt" class="ml-2 text-gray-700" :title="formatDateFull(shop.createdAt)">· {{ formatRelative(shop.createdAt) }}</span>
-                <!-- ✅ Analytics inline -->
                 <span v-if="analyticsMap[shop.id]" class="ml-2 text-gray-600 flex items-center gap-2">
                   <span title="Views 30 dias">👁 {{ analyticsMap[shop.id].pageviews }}</span>
                   <span title="Cliques WhatsApp 30 dias">💬 {{ analyticsMap[shop.id].whatsapp_clicks }}</span>
@@ -390,7 +409,6 @@
               </p>
             </div>
 
-            <!-- Plano -->
             <span
               class="hidden sm:inline-flex px-2 py-1 rounded text-[10px] font-bold border flex-shrink-0"
               :class="{
@@ -401,7 +419,6 @@
               }"
             >{{ shop.plan }}</span>
 
-            <!-- Ações -->
             <div class="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
               <NuxtLink
                 v-if="shop.ufSlug && shop.citySlug && shop.neighborhoodSlug && shop.slug"
@@ -448,35 +465,30 @@
         </div>
       </div>
 
-      <!-- ── Paginação ────────────────────────────────────────────── -->
-<div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
-  <!-- Anterior -->
-  <button
-    class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-    :disabled="meta.page === 1"
-    @click="goPage(meta.page - 1)"
-  >‹</button>
-
-  <!-- Páginas truncadas -->
-  <template v-for="p in paginationPages" :key="p">
-    <span v-if="p === '...'" class="w-9 h-9 flex items-center justify-center text-gray-600 text-sm">…</span>
-    <button
-      v-else
-      class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
-      :class="meta.page === p
-        ? 'bg-green-400 text-black'
-        : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
-      @click="goPage(p)"
-    >{{ p }}</button>
-  </template>
-
-  <!-- Próximo -->
-  <button
-    class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-    :disabled="meta.page === meta.pages"
-    @click="goPage(meta.page + 1)"
-  >›</button>
-</div>
+      <!-- ── Paginação (rodapé) ──────────────────────────────────── -->
+      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
+        <button
+          class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          :disabled="meta.page === 1"
+          @click="goPage(meta.page - 1)"
+        >‹</button>
+        <template v-for="p in paginationPages" :key="p">
+          <span v-if="p === '...'" class="w-9 h-9 flex items-center justify-center text-gray-600 text-sm">…</span>
+          <button
+            v-else
+            class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
+            :class="meta.page === p
+              ? 'bg-green-400 text-black'
+              : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
+            @click="goPage(p)"
+          >{{ p }}</button>
+        </template>
+        <button
+          class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          :disabled="meta.page === meta.pages"
+          @click="goPage(meta.page + 1)"
+        >›</button>
+      </div>
 
     </div>
 
@@ -517,8 +529,6 @@ import { allCities } from '~/data/locations'
 import { useAnalytics } from '~/composables/useAnalytics'
 
 definePageMeta({ layout: 'barber' })
-
-// ✅ Bloqueia indexação do Google — página admin interna
 useHead({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const isDev = import.meta.dev
@@ -540,14 +550,12 @@ const filters = reactive({
   page:         1,
 })
 
-const cityOptions        = ref<string[]>([])
-// ✅ Bairros da cidade selecionada, vindos do allCities (locations.ts)
-// Quando muda a cidade, reseta bairro e busca do zero
+const cityOptions = ref<string[]>([])
+
 const neighborhoodChips = computed(() => {
   if (!filters.city) return []
   const city = allCities.find(c => c.citySlug === filters.city)
   if (!city) return []
-  // Flatten todos os bairros de todos os distritos, sem duplicatas
   const seen = new Set<string>()
   const chips: { name: string; slug: string }[] = []
   for (const district of city.districts) {
@@ -565,11 +573,11 @@ const hasFilters = computed(() =>
   !!filters.q || !!filters.status || !!filters.claimed || !!filters.city || !!filters.neighborhood || !!filters.dateRange
 )
 
-//PAGNACAO
+// ── Paginação truncada ────────────────────────────────────────────────────
 const paginationPages = computed(() => {
   const current = meta.value.page
   const total   = meta.value.pages
-  const delta   = 2 // quantas páginas mostrar ao redor da atual
+  const delta   = 2
 
   const pages: (number | string)[] = []
   const range: number[] = []
@@ -578,16 +586,10 @@ const paginationPages = computed(() => {
     range.push(i)
   }
 
-  // Sempre mostra primeira
   pages.push(1)
-
   if (range[0] > 2) pages.push('...')
-
   pages.push(...range)
-
   if (range[range.length - 1] < total - 1) pages.push('...')
-
-  // Sempre mostra última
   if (total > 1) pages.push(total)
 
   return pages
@@ -611,14 +613,12 @@ async function fetchList() {
     if (filters.status)         params.status       = filters.status
     if (filters.claimed !== '') params.isClaimed    = filters.claimed
     if (filters.city)           params.city         = filters.city
-    // ✅ Passa neighborhood como filtro pra API quando selecionado
     if (filters.neighborhood)   params.neighborhood = filters.neighborhood
     if (filters.dateRange)      params.dateRange    = filters.dateRange
 
     const res = await api.listBarbershops(params)
     rows.value = res.data ?? []
     meta.value = res.meta ?? meta.value
-    // Busca analytics das barbearias listadas (fire-and-forget)
     const ids = (res.data ?? []).map((r: any) => r.id).filter(Boolean)
     fetchAnalytics(ids)
   } catch (e) {
@@ -632,20 +632,13 @@ const debouncedFetch = useDebounceFn(() => { filters.page = 1; fetchList() }, 40
 
 function goPage(p: number) { filters.page = p; fetchList() }
 
-// Quando muda cidade: reseta bairro + busca
 function onCityChange() {
-  filters.neighborhood  = ''
-  filters.page          = 1
+  filters.neighborhood = ''
+  filters.page         = 1
   fetchList()
 }
 
 function onNeighborhoodChange() {
-  filters.page = 1
-  fetchList()
-}
-
-function clearNeighborhood() {
-  filters.neighborhood = ''
   filters.page = 1
   fetchList()
 }
@@ -661,7 +654,7 @@ function clearFilters() {
   fetchList()
 }
 
-// ── Analytics ────────────────────────────────────────────────────────────
+// ── Analytics ─────────────────────────────────────────────────────────────
 const { fetchBulkSummary } = useAnalytics()
 const analyticsMap = ref<Record<string, any>>({})
 
@@ -670,10 +663,7 @@ async function fetchAnalytics(ids: string[]) {
   analyticsMap.value = await fetchBulkSummary(ids, 30)
 }
 
-// ── Metas de cadastros (semanal + diária) ────────────────────────────────────
-// Configurável via .env:
-//   NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL=50  → meta semanal (0 = oculta)
-//   NUXT_PUBLIC_DAILY_REGISTRATION_GOAL=10   → meta diária  (0 = oculta)
+// ── Metas de cadastros ────────────────────────────────────────────────────
 const { public: runtimeConfig } = useRuntimeConfig()
 
 const weeklyGoal = computed(() => {
@@ -686,23 +676,29 @@ const dailyGoal = computed(() => {
   return raw ? parseInt(String(raw)) : 0
 })
 
-// Hoje no formato YYYY-MM-DD pra bater com o DATE() do MySQL
+// ── Dia de negócio: vira às 05:00 ─────────────────────────────────────────
+// Antes das 05h, ainda é o "dia anterior" para fins de meta
+const BUSINESS_DAY_START_HOUR = 5
+
+function businessDay(date = new Date()): string {
+  const adjusted = new Date(date.getTime() - BUSINESS_DAY_START_HOUR * 60 * 60 * 1000)
+  return adjusted.toISOString().split('T')[0]
+}
+
 function todayStr(): string {
-  return new Date().toISOString().split('T')[0]
+  return businessDay()
 }
 
-// Segunda-feira desta semana
 function mondayStr(): string {
-  const now = new Date()
-  const dayOfWeek = now.getDay()
+  const now      = new Date()
+  const adjusted = new Date(now.getTime() - BUSINESS_DAY_START_HOUR * 60 * 60 * 1000)
+  const dayOfWeek = adjusted.getDay()
   const daysSince = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-  const monday = new Date(now)
-  monday.setDate(monday.getDate() - daysSince)
-  monday.setHours(0, 0, 0, 0)
-  return monday.toISOString().split('T')[0]
+  adjusted.setDate(adjusted.getDate() - daysSince)
+  adjusted.setHours(0, 0, 0, 0)
+  return adjusted.toISOString().split('T')[0]
 }
 
-// Contagem desta semana (seg → hoje)
 const weeklyCount = computed(() => {
   if (!stats.value?.byDay) return 0
   const mon = mondayStr()
@@ -711,7 +707,6 @@ const weeklyCount = computed(() => {
     .reduce((acc, d) => acc + Number(d.count), 0)
 })
 
-// Contagem de hoje
 const dailyCount = computed(() => {
   if (!stats.value?.byDay) return 0
   const today = todayStr()
@@ -720,7 +715,6 @@ const dailyCount = computed(() => {
   return entry ? Number(entry.count) : 0
 })
 
-// Helper que monta o objeto de status para qualquer meta
 function makeGoalStatus(current: number, goal: number, daysLeft = 0) {
   const pct       = goal > 0 ? Math.round((current / goal) * 100) : 0
   const done      = current >= goal
@@ -731,7 +725,8 @@ function makeGoalStatus(current: number, goal: number, daysLeft = 0) {
 
 const goalWeekly = computed(() => {
   const now       = new Date()
-  const dayOfWeek = now.getDay()
+  const adjusted  = new Date(now.getTime() - BUSINESS_DAY_START_HOUR * 60 * 60 * 1000)
+  const dayOfWeek = adjusted.getDay()
   const daysLeft  = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
   return makeGoalStatus(weeklyCount.value, weeklyGoal.value, daysLeft)
 })
@@ -740,15 +735,14 @@ const goalDaily = computed(() =>
   makeGoalStatus(dailyCount.value, dailyGoal.value)
 )
 
-// ── Cobertura de bairros ─────────────────────────────────────────────────────
+// ── Cobertura de bairros ──────────────────────────────────────────────────
 const showCoverage = ref(false)
 
 const coverageStats = computed(() => {
   if (!stats.value?.neighborhoodsByCity) return null
 
-  // Backend retorna { citySlug: { neighborhoodSlug: count } }
   const covered = stats.value.neighborhoodsByCity as Record<string, Record<string, number>>
-  let totalNeighborhoods = 0
+  let totalNeighborhoods   = 0
   let coveredNeighborhoods = 0
 
   const cities = allCities.map(city => {
@@ -762,29 +756,26 @@ const coverageStats = computed(() => {
       count:   cityMap[n.slug] ?? 0,
     }))
 
-    const total   = neighborhoods.length
-    const cov     = neighborhoods.filter(n => n.covered).length
-    const pct     = total > 0 ? Math.round((cov / total) * 100) : 0
+    const total = neighborhoods.length
+    const cov   = neighborhoods.filter(n => n.covered).length
+    const pct   = total > 0 ? Math.round((cov / total) * 100) : 0
 
     totalNeighborhoods   += total
     coveredNeighborhoods += cov
 
     return {
-      name:          city.city,
-      citySlug:      city.citySlug,
-      ufSlug:        city.ufSlug,
+      name:     city.city,
+      citySlug: city.citySlug,
+      ufSlug:   city.ufSlug,
       total,
-      covered:       cov,
+      covered:  cov,
       pct,
       neighborhoods: neighborhoods.sort((a, b) => {
-        // Cobertos primeiro, depois alfabético
         if (a.covered !== b.covered) return b.covered ? 1 : -1
         return a.name.localeCompare(b.name, 'pt-BR')
       }),
     }
-  })
-  // Ordena cidades por cobertura % desc
-  .sort((a, b) => b.pct - a.pct || b.covered - a.covered)
+  }).sort((a, b) => b.pct - a.pct || b.covered - a.covered)
 
   const totalCities = cities.length
   const pct = totalNeighborhoods > 0
@@ -794,16 +785,14 @@ const coverageStats = computed(() => {
   return { cities, totalCities, totalNeighborhoods, coveredNeighborhoods, pct }
 })
 
-// Clique no chip de bairro — seta filtro city + neighborhood e fecha coverage
 function filterByNeighborhood(city: any, neighborhood: any) {
   filters.city         = city.citySlug
   filters.neighborhood = neighborhood.slug
   filters.page         = 1
   showCoverage.value   = false
   fetchList()
-  // Scroll suave pra lista
   nextTick(() => {
-    document.querySelector('.rounded-2xl.border.border-white\/\[\.06\].overflow-hidden')
+    document.querySelector('.rounded-2xl.border.border-white\\/\\[\\.06\\].overflow-hidden')
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
 }
@@ -838,11 +827,11 @@ async function doDelete() {
   }
 }
 
-// ── Formatação de data ───────────────────────────────────────────────────
+// ── Formatação de data ────────────────────────────────────────────────────
 function formatRelative(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now   = new Date()
-  const diffMs = now.getTime() - date.getTime()
+  const date    = new Date(dateStr)
+  const now     = new Date()
+  const diffMs  = now.getTime() - date.getTime()
   const diffMin = Math.floor(diffMs / 60_000)
   const diffH   = Math.floor(diffMs / 3_600_000)
   const diffD   = Math.floor(diffMs / 86_400_000)
