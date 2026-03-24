@@ -248,3 +248,35 @@ export function debugCities() {
     console.log(`${city.city} (${city.ufSlug}/${city.citySlug}): ${city.districts.length} distritos, ${total} bairros`)
   }
 }
+
+// No final de data/locations/index.ts — funções com cities injetável
+
+export function getNeighborhoodDataFrom(
+  cities: CityData[],
+  ufSlug: string,
+  citySlug: string,
+  neighborhoodSlug: string
+): { city: CityData; district: District; neighborhood: Neighborhood } | null {
+  const city = cities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug)
+  if (!city) return null
+  for (const district of city.districts) {
+    const neighborhood = district.neighborhoods.find(n => n.slug === neighborhoodSlug)
+    if (neighborhood) return { city, district, neighborhood }
+  }
+  return null
+}
+
+// Mesma lógica pras rotas — útil no sitemap e no nitro
+export function getAllNeighborhoodRoutesFrom(cities: CityData[]): string[] {
+  const routes: string[] = []
+  const seen = new Set<string>()
+  for (const city of cities) {
+    for (const district of city.districts) {
+      for (const neighborhood of district.neighborhoods) {
+        const route = `/barbearias/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`
+        if (!seen.has(route)) { seen.add(route); routes.push(route) }
+      }
+    }
+  }
+  return routes
+}

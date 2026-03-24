@@ -1,0 +1,4652 @@
+[
+  {
+    "city": "Angra dos Reis",
+    "citySlug": "angra-dos-reis",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Costa Verde",
+    "region": "Costa Verde",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Parque das Palmeiras",
+            "slug": "parque-das-palmeiras"
+          },
+          {
+            "name": "Vila Velha",
+            "slug": "vila-velha"
+          },
+          {
+            "name": "Morro do Santo Antônio",
+            "slug": "morro-santo-antonio"
+          }
+        ]
+      },
+      {
+        "name": "Balneários",
+        "slug": "balnearios",
+        "neighborhoods": [
+          {
+            "name": "Bracuí",
+            "slug": "bracui"
+          },
+          {
+            "name": "Cunhambebe",
+            "slug": "cunhambebe"
+          },
+          {
+            "name": "Frade",
+            "slug": "frade"
+          },
+          {
+            "name": "Garatucaia",
+            "slug": "garatucaia"
+          },
+          {
+            "name": "Monsuaba",
+            "slug": "monsuaba"
+          },
+          {
+            "name": "Mambucaba",
+            "slug": "mambucaba"
+          }
+        ]
+      },
+      {
+        "name": "Ilha Grande",
+        "slug": "ilha-grande",
+        "neighborhoods": [
+          {
+            "name": "Vila do Abraão",
+            "slug": "vila-do-abrao"
+          },
+          {
+            "name": "Sítio Forte",
+            "slug": "sitio-forte"
+          },
+          {
+            "name": "Provetá",
+            "slug": "proveta"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Arujá",
+    "citySlug": "aruja",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-aruja",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-aruja"
+          },
+          {
+            "name": "Jardim Rincão",
+            "slug": "jardim-rincao"
+          }
+        ]
+      },
+      {
+        "name": "Sul",
+        "slug": "sul-aruja",
+        "neighborhoods": [
+          {
+            "name": "Jordanópolis",
+            "slug": "jordanopolis"
+          },
+          {
+            "name": "Parque Rodrigo Barreto",
+            "slug": "parque-rodrigo-barreto"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Atibaia",
+    "citySlug": "atibaia",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Thais",
+            "slug": "vila-thais"
+          },
+          {
+            "name": "Jardim Imperial",
+            "slug": "jardim-imperial"
+          },
+          {
+            "name": "Jardim Cerejeiras",
+            "slug": "jardim-cerejeiras"
+          },
+          {
+            "name": "Vila São José",
+            "slug": "vila-sao-jose"
+          },
+          {
+            "name": "Jardim América",
+            "slug": "jardim-america"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim do Lago",
+            "slug": "jardim-do-lago"
+          },
+          {
+            "name": "Alvinópolis",
+            "slug": "alvinopolis"
+          },
+          {
+            "name": "Jardim Maristela",
+            "slug": "jardim-maristela"
+          },
+          {
+            "name": "Nova Atibaia",
+            "slug": "nova-atibaia"
+          },
+          {
+            "name": "Jardim Paulista",
+            "slug": "jardim-paulista"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Itapetinga",
+            "slug": "itapetinga"
+          },
+          {
+            "name": "Caetetuba",
+            "slug": "caetetuba"
+          },
+          {
+            "name": "Jardim Itapetinga",
+            "slug": "jardim-itapetinga"
+          },
+          {
+            "name": "Jardim Estância Brasil",
+            "slug": "jardim-estancia-brasil"
+          }
+        ]
+      },
+      {
+        "name": "Zona Rural e Condomínios",
+        "slug": "zona-rural",
+        "neighborhoods": [
+          {
+            "name": "Condomínio Shambala",
+            "slug": "condominio-shambala"
+          },
+          {
+            "name": "Sítio São Francisco",
+            "slug": "sitio-sao-francisco"
+          },
+          {
+            "name": "Bairro do Tanque",
+            "slug": "bairro-do-tanque"
+          },
+          {
+            "name": "Bairro da Usina",
+            "slug": "bairro-da-usina"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Barra Mansa",
+    "citySlug": "barra-mansa",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Sul Fluminense",
+    "region": "Sul Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Orlandélia",
+            "slug": "vila-orlandelia"
+          },
+          {
+            "name": "Santa Clara",
+            "slug": "santa-clara"
+          },
+          {
+            "name": "Ano Bom",
+            "slug": "ano-bom"
+          }
+        ]
+      },
+      {
+        "name": "Saudade",
+        "slug": "saudade",
+        "neighborhoods": [
+          {
+            "name": "Saudade",
+            "slug": "saudade"
+          },
+          {
+            "name": "Jardim Esperança",
+            "slug": "jardim-esperanca"
+          },
+          {
+            "name": "Paraíso",
+            "slug": "paraiso-bm"
+          },
+          {
+            "name": "Nova Esperança",
+            "slug": "nova-esperanca"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Belford Roxo",
+    "citySlug": "belford-roxo",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Heliópolis",
+            "slug": "heliopolis"
+          },
+          {
+            "name": "Jardim Redentor",
+            "slug": "jardim-redentor"
+          },
+          {
+            "name": "Nova Aurora",
+            "slug": "nova-aurora"
+          }
+        ]
+      },
+      {
+        "name": "Leste",
+        "slug": "leste",
+        "neighborhoods": [
+          {
+            "name": "Areia Branca",
+            "slug": "areia-branca"
+          },
+          {
+            "name": "Piam",
+            "slug": "piam"
+          },
+          {
+            "name": "Xavantes",
+            "slug": "xavantes"
+          },
+          {
+            "name": "Wona",
+            "slug": "wona"
+          }
+        ]
+      },
+      {
+        "name": "Oeste",
+        "slug": "oeste",
+        "neighborhoods": [
+          {
+            "name": "Lote XV",
+            "slug": "lote-xv"
+          },
+          {
+            "name": "São Bernardo",
+            "slug": "sao-bernardo"
+          },
+          {
+            "name": "Paraíso",
+            "slug": "paraiso"
+          },
+          {
+            "name": "Belo Horizonte",
+            "slug": "belo-horizonte-belford"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Bertioga",
+    "citySlug": "bertioga",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Indaiá",
+            "slug": "indaia"
+          },
+          {
+            "name": "Vista Linda",
+            "slug": "vista-linda"
+          }
+        ]
+      },
+      {
+        "name": "Riviera",
+        "slug": "riviera",
+        "neighborhoods": [
+          {
+            "name": "Riviera de São Lourenço",
+            "slug": "riviera-sao-lourenco"
+          },
+          {
+            "name": "São Lourenço",
+            "slug": "sao-lourenco"
+          },
+          {
+            "name": "Boraceia",
+            "slug": "boraceia"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Guaratuba",
+            "slug": "guaratuba"
+          },
+          {
+            "name": "Mangaguá",
+            "slug": "mangagua"
+          },
+          {
+            "name": "Itaguaré",
+            "slug": "itaguare"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Biritiba Mirim",
+    "citySlug": "biritiba-mirim",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-biritiba",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-biritiba"
+          },
+          {
+            "name": "Jardim Yoneda",
+            "slug": "jardim-yoneda"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Bragança Paulista",
+    "citySlug": "braganca-paulista",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila São Silvestre",
+            "slug": "vila-sao-silvestre"
+          },
+          {
+            "name": "Vila Municipal",
+            "slug": "vila-municipal"
+          },
+          {
+            "name": "Jardim Paulista",
+            "slug": "jardim-paulista"
+          },
+          {
+            "name": "Vila Aparecida",
+            "slug": "vila-aparecida"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Redentor",
+            "slug": "jardim-redentor"
+          },
+          {
+            "name": "Parque São Jorge",
+            "slug": "parque-sao-jorge"
+          },
+          {
+            "name": "Vila São João",
+            "slug": "vila-sao-joao"
+          },
+          {
+            "name": "Jardim Bom Pastor",
+            "slug": "jardim-bom-pastor"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Ponte Preta",
+            "slug": "ponte-preta"
+          },
+          {
+            "name": "Jardim Flamboyant",
+            "slug": "jardim-flamboyant"
+          },
+          {
+            "name": "Residencial das Palmeiras",
+            "slug": "residencial-das-palmeiras"
+          },
+          {
+            "name": "Jardim América",
+            "slug": "jardim-america"
+          }
+        ]
+      },
+      {
+        "name": "Zona Leste",
+        "slug": "zona-leste",
+        "neighborhoods": [
+          {
+            "name": "Jardim Novo Horizonte",
+            "slug": "jardim-novo-horizonte"
+          },
+          {
+            "name": "Vila Nova Bragança",
+            "slug": "vila-nova-braganca"
+          },
+          {
+            "name": "Parque Residencial Água Branca",
+            "slug": "parque-agua-branca"
+          },
+          {
+            "name": "Jardim Itapetininga",
+            "slug": "jardim-itapetininga"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Armação dos Búzios",
+    "citySlug": "buzios",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região dos Lagos",
+    "region": "Região dos Lagos",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Armação",
+            "slug": "armacao"
+          },
+          {
+            "name": "Ossos",
+            "slug": "ossos"
+          },
+          {
+            "name": "Manguinhos",
+            "slug": "manguinhos"
+          }
+        ]
+      },
+      {
+        "name": "Praias",
+        "slug": "praias",
+        "neighborhoods": [
+          {
+            "name": "Geribá",
+            "slug": "geriba"
+          },
+          {
+            "name": "João Fernandes",
+            "slug": "joao-fernandes"
+          },
+          {
+            "name": "Ferradura",
+            "slug": "ferradura"
+          },
+          {
+            "name": "Tucuns",
+            "slug": "tucuns"
+          },
+          {
+            "name": "Tartaruga",
+            "slug": "tartaruga"
+          },
+          {
+            "name": "Brava",
+            "slug": "brava"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Cabo Frio",
+    "citySlug": "cabo-frio",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região dos Lagos",
+    "region": "Região dos Lagos",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Passagem",
+            "slug": "passagem"
+          },
+          {
+            "name": "Braga",
+            "slug": "braga"
+          },
+          {
+            "name": "Jardim Excelsior",
+            "slug": "jardim-excelsior"
+          }
+        ]
+      },
+      {
+        "name": "Praias",
+        "slug": "praias",
+        "neighborhoods": [
+          {
+            "name": "Praia do Forte",
+            "slug": "praia-do-forte"
+          },
+          {
+            "name": "Ogiva",
+            "slug": "ogiva"
+          },
+          {
+            "name": "Peró",
+            "slug": "pero"
+          },
+          {
+            "name": "Foguete",
+            "slug": "foguete"
+          },
+          {
+            "name": "Praia das Dunas",
+            "slug": "praia-das-dunas"
+          }
+        ]
+      },
+      {
+        "name": "Tamoios",
+        "slug": "tamoios",
+        "neighborhoods": [
+          {
+            "name": "Tamoios",
+            "slug": "tamoios"
+          },
+          {
+            "name": "Porto do Carro",
+            "slug": "porto-do-carro"
+          },
+          {
+            "name": "Reginaldo",
+            "slug": "reginaldo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Campo Limpo Paulista",
+    "citySlug": "campo-limpo-paulista",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Paulista",
+            "slug": "vila-paulista"
+          },
+          {
+            "name": "Jardim Santa Terezinha",
+            "slug": "jardim-santa-terezinha"
+          },
+          {
+            "name": "Vila São Bento",
+            "slug": "vila-sao-bento"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim dos Estados",
+            "slug": "jardim-dos-estados"
+          },
+          {
+            "name": "Parque Industrial",
+            "slug": "parque-industrial"
+          },
+          {
+            "name": "Vila Nova Campo Limpo",
+            "slug": "vila-nova-campo-limpo"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Jardim Vitória",
+            "slug": "jardim-vitoria"
+          },
+          {
+            "name": "Residencial Greenville",
+            "slug": "residencial-greenville"
+          },
+          {
+            "name": "Jardim Bela Vista",
+            "slug": "jardim-bela-vista"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Cubatão",
+    "citySlug": "cubatao",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Nova",
+            "slug": "vila-nova"
+          },
+          {
+            "name": "Jardim Casqueiro",
+            "slug": "jardim-casqueiro"
+          },
+          {
+            "name": "Vila Esperança",
+            "slug": "vila-esperanca"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Anchieta",
+            "slug": "jardim-anchieta"
+          },
+          {
+            "name": "Vila Parisi",
+            "slug": "vila-parisi"
+          },
+          {
+            "name": "Cota",
+            "slug": "cota"
+          },
+          {
+            "name": "Jardim Nossa Senhora das Graças",
+            "slug": "jardim-nsa-gracas"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Morro do Sangue Bom",
+            "slug": "morro-sangue-bom"
+          },
+          {
+            "name": "Pilões",
+            "slug": "piloes"
+          },
+          {
+            "name": "Vila Coelho",
+            "slug": "vila-coelho"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Diadema",
+    "citySlug": "diadema",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-diadema",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-diadema"
+          },
+          {
+            "name": "Vila Conceição",
+            "slug": "vila-conceicao-diadema"
+          },
+          {
+            "name": "Jardim Canhema",
+            "slug": "jardim-canhema"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte-diadema",
+        "neighborhoods": [
+          {
+            "name": "Eldorado",
+            "slug": "eldorado-diadema"
+          },
+          {
+            "name": "Casa Grande",
+            "slug": "casa-grande-diadema"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul-diadema",
+        "neighborhoods": [
+          {
+            "name": "Piraporinha",
+            "slug": "piraporinha"
+          },
+          {
+            "name": "Campanário",
+            "slug": "campanario"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Duque de Caxias",
+    "citySlug": "duque-de-caxias",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Primeiro Distrito",
+        "slug": "primeiro-distrito",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Jardim Primavera",
+            "slug": "jardim-primavera"
+          },
+          {
+            "name": "Vila São Luís",
+            "slug": "vila-sao-luis"
+          },
+          {
+            "name": "Gramacho",
+            "slug": "gramacho"
+          },
+          {
+            "name": "Jardim Gramacho",
+            "slug": "jardim-gramacho"
+          },
+          {
+            "name": "Parque Sarapuí",
+            "slug": "parque-sarapui"
+          }
+        ]
+      },
+      {
+        "name": "Segundo Distrito",
+        "slug": "segundo-distrito",
+        "neighborhoods": [
+          {
+            "name": "Campos Elíseos",
+            "slug": "campos-eliseos"
+          },
+          {
+            "name": "Jardim Leal",
+            "slug": "jardim-leal"
+          },
+          {
+            "name": "Parque Eldorado",
+            "slug": "parque-eldorado"
+          },
+          {
+            "name": "Saracuruna",
+            "slug": "saracuruna"
+          }
+        ]
+      },
+      {
+        "name": "Terceiro Distrito",
+        "slug": "terceiro-distrito",
+        "neighborhoods": [
+          {
+            "name": "Imbariê",
+            "slug": "imbarie"
+          },
+          {
+            "name": "Parada Angélica",
+            "slug": "parada-angelica"
+          },
+          {
+            "name": "Taquara",
+            "slug": "taquara-caxias"
+          },
+          {
+            "name": "Jardim Anhangá",
+            "slug": "jardim-anhanga"
+          }
+        ]
+      },
+      {
+        "name": "Quarto Distrito",
+        "slug": "quarto-distrito",
+        "neighborhoods": [
+          {
+            "name": "Xerém",
+            "slug": "xerem"
+          },
+          {
+            "name": "Mantiquira",
+            "slug": "mantiquira"
+          },
+          {
+            "name": "Brejal",
+            "slug": "brejal"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Ferraz de Vasconcelos",
+    "citySlug": "ferraz-de-vasconcelos",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-ferraz",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-ferraz"
+          },
+          {
+            "name": "Vila Romanópolis",
+            "slug": "vila-romanopolis"
+          },
+          {
+            "name": "Vila Correa",
+            "slug": "vila-correa"
+          },
+          {
+            "name": "Jardim Bela Vista",
+            "slug": "jardim-bela-vista"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte-ferraz",
+        "neighborhoods": [
+          {
+            "name": "Jardim Cambiri",
+            "slug": "jardim-cambiri"
+          },
+          {
+            "name": "Jardim Dayse",
+            "slug": "jardim-dayse"
+          }
+        ]
+      },
+      {
+        "name": "Sul",
+        "slug": "sul-ferraz",
+        "neighborhoods": [
+          {
+            "name": "Cidade Kemel",
+            "slug": "cidade-kemel-ferraz"
+          },
+          {
+            "name": "Jardim São Judas Tadeu",
+            "slug": "jardim-sao-judas-tadeu"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Guararema",
+    "citySlug": "guararema",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-guararema",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-guararema"
+          },
+          {
+            "name": "Itapema",
+            "slug": "itapema"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Guarujá",
+    "citySlug": "guaruja",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Santa Rosa",
+            "slug": "santa-rosa"
+          },
+          {
+            "name": "Vila Maia",
+            "slug": "vila-maia"
+          },
+          {
+            "name": "Jardim Progresso",
+            "slug": "jardim-progresso"
+          }
+        ]
+      },
+      {
+        "name": "Praia",
+        "slug": "praia",
+        "neighborhoods": [
+          {
+            "name": "Pitangueiras",
+            "slug": "pitangueiras"
+          },
+          {
+            "name": "Astúrias",
+            "slug": "asturias"
+          },
+          {
+            "name": "Enseada",
+            "slug": "enseada"
+          },
+          {
+            "name": "Pernambuco",
+            "slug": "pernambuco"
+          },
+          {
+            "name": "Tombo",
+            "slug": "tombo"
+          },
+          {
+            "name": "Guaiúba",
+            "slug": "guaiuba"
+          }
+        ]
+      },
+      {
+        "name": "Vicente de Carvalho",
+        "slug": "vicente-de-carvalho",
+        "neighborhoods": [
+          {
+            "name": "Vicente de Carvalho",
+            "slug": "vicente-de-carvalho"
+          },
+          {
+            "name": "Vila Áurea",
+            "slug": "vila-aurea"
+          },
+          {
+            "name": "Morrinhos",
+            "slug": "morrinhos"
+          },
+          {
+            "name": "Jardim Boa Esperança",
+            "slug": "jardim-boa-esperanca"
+          },
+          {
+            "name": "Vila Júlia",
+            "slug": "vila-julia"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Itaboraí",
+    "citySlug": "itaborai",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região Metropolitana",
+    "region": "Leste Metropolitano",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Joaquim de Oliveira",
+            "slug": "joaquim-de-oliveira"
+          },
+          {
+            "name": "Porto das Caixas",
+            "slug": "porto-das-caixas"
+          },
+          {
+            "name": "Manilha",
+            "slug": "manilha"
+          }
+        ]
+      },
+      {
+        "name": "Venda das Pedras",
+        "slug": "venda-das-pedras",
+        "neighborhoods": [
+          {
+            "name": "Venda das Pedras",
+            "slug": "venda-das-pedras"
+          },
+          {
+            "name": "Sambaetiba",
+            "slug": "sambaetiba"
+          },
+          {
+            "name": "Cabuçu",
+            "slug": "cabucu-itaborai"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Itanhaém",
+    "citySlug": "itanhaem",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Jardim Ibisara",
+            "slug": "jardim-ibisara"
+          },
+          {
+            "name": "Suarão",
+            "slug": "suarao"
+          },
+          {
+            "name": "Vila Loty",
+            "slug": "vila-loty"
+          }
+        ]
+      },
+      {
+        "name": "Balneários",
+        "slug": "balnearios",
+        "neighborhoods": [
+          {
+            "name": "Balneário Tupy",
+            "slug": "balneario-tupy"
+          },
+          {
+            "name": "Savoy",
+            "slug": "savoy"
+          },
+          {
+            "name": "Cibratel",
+            "slug": "cibratel"
+          },
+          {
+            "name": "Belas Artes",
+            "slug": "belas-artes"
+          },
+          {
+            "name": "Gaivota",
+            "slug": "gaivota"
+          },
+          {
+            "name": "Jardim Coronel",
+            "slug": "jardim-coronel"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Angélica",
+            "slug": "angelica"
+          },
+          {
+            "name": "Jamaica",
+            "slug": "jamaica"
+          },
+          {
+            "name": "Jardim Magalhães",
+            "slug": "jardim-magalhaes"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Itaquaquecetuba",
+    "citySlug": "itaquaquecetuba",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-itaqua",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-itaqua"
+          },
+          {
+            "name": "Vila Virgínia",
+            "slug": "vila-virginia"
+          },
+          {
+            "name": "Vila Ursulina",
+            "slug": "vila-ursulina"
+          }
+        ]
+      },
+      {
+        "name": "Leste",
+        "slug": "leste-itaqua",
+        "neighborhoods": [
+          {
+            "name": "Jardim Caiuby",
+            "slug": "jardim-caiuby"
+          },
+          {
+            "name": "Jardim Odete",
+            "slug": "jardim-odete"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte-itaqua",
+        "neighborhoods": [
+          {
+            "name": "Jardim Adriane",
+            "slug": "jardim-adriane"
+          },
+          {
+            "name": "Parque Piratininga",
+            "slug": "parque-piratininga"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Itatiba",
+    "citySlug": "itatiba",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila São José",
+            "slug": "vila-sao-jose"
+          },
+          {
+            "name": "Jardim Panorama",
+            "slug": "jardim-panorama"
+          },
+          {
+            "name": "Vila Figueira",
+            "slug": "vila-figueira"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Itapoan",
+            "slug": "jardim-itapoan"
+          },
+          {
+            "name": "Jardim das Flores",
+            "slug": "jardim-das-flores"
+          },
+          {
+            "name": "Parque Residencial Itatiba",
+            "slug": "parque-residencial-itatiba"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Jardim Europa",
+            "slug": "jardim-europa"
+          },
+          {
+            "name": "Nova Itatiba",
+            "slug": "nova-itatiba"
+          },
+          {
+            "name": "Residencial São Paulo",
+            "slug": "residencial-sao-paulo"
+          }
+        ]
+      },
+      {
+        "name": "Bairro dos Pires",
+        "slug": "bairro-dos-pires",
+        "neighborhoods": [
+          {
+            "name": "Bairro dos Pires",
+            "slug": "bairro-dos-pires"
+          },
+          {
+            "name": "Estância Paraíso",
+            "slug": "estancia-paraiso"
+          },
+          {
+            "name": "Jardim Santa Inês",
+            "slug": "jardim-santa-ines"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Jarinu",
+    "citySlug": "jarinu",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Aparecida",
+            "slug": "vila-aparecida"
+          },
+          {
+            "name": "Jardim das Acácias",
+            "slug": "jardim-das-acacias"
+          }
+        ]
+      },
+      {
+        "name": "Bairros Rurais",
+        "slug": "bairros-rurais",
+        "neighborhoods": [
+          {
+            "name": "Ivoturucaia",
+            "slug": "ivoturucaia"
+          },
+          {
+            "name": "Bairro do Portão",
+            "slug": "bairro-do-portao"
+          },
+          {
+            "name": "Bairro Eloy Chaves",
+            "slug": "bairro-eloy-chaves"
+          },
+          {
+            "name": "Bairro do Aterrado",
+            "slug": "bairro-do-aterrado"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Jundiaí",
+    "citySlug": "jundiai",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Arens",
+            "slug": "vila-arens"
+          },
+          {
+            "name": "Jardim Paulista",
+            "slug": "jardim-paulista"
+          },
+          {
+            "name": "Vila Rio Branco",
+            "slug": "vila-rio-branco"
+          },
+          {
+            "name": "Anhangabaú",
+            "slug": "anhangabau"
+          },
+          {
+            "name": "Jardim São Camilo",
+            "slug": "jardim-sao-camilo"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Novo Horizonte",
+            "slug": "jardim-novo-horizonte"
+          },
+          {
+            "name": "Parque Residencial Jundiaí",
+            "slug": "parque-residencial-jundiai"
+          },
+          {
+            "name": "Vila Militar",
+            "slug": "vila-militar"
+          },
+          {
+            "name": "Jardim Ermida",
+            "slug": "jardim-ermida"
+          },
+          {
+            "name": "Ivoturucaia",
+            "slug": "ivoturucaia-jundiai"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Jardim Tamoio",
+            "slug": "jardim-tamoio"
+          },
+          {
+            "name": "Parque Centenário",
+            "slug": "parque-centenario"
+          },
+          {
+            "name": "Vila União",
+            "slug": "vila-uniao"
+          },
+          {
+            "name": "Jardim Colônia",
+            "slug": "jardim-colonia"
+          },
+          {
+            "name": "Vila Rami",
+            "slug": "vila-rami"
+          }
+        ]
+      },
+      {
+        "name": "Zona Leste",
+        "slug": "zona-leste",
+        "neighborhoods": [
+          {
+            "name": "Jardim Shangrilá",
+            "slug": "jardim-shangrila"
+          },
+          {
+            "name": "Jardim Pacaembu",
+            "slug": "jardim-pacaembu"
+          },
+          {
+            "name": "Vila Progresso",
+            "slug": "vila-progresso"
+          },
+          {
+            "name": "Medeiros",
+            "slug": "medeiros"
+          },
+          {
+            "name": "Jardim Nazareth",
+            "slug": "jardim-nazareth"
+          }
+        ]
+      },
+      {
+        "name": "Zona Oeste",
+        "slug": "zona-oeste",
+        "neighborhoods": [
+          {
+            "name": "Vila Aparecida",
+            "slug": "vila-aparecida"
+          },
+          {
+            "name": "Jardim Murumbi",
+            "slug": "jardim-murumbi"
+          },
+          {
+            "name": "Tulipas",
+            "slug": "tulipas"
+          },
+          {
+            "name": "Jardim Vista Alegre",
+            "slug": "jardim-vista-alegre"
+          },
+          {
+            "name": "Retiro",
+            "slug": "retiro"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Mairiporã",
+    "citySlug": "mairipora",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Galvão",
+            "slug": "vila-galvao"
+          },
+          {
+            "name": "Jardim Maia",
+            "slug": "jardim-maia"
+          },
+          {
+            "name": "Vila São João",
+            "slug": "vila-sao-joao"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Terra Preta",
+            "slug": "terra-preta"
+          },
+          {
+            "name": "Jardim Itaoca",
+            "slug": "jardim-itaoca"
+          },
+          {
+            "name": "Bairro Pinhal",
+            "slug": "bairro-pinhal"
+          }
+        ]
+      },
+      {
+        "name": "Condomínios e Chácaras",
+        "slug": "condominios-e-chacaras",
+        "neighborhoods": [
+          {
+            "name": "Condomínio Portal dos Pinheiros",
+            "slug": "portal-dos-pinheiros"
+          },
+          {
+            "name": "Chácara Alvorada",
+            "slug": "chacara-alvorada"
+          },
+          {
+            "name": "Chácaras Reunidas",
+            "slug": "chacaras-reunidas"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Maricá",
+    "citySlug": "marica",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região Metropolitana",
+    "region": "Leste Metropolitano",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Araçatiba",
+            "slug": "aracatiba"
+          },
+          {
+            "name": "Inoã",
+            "slug": "inoa"
+          },
+          {
+            "name": "Itaipuaçu",
+            "slug": "itaipuacu"
+          }
+        ]
+      },
+      {
+        "name": "Praias",
+        "slug": "praias",
+        "neighborhoods": [
+          {
+            "name": "Barra de Maricá",
+            "slug": "barra-de-marica"
+          },
+          {
+            "name": "Ponta Negra",
+            "slug": "ponta-negra"
+          },
+          {
+            "name": "Guaratiba",
+            "slug": "guaratiba-marica"
+          },
+          {
+            "name": "Cordeirinho",
+            "slug": "cordeirinho"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Mauá",
+    "citySlug": "maua",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-maua",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-maua"
+          },
+          {
+            "name": "Vila Bocaina",
+            "slug": "vila-bocaina"
+          },
+          {
+            "name": "Jardim Zaíra",
+            "slug": "jardim-zaira"
+          }
+        ]
+      },
+      {
+        "name": "Zona Leste",
+        "slug": "zona-leste-maua",
+        "neighborhoods": [
+          {
+            "name": "Parque das Américas",
+            "slug": "parque-das-americas"
+          },
+          {
+            "name": "Jardim Itapeva",
+            "slug": "jardim-itapeva"
+          }
+        ]
+      },
+      {
+        "name": "Zona Oeste",
+        "slug": "zona-oeste-maua",
+        "neighborhoods": [
+          {
+            "name": "Vila Assis Brasil",
+            "slug": "vila-assis-brasil"
+          },
+          {
+            "name": "Vila Magini",
+            "slug": "vila-magini"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Mesquita",
+    "citySlug": "mesquita",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Edson Passos",
+            "slug": "edson-passos"
+          },
+          {
+            "name": "Jacutinga",
+            "slug": "jacutinga"
+          },
+          {
+            "name": "Banco de Areia",
+            "slug": "banco-de-areia"
+          },
+          {
+            "name": "Vale das Pedrinhas",
+            "slug": "vale-das-pedrinhas"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Mogi das Cruzes",
+    "citySlug": "mogi-das-cruzes",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-mogi",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-mogi"
+          },
+          {
+            "name": "Mogi Moderno",
+            "slug": "mogi-moderno"
+          },
+          {
+            "name": "Alto Ipiranga",
+            "slug": "alto-ipiranga"
+          },
+          {
+            "name": "Vila Oliveira",
+            "slug": "vila-oliveira"
+          }
+        ]
+      },
+      {
+        "name": "Leste",
+        "slug": "leste-mogi",
+        "neighborhoods": [
+          {
+            "name": "Braz Cubas",
+            "slug": "braz-cubas"
+          },
+          {
+            "name": "Jundiapeba",
+            "slug": "jundiapeba"
+          },
+          {
+            "name": "Vila Industrial",
+            "slug": "vila-industrial"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte-mogi",
+        "neighborhoods": [
+          {
+            "name": "César de Souza",
+            "slug": "cesar-de-souza"
+          },
+          {
+            "name": "Socorro",
+            "slug": "socorro-mogi"
+          },
+          {
+            "name": "Jardim Universo",
+            "slug": "jardim-universo"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Mongaguá",
+    "citySlug": "mongagua",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vera Cruz",
+            "slug": "vera-cruz"
+          },
+          {
+            "name": "Vila Atlântica",
+            "slug": "vila-atlantica"
+          },
+          {
+            "name": "Jardim Praia Grande",
+            "slug": "jardim-praia-grande"
+          }
+        ]
+      },
+      {
+        "name": "Balneários",
+        "slug": "balnearios",
+        "neighborhoods": [
+          {
+            "name": "Agenor de Campos",
+            "slug": "agenor-de-campos"
+          },
+          {
+            "name": "Flórida Mirim",
+            "slug": "florida-mirim"
+          },
+          {
+            "name": "Jardim Regina",
+            "slug": "jardim-regina"
+          },
+          {
+            "name": "Balneário Itaguai",
+            "slug": "balneario-itaguai"
+          },
+          {
+            "name": "Jardim Leonor",
+            "slug": "jardim-leonor"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Nazaré Paulista",
+    "citySlug": "nazare-paulista",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Nova",
+            "slug": "vila-nova"
+          },
+          {
+            "name": "Jardim Pinheiros",
+            "slug": "jardim-pinheiros"
+          }
+        ]
+      },
+      {
+        "name": "Bairros",
+        "slug": "bairros",
+        "neighborhoods": [
+          {
+            "name": "Bairro da Represa",
+            "slug": "bairro-da-represa"
+          },
+          {
+            "name": "Laranjal Paulista",
+            "slug": "laranjal-paulista"
+          },
+          {
+            "name": "Cachoeira",
+            "slug": "cachoeira"
+          },
+          {
+            "name": "Bairro dos Fernandes",
+            "slug": "bairro-dos-fernandes"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Nilópolis",
+    "citySlug": "nilopolis",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Novo Horizonte",
+            "slug": "novo-horizonte"
+          },
+          {
+            "name": "Frigorífico",
+            "slug": "frigorifico"
+          }
+        ]
+      },
+      {
+        "name": "Olinda",
+        "slug": "olinda",
+        "neighborhoods": [
+          {
+            "name": "Olinda",
+            "slug": "olinda"
+          },
+          {
+            "name": "Cabral",
+            "slug": "cabral"
+          },
+          {
+            "name": "Jardim Catarina",
+            "slug": "jardim-catarina"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Niterói",
+    "citySlug": "niteroi",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região Metropolitana",
+    "region": "Leste Metropolitano",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "São Domingos",
+            "slug": "sao-domingos"
+          },
+          {
+            "name": "Ingá",
+            "slug": "inga"
+          },
+          {
+            "name": "Gragoatá",
+            "slug": "gragoata"
+          },
+          {
+            "name": "Ponta d'Areia",
+            "slug": "ponta-dareia"
+          }
+        ]
+      },
+      {
+        "name": "Praias da Baía",
+        "slug": "praias-da-baia",
+        "neighborhoods": [
+          {
+            "name": "Icaraí",
+            "slug": "icarai"
+          },
+          {
+            "name": "Santa Rosa",
+            "slug": "santa-rosa"
+          },
+          {
+            "name": "Charitas",
+            "slug": "charitas"
+          },
+          {
+            "name": "Jurujuba",
+            "slug": "jurujuba"
+          },
+          {
+            "name": "Boa Viagem",
+            "slug": "boa-viagem"
+          }
+        ]
+      },
+      {
+        "name": "Oceânica",
+        "slug": "oceanica",
+        "neighborhoods": [
+          {
+            "name": "Piratininga",
+            "slug": "piratininga"
+          },
+          {
+            "name": "Camboinhas",
+            "slug": "camboinhas"
+          },
+          {
+            "name": "Itaipu",
+            "slug": "itaipu"
+          },
+          {
+            "name": "Itacoatiara",
+            "slug": "itacoatiara"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte",
+        "neighborhoods": [
+          {
+            "name": "Barreto",
+            "slug": "barreto"
+          },
+          {
+            "name": "Engenhoca",
+            "slug": "engenhoca"
+          },
+          {
+            "name": "Fonseca",
+            "slug": "fonseca"
+          },
+          {
+            "name": "Caramujo",
+            "slug": "caramujo"
+          },
+          {
+            "name": "Cubango",
+            "slug": "cubango"
+          },
+          {
+            "name": "Viçoso Jardim",
+            "slug": "vicoso-jardim"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Nova Iguaçu",
+    "citySlug": "nova-iguacu",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Moquetá",
+            "slug": "moqueta"
+          },
+          {
+            "name": "Jardim Iguaçu",
+            "slug": "jardim-iguacu"
+          },
+          {
+            "name": "Posse",
+            "slug": "posse"
+          },
+          {
+            "name": "Cabuçu",
+            "slug": "cabucu"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Austin",
+            "slug": "austin"
+          },
+          {
+            "name": "Comendador Soares",
+            "slug": "comendador-soares"
+          },
+          {
+            "name": "Jardim Tropical",
+            "slug": "jardim-tropical"
+          },
+          {
+            "name": "Km 32",
+            "slug": "km-32"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Califórnia",
+            "slug": "california"
+          },
+          {
+            "name": "Jardim Alvorada",
+            "slug": "jardim-alvorada"
+          },
+          {
+            "name": "Vila de Cava",
+            "slug": "vila-de-cava"
+          },
+          {
+            "name": "Prados Verdes",
+            "slug": "prados-verdes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Peruíbe",
+    "citySlug": "peruibe",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Jardim São João",
+            "slug": "jardim-sao-joao"
+          },
+          {
+            "name": "Vila Tupi",
+            "slug": "vila-tupi"
+          },
+          {
+            "name": "Estância São Pedro",
+            "slug": "estancia-sao-pedro"
+          }
+        ]
+      },
+      {
+        "name": "Balneários",
+        "slug": "balnearios",
+        "neighborhoods": [
+          {
+            "name": "Balneário Stella Maris",
+            "slug": "balneario-stella-maris"
+          },
+          {
+            "name": "Hortência",
+            "slug": "hortencia"
+          },
+          {
+            "name": "Convento",
+            "slug": "convento"
+          },
+          {
+            "name": "Guaraú",
+            "slug": "guarau"
+          },
+          {
+            "name": "Jardim Beira Mar",
+            "slug": "jardim-beira-mar"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Petrópolis",
+    "citySlug": "petropolis",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Serra Fluminense",
+    "region": "Serra Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Alto da Serra",
+            "slug": "alto-da-serra"
+          },
+          {
+            "name": "Bingen",
+            "slug": "bingen"
+          },
+          {
+            "name": "Castelânea",
+            "slug": "castelania"
+          },
+          {
+            "name": "Petrópolis",
+            "slug": "petropolis-bairro"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Itaipava",
+            "slug": "itaipava"
+          },
+          {
+            "name": "Pedro do Rio",
+            "slug": "pedro-do-rio"
+          },
+          {
+            "name": "Posse",
+            "slug": "posse-petropolis"
+          },
+          {
+            "name": "Araras",
+            "slug": "araras"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Corrêas",
+            "slug": "correas"
+          },
+          {
+            "name": "Nogueira",
+            "slug": "nogueira"
+          },
+          {
+            "name": "Quitandinha",
+            "slug": "quitandinha"
+          },
+          {
+            "name": "Retiro",
+            "slug": "retiro"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Poá",
+    "citySlug": "poa",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-poa",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-poa"
+          },
+          {
+            "name": "Vila Açoreana",
+            "slug": "vila-acoreana"
+          },
+          {
+            "name": "Vila Perracini",
+            "slug": "vila-perracini"
+          }
+        ]
+      },
+      {
+        "name": "Leste",
+        "slug": "leste-poa",
+        "neighborhoods": [
+          {
+            "name": "Cidade Kemel",
+            "slug": "cidade-kemel"
+          },
+          {
+            "name": "Calmon Viana",
+            "slug": "calmon-viana"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Praia Grande",
+    "citySlug": "praia-grande",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Boqueirão",
+            "slug": "boqueirao"
+          },
+          {
+            "name": "Guilhermina",
+            "slug": "guilhermina"
+          },
+          {
+            "name": "Canto do Forte",
+            "slug": "canto-do-forte"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Samambaia",
+            "slug": "samambaia"
+          },
+          {
+            "name": "Mirim",
+            "slug": "mirim"
+          },
+          {
+            "name": "Quietude",
+            "slug": "quietude"
+          },
+          {
+            "name": "Ribeirópolis",
+            "slug": "riberopolis"
+          },
+          {
+            "name": "Flórida",
+            "slug": "florida"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Aviação",
+            "slug": "aviacao"
+          },
+          {
+            "name": "Ocian",
+            "slug": "ocian"
+          },
+          {
+            "name": "Tupi",
+            "slug": "tupi"
+          },
+          {
+            "name": "Real",
+            "slug": "real"
+          },
+          {
+            "name": "Sítio do Campo",
+            "slug": "sitio-do-campo"
+          },
+          {
+            "name": "Anhanguera",
+            "slug": "anhanguera"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Queimados",
+    "citySlug": "queimados",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Camarim",
+            "slug": "vila-camarim"
+          },
+          {
+            "name": "Jardim Paraíba",
+            "slug": "jardim-paraiba"
+          },
+          {
+            "name": "Inconfidência",
+            "slug": "inconfidencia"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Queimados",
+            "slug": "jardim-queimados"
+          },
+          {
+            "name": "Malvinas",
+            "slug": "malvinas"
+          },
+          {
+            "name": "São Roque",
+            "slug": "sao-roque"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Resende",
+    "citySlug": "resende",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Sul Fluminense",
+    "region": "Sul Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Jardim Alegria",
+            "slug": "jardim-alegria"
+          },
+          {
+            "name": "Vila Julieta",
+            "slug": "vila-julieta"
+          },
+          {
+            "name": "Fazenda da Barra",
+            "slug": "fazenda-da-barra"
+          }
+        ]
+      },
+      {
+        "name": "Itatiaia",
+        "slug": "itatiaia",
+        "neighborhoods": [
+          {
+            "name": "Itatiaia",
+            "slug": "itatiaia"
+          },
+          {
+            "name": "Vila Residencial",
+            "slug": "vila-residencial"
+          },
+          {
+            "name": "Penedo",
+            "slug": "penedo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Ribeirão Pires",
+    "citySlug": "ribeirao-pires",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-ribeirao-pires",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-ribeirao-pires"
+          },
+          {
+            "name": "Santa Luzia",
+            "slug": "santa-luzia-rp"
+          },
+          {
+            "name": "Jardim Pastoril",
+            "slug": "jardim-pastoril"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte-ribeirao-pires",
+        "neighborhoods": [
+          {
+            "name": "Ouro Fino",
+            "slug": "ouro-fino"
+          },
+          {
+            "name": "Colônia",
+            "slug": "colonia-rp"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Rio de Janeiro",
+    "citySlug": "rio-de-janeiro",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Rio de Janeiro",
+    "region": "Rio de Janeiro",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Lapa",
+            "slug": "lapa"
+          },
+          {
+            "name": "Glória",
+            "slug": "gloria"
+          },
+          {
+            "name": "Catete",
+            "slug": "catete"
+          },
+          {
+            "name": "Flamengo",
+            "slug": "flamengo"
+          },
+          {
+            "name": "Botafogo",
+            "slug": "botafogo"
+          },
+          {
+            "name": "Cinelândia",
+            "slug": "cinelandia"
+          },
+          {
+            "name": "Saúde",
+            "slug": "saude"
+          },
+          {
+            "name": "Gamboa",
+            "slug": "gamboa"
+          },
+          {
+            "name": "Santo Cristo",
+            "slug": "santo-cristo"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Copacabana",
+            "slug": "copacabana"
+          },
+          {
+            "name": "Ipanema",
+            "slug": "ipanema"
+          },
+          {
+            "name": "Leblon",
+            "slug": "leblon"
+          },
+          {
+            "name": "Leme",
+            "slug": "leme"
+          },
+          {
+            "name": "Laranjeiras",
+            "slug": "laranjeiras"
+          },
+          {
+            "name": "Humaitá",
+            "slug": "humaita"
+          },
+          {
+            "name": "Urca",
+            "slug": "urca"
+          },
+          {
+            "name": "Gávea",
+            "slug": "gavea"
+          },
+          {
+            "name": "Jardim Botânico",
+            "slug": "jardim-botanico"
+          },
+          {
+            "name": "Lagoa",
+            "slug": "lagoa"
+          },
+          {
+            "name": "Cosme Velho",
+            "slug": "cosme-velho"
+          },
+          {
+            "name": "Santa Teresa",
+            "slug": "santa-teresa"
+          }
+        ]
+      },
+      {
+        "name": "Zona Oeste",
+        "slug": "zona-oeste",
+        "neighborhoods": [
+          {
+            "name": "Barra da Tijuca",
+            "slug": "barra-da-tijuca"
+          },
+          {
+            "name": "Recreio dos Bandeirantes",
+            "slug": "recreio-dos-bandeirantes"
+          },
+          {
+            "name": "Jacarepaguá",
+            "slug": "jacarepagua"
+          },
+          {
+            "name": "Taquara",
+            "slug": "taquara"
+          },
+          {
+            "name": "Campo Grande",
+            "slug": "campo-grande"
+          },
+          {
+            "name": "Santa Cruz",
+            "slug": "santa-cruz"
+          },
+          {
+            "name": "Guaratiba",
+            "slug": "guaratiba"
+          },
+          {
+            "name": "Bangu",
+            "slug": "bangu"
+          },
+          {
+            "name": "Realengo",
+            "slug": "realengo"
+          },
+          {
+            "name": "Padre Miguel",
+            "slug": "padre-miguel"
+          },
+          {
+            "name": "Deodoro",
+            "slug": "deodoro"
+          },
+          {
+            "name": "Cosmos",
+            "slug": "cosmos"
+          },
+          {
+            "name": "Inhoaíba",
+            "slug": "inhoaiba"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Tijuca",
+            "slug": "tijuca"
+          },
+          {
+            "name": "Vila Isabel",
+            "slug": "vila-isabel"
+          },
+          {
+            "name": "Maracanã",
+            "slug": "maracana"
+          },
+          {
+            "name": "São Cristóvão",
+            "slug": "sao-cristovao"
+          },
+          {
+            "name": "Méier",
+            "slug": "meier"
+          },
+          {
+            "name": "Engenho de Dentro",
+            "slug": "engenho-de-dentro"
+          },
+          {
+            "name": "Engenho Novo",
+            "slug": "engenho-novo"
+          },
+          {
+            "name": "Ramos",
+            "slug": "ramos"
+          },
+          {
+            "name": "Bonsucesso",
+            "slug": "bonsucesso"
+          },
+          {
+            "name": "Penha",
+            "slug": "penha"
+          },
+          {
+            "name": "Olaria",
+            "slug": "olaria"
+          },
+          {
+            "name": "Ilha do Governador",
+            "slug": "ilha-do-governador"
+          },
+          {
+            "name": "Irajá",
+            "slug": "iraja"
+          },
+          {
+            "name": "Madureira",
+            "slug": "madureira"
+          },
+          {
+            "name": "Cascadura",
+            "slug": "cascadura"
+          },
+          {
+            "name": "Anchieta",
+            "slug": "anchieta"
+          },
+          {
+            "name": "Turiaçu",
+            "slug": "turiacu"
+          },
+          {
+            "name": "Rocha Miranda",
+            "slug": "rocha-miranda"
+          },
+          {
+            "name": "Pavuna",
+            "slug": "pavuna"
+          },
+          {
+            "name": "Acari",
+            "slug": "acari"
+          },
+          {
+            "name": "Costa Barros",
+            "slug": "costa-barros"
+          },
+          {
+            "name": "Coelho Neto",
+            "slug": "coelho-neto"
+          },
+          {
+            "name": "Complexo do Alemão",
+            "slug": "complexo-do-alemao"
+          },
+          {
+            "name": "Vigário Geral",
+            "slug": "vigario-geral"
+          },
+          {
+            "name": "Honório Gurgel",
+            "slug": "honorio-gurgel"
+          }
+        ]
+      },
+      {
+        "name": "Grande Tijuca",
+        "slug": "grande-tijuca",
+        "neighborhoods": [
+          {
+            "name": "Alto da Boa Vista",
+            "slug": "alto-da-boa-vista"
+          },
+          {
+            "name": "Grajaú",
+            "slug": "grajau"
+          },
+          {
+            "name": "Andaraí",
+            "slug": "andara"
+          },
+          {
+            "name": "Praça da Bandeira",
+            "slug": "praca-da-bandeira"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Rio Grande da Serra",
+    "citySlug": "rio-grande-da-serra",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-rio-grande-serra",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-rio-grande-serra"
+          },
+          {
+            "name": "Vila Lopes",
+            "slug": "vila-lopes"
+          },
+          {
+            "name": "Parque América",
+            "slug": "parque-america-rgs"
+          }
+        ]
+      },
+      {
+        "name": "Zona Rural",
+        "slug": "zona-rural-rio-grande",
+        "neighborhoods": [
+          {
+            "name": "Pedreira",
+            "slug": "pedreira-rgs"
+          },
+          {
+            "name": "Rio Pequeno",
+            "slug": "rio-pequeno-rgs"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Salesópolis",
+    "citySlug": "salesopolis",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-salesopolis",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-salesopolis"
+          },
+          {
+            "name": "Vila Nova",
+            "slug": "vila-nova-salesopolis"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Santa Isabel",
+    "citySlug": "santa-isabel",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-santa-isabel",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-santa-isabel"
+          },
+          {
+            "name": "Jardim Eldorado",
+            "slug": "jardim-eldorado"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Santo André",
+    "citySlug": "santo-andre",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-santo-andre",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-santo-andre"
+          },
+          {
+            "name": "Casa Branca",
+            "slug": "casa-branca-santo-andre"
+          },
+          {
+            "name": "Vila Bastos",
+            "slug": "vila-bastos"
+          },
+          {
+            "name": "Vila Assunção",
+            "slug": "vila-assuncao"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte-santo-andre",
+        "neighborhoods": [
+          {
+            "name": "Vila Curuçá",
+            "slug": "vila-curuca"
+          },
+          {
+            "name": "Parque Novo Oratório",
+            "slug": "parque-novo-oratorio"
+          },
+          {
+            "name": "Jardim Santo André",
+            "slug": "jardim-santo-andre"
+          },
+          {
+            "name": "Parque das Nações",
+            "slug": "parque-das-nacoes"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul-santo-andre",
+        "neighborhoods": [
+          {
+            "name": "Campestre",
+            "slug": "campestre-santo-andre"
+          },
+          {
+            "name": "Jardim",
+            "slug": "bairro-jardim-santo-andre"
+          },
+          {
+            "name": "Vila Gilda",
+            "slug": "vila-gilda"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Santos",
+    "citySlug": "santos",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Paquetá",
+            "slug": "paqueta"
+          },
+          {
+            "name": "Vila Mathias",
+            "slug": "vila-mathias"
+          },
+          {
+            "name": "Vila Nova",
+            "slug": "vila-nova"
+          },
+          {
+            "name": "Macuco",
+            "slug": "macuco"
+          },
+          {
+            "name": "Valongo",
+            "slug": "valongo"
+          }
+        ]
+      },
+      {
+        "name": "Orla",
+        "slug": "orla",
+        "neighborhoods": [
+          {
+            "name": "Gonzaga",
+            "slug": "gonzaga"
+          },
+          {
+            "name": "Boqueirão",
+            "slug": "boqueirao"
+          },
+          {
+            "name": "Embaré",
+            "slug": "embare"
+          },
+          {
+            "name": "Aparecida",
+            "slug": "aparecida"
+          },
+          {
+            "name": "José Menino",
+            "slug": "jose-menino"
+          },
+          {
+            "name": "Pompéia",
+            "slug": "pompeia"
+          },
+          {
+            "name": "Ponta da Praia",
+            "slug": "ponta-da-praia"
+          }
+        ]
+      },
+      {
+        "name": "Morros",
+        "slug": "morros",
+        "neighborhoods": [
+          {
+            "name": "Monte Serrat",
+            "slug": "monte-serrat"
+          },
+          {
+            "name": "Jabaquara",
+            "slug": "jabaquara"
+          },
+          {
+            "name": "Morro Nova Cintra",
+            "slug": "morro-nova-cintra"
+          },
+          {
+            "name": "São Manoel",
+            "slug": "sao-manoel"
+          },
+          {
+            "name": "Morro José Menino",
+            "slug": "morro-jose-menino"
+          }
+        ]
+      },
+      {
+        "name": "Zona Noroeste",
+        "slug": "zona-noroeste",
+        "neighborhoods": [
+          {
+            "name": "Areia Branca",
+            "slug": "areia-branca"
+          },
+          {
+            "name": "Castelo",
+            "slug": "castelo"
+          },
+          {
+            "name": "Marapé",
+            "slug": "marape"
+          },
+          {
+            "name": "Santa Maria",
+            "slug": "santa-maria"
+          },
+          {
+            "name": "Vila Belmiro",
+            "slug": "vila-belmiro"
+          },
+          {
+            "name": "Rádio Clube",
+            "slug": "radio-clube"
+          },
+          {
+            "name": "Vila Matias",
+            "slug": "vila-matias"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "São Bernardo do Campo",
+    "citySlug": "sao-bernardo-do-campo",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-sao-bernardo",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-sao-bernardo"
+          },
+          {
+            "name": "Baeta Neves",
+            "slug": "baeta-neves"
+          },
+          {
+            "name": "Vila Dusi",
+            "slug": "vila-dusi"
+          },
+          {
+            "name": "Jardim do Mar",
+            "slug": "jardim-do-mar"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte-sao-bernardo",
+        "neighborhoods": [
+          {
+            "name": "Rudge Ramos",
+            "slug": "rudge-ramos"
+          },
+          {
+            "name": "Paulicéia",
+            "slug": "pauliceia-sbc"
+          },
+          {
+            "name": "Taboão",
+            "slug": "taboao-sbc"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul-sao-bernardo",
+        "neighborhoods": [
+          {
+            "name": "Alvarenga",
+            "slug": "alvarenga-sbc"
+          },
+          {
+            "name": "Assunção",
+            "slug": "assuncao-sbc"
+          },
+          {
+            "name": "Cooperativa",
+            "slug": "cooperativa-sbc"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "São Caetano do Sul",
+    "citySlug": "sao-caetano-do-sul",
+    "zone": "ABC Paulista",
+    "region": "Grande ABC",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-sao-caetano",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-sao-caetano"
+          },
+          {
+            "name": "Fundação",
+            "slug": "fundacao-scs"
+          },
+          {
+            "name": "Santa Paula",
+            "slug": "santa-paula-scs"
+          }
+        ]
+      },
+      {
+        "name": "Zona Leste",
+        "slug": "zona-leste-sao-caetano",
+        "neighborhoods": [
+          {
+            "name": "Nova Gerty",
+            "slug": "nova-gerty"
+          },
+          {
+            "name": "Osvaldo Cruz",
+            "slug": "osvaldo-cruz-scs"
+          }
+        ]
+      },
+      {
+        "name": "Zona Oeste",
+        "slug": "zona-oeste-sao-caetano",
+        "neighborhoods": [
+          {
+            "name": "Barcelona",
+            "slug": "barcelona-scs"
+          },
+          {
+            "name": "Cerâmica",
+            "slug": "ceramica-scs"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "São Gonçalo",
+    "citySlug": "sao-goncalo",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Região Metropolitana",
+    "region": "Leste Metropolitano",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Alcântara",
+            "slug": "alcantara"
+          },
+          {
+            "name": "Paraíso",
+            "slug": "paraiso"
+          },
+          {
+            "name": "Boa Vista",
+            "slug": "boa-vista"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Neves",
+            "slug": "neves"
+          },
+          {
+            "name": "Colubandê",
+            "slug": "colubande"
+          },
+          {
+            "name": "Itaoca",
+            "slug": "itaoca"
+          },
+          {
+            "name": "Largo da Idéia",
+            "slug": "largo-da-ideia"
+          },
+          {
+            "name": "Monjolos",
+            "slug": "monjolos"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Arsenal",
+            "slug": "arsenal"
+          },
+          {
+            "name": "Patronato",
+            "slug": "patronato"
+          },
+          {
+            "name": "Vista Alegre",
+            "slug": "vista-alegre"
+          },
+          {
+            "name": "Barro Vermelho",
+            "slug": "barro-vermelho"
+          },
+          {
+            "name": "Zé Garoto",
+            "slug": "ze-garoto"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "São João de Meriti",
+    "citySlug": "sao-joao-de-meriti",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Baixada Fluminense",
+    "region": "Baixada Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vilar dos Teles",
+            "slug": "vilar-dos-teles"
+          },
+          {
+            "name": "Coelho da Rocha",
+            "slug": "coelho-da-rocha"
+          },
+          {
+            "name": "Éden",
+            "slug": "eden"
+          }
+        ]
+      },
+      {
+        "name": "Leste",
+        "slug": "leste",
+        "neighborhoods": [
+          {
+            "name": "Jardim Meriti",
+            "slug": "jardim-meriti"
+          },
+          {
+            "name": "Parque Analândia",
+            "slug": "parque-analandia"
+          },
+          {
+            "name": "Tibagi",
+            "slug": "tibagi"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "city": "São Paulo",
+    "citySlug": "sao-paulo",
+    "uf": "SP",
+    "ufSlug": "sp",
+    "zone": "São Paulo",
+    "region": "São Paulo",
+    "districts": [
+      {
+        "name": "Itaquera",
+        "slug": "itaquera",
+        "neighborhoods": [
+          {
+            "name": "Itaquera",
+            "slug": "itaquera"
+          },
+          {
+            "name": "Cidade Líder",
+            "slug": "cidade-lider"
+          },
+          {
+            "name": "José Bonifácio",
+            "slug": "jose-bonifacio"
+          },
+          {
+            "name": "Parque do Carmo",
+            "slug": "parque-do-carmo"
+          },
+          {
+            "name": "Vila Carmosina",
+            "slug": "vila-carmosina"
+          },
+          {
+            "name": "Artur Alvim",
+            "slug": "artur-alvim"
+          },
+          {
+            "name": "Vila Campanela",
+            "slug": "vila-campanela"
+          },
+          {
+            "name": "Cidade A.E Carvalho",
+            "slug": "cidade-a-e-carvalho"
+          },
+          {
+            "name": "Conjunto Habitacional A E Carvalho",
+            "slug": "conjunto-habitacional-a-e-carvalho"
+          },
+          {
+            "name": "Parque Guarani",
+            "slug": "parque-guarani"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "São Mateus",
+        "slug": "sao-mateus",
+        "neighborhoods": [
+          {
+            "name": "São Mateus",
+            "slug": "sao-mateus"
+          },
+          {
+            "name": "Cidade São Mateus",
+            "slug": "cidade-sao-mateus"
+          },
+          {
+            "name": "Parque São Rafael",
+            "slug": "parque-sao-rafael"
+          },
+          {
+            "name": "Jardim Iguatemi",
+            "slug": "jardim-iguatemi"
+          },
+          {
+            "name": "Jardim Nove de Julho",
+            "slug": "jardim-nove-de-julho"
+          },
+          {
+            "name": "Vila Flávia",
+            "slug": "vila-flavia"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "Guaianases",
+        "slug": "guaianases",
+        "neighborhoods": [
+          {
+            "name": "Guaianases",
+            "slug": "guaianases"
+          },
+          {
+            "name": "Lajeado",
+            "slug": "lajeado"
+          },
+          {
+            "name": "Jardim São Paulo",
+            "slug": "jardim-sao-paulo-guaianases"
+          },
+          {
+            "name": "Vila Minerva",
+            "slug": "vila-minerva"
+          },
+          {
+            "name": "Jardim Aurora",
+            "slug": "jardim-aurora"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "São Miguel Paulista",
+        "slug": "sao-miguel-paulista",
+        "neighborhoods": [
+          {
+            "name": "São Miguel Paulista",
+            "slug": "sao-miguel-paulista"
+          },
+          {
+            "name": "Vila Jacuí",
+            "slug": "vila-jacui"
+          },
+          {
+            "name": "Jardim Helena",
+            "slug": "jardim-helena"
+          },
+          {
+            "name": "Vila Curuçá",
+            "slug": "vila-curuca"
+          },
+          {
+            "name": "Jardim Romano",
+            "slug": "jardim-romano"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "Itaim Paulista",
+        "slug": "itaim-paulista",
+        "neighborhoods": [
+          {
+            "name": "Itaim Paulista",
+            "slug": "itaim-paulista"
+          },
+          {
+            "name": "Jardim Nélia",
+            "slug": "jardim-nelia"
+          },
+          {
+            "name": "Vila Curuçá Velha",
+            "slug": "vila-curuca-velha"
+          },
+          {
+            "name": "Jardim Camargo Novo",
+            "slug": "jardim-camargo-novo"
+          },
+          {
+            "name": "Jardim das Oliveiras",
+            "slug": "jardim-das-oliveiras"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "Cidade Tiradentes",
+        "slug": "cidade-tiradentes",
+        "neighborhoods": [
+          {
+            "name": "Cidade Tiradentes",
+            "slug": "cidade-tiradentes"
+          },
+          {
+            "name": "Barro Branco",
+            "slug": "barro-branco"
+          },
+          {
+            "name": "Santa Etelvina",
+            "slug": "santa-etelvina"
+          },
+          {
+            "name": "Jardim Vitória",
+            "slug": "jardim-vitoria"
+          },
+          {
+            "name": "Conjunto Prestes Maia",
+            "slug": "conjunto-prestes-maia"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Extremo Leste"
+      },
+      {
+        "name": "Mooca",
+        "slug": "mooca",
+        "neighborhoods": [
+          {
+            "name": "Mooca",
+            "slug": "mooca"
+          },
+          {
+            "name": "Belém",
+            "slug": "belem"
+          },
+          {
+            "name": "Bresser",
+            "slug": "bresser"
+          },
+          {
+            "name": "Água Rasa",
+            "slug": "agua-rasa"
+          },
+          {
+            "name": "Pari",
+            "slug": "pari"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Tatuapé",
+        "slug": "tatuape",
+        "neighborhoods": [
+          {
+            "name": "Tatuapé",
+            "slug": "tatuape"
+          },
+          {
+            "name": "Carrão",
+            "slug": "carrao"
+          },
+          {
+            "name": "Vila Formosa",
+            "slug": "vila-formosa"
+          },
+          {
+            "name": "Anália Franco",
+            "slug": "analia-franco"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Penha",
+        "slug": "penha",
+        "neighborhoods": [
+          {
+            "name": "Penha",
+            "slug": "penha"
+          },
+          {
+            "name": "Cangaíba",
+            "slug": "cangaiba"
+          },
+          {
+            "name": "Vila Matilde",
+            "slug": "vila-matilde"
+          },
+          {
+            "name": "Ponte Rasa",
+            "slug": "ponte-rasa"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Ermelino Matarazzo",
+        "slug": "ermelino-matarazzo",
+        "neighborhoods": [
+          {
+            "name": "Ermelino Matarazzo",
+            "slug": "ermelino-matarazzo"
+          },
+          {
+            "name": "Jardim Helena",
+            "slug": "jardim-helena"
+          },
+          {
+            "name": "Vila Curuçá",
+            "slug": "vila-curuca"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Sapopemba",
+        "slug": "sapopemba",
+        "neighborhoods": [
+          {
+            "name": "Sapopemba",
+            "slug": "sapopemba"
+          },
+          {
+            "name": "Vila Prudente",
+            "slug": "vila-prudente"
+          },
+          {
+            "name": "São Lucas",
+            "slug": "sao-lucas"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Vila Prudente",
+        "slug": "vila-prudente",
+        "neighborhoods": [
+          {
+            "name": "Vila Prudente",
+            "slug": "vila-prudente-distrito"
+          },
+          {
+            "name": "Ipiranga",
+            "slug": "ipiranga-leste"
+          },
+          {
+            "name": "Sacomã",
+            "slug": "sacoma"
+          },
+          {
+            "name": "Cursino",
+            "slug": "cursino"
+          }
+        ],
+        "zone": "Zona Leste",
+        "region": "Zona Leste"
+      },
+      {
+        "name": "Santana",
+        "slug": "santana",
+        "neighborhoods": [
+          {
+            "name": "Santana",
+            "slug": "santana"
+          },
+          {
+            "name": "Mandaqui",
+            "slug": "mandaqui"
+          },
+          {
+            "name": "Vila Gustavo",
+            "slug": "vila-gustavo"
+          },
+          {
+            "name": "Vila Guilherme",
+            "slug": "vila-guilherme"
+          },
+          {
+            "name": "Vila Maria",
+            "slug": "vila-maria"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Tucuruvi",
+        "slug": "tucuruvi",
+        "neighborhoods": [
+          {
+            "name": "Tucuruvi",
+            "slug": "tucuruvi"
+          },
+          {
+            "name": "Parada Inglesa",
+            "slug": "parada-inglesa"
+          },
+          {
+            "name": "Vila Mazzei",
+            "slug": "vila-mazzei"
+          },
+          {
+            "name": "Jardim Brasil",
+            "slug": "jardim-brasil-zona-norte"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Casa Verde",
+        "slug": "casa-verde",
+        "neighborhoods": [
+          {
+            "name": "Casa Verde",
+            "slug": "casa-verde"
+          },
+          {
+            "name": "Cachoeirinha",
+            "slug": "cachoeirinha"
+          },
+          {
+            "name": "Limão",
+            "slug": "limao"
+          },
+          {
+            "name": "Vila Nova Cachoeirinha",
+            "slug": "vila-nova-cachoeirinha"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Pirituba",
+        "slug": "pirituba",
+        "neighborhoods": [
+          {
+            "name": "Pirituba",
+            "slug": "pirituba"
+          },
+          {
+            "name": "Jaraguá",
+            "slug": "jaragua"
+          },
+          {
+            "name": "São Domingos",
+            "slug": "sao-domingos"
+          },
+          {
+            "name": "Jardim Bonfiglioli",
+            "slug": "jardim-bonfiglioli"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Brasilândia",
+        "slug": "brasilandia",
+        "neighborhoods": [
+          {
+            "name": "Brasilândia",
+            "slug": "brasilandia"
+          },
+          {
+            "name": "Vila Penteado",
+            "slug": "vila-penteado"
+          },
+          {
+            "name": "Jaraguá",
+            "slug": "jaragua-brasilandia"
+          },
+          {
+            "name": "Freguesia do Ó",
+            "slug": "freguesia-do-o"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Tremembé",
+        "slug": "tremembe",
+        "neighborhoods": [
+          {
+            "name": "Tremembé",
+            "slug": "tremembe"
+          },
+          {
+            "name": "Jaçanã",
+            "slug": "jacana"
+          },
+          {
+            "name": "Vila Ede",
+            "slug": "vila-ede"
+          },
+          {
+            "name": "Jardim Damasceno",
+            "slug": "jardim-damasceno"
+          }
+        ],
+        "zone": "Zona Norte",
+        "region": "Zona Norte"
+      },
+      {
+        "name": "Santo Amaro",
+        "slug": "santo-amaro",
+        "neighborhoods": [
+          {
+            "name": "Santo Amaro",
+            "slug": "santo-amaro"
+          },
+          {
+            "name": "Campo Belo",
+            "slug": "campo-belo"
+          },
+          {
+            "name": "Brooklin",
+            "slug": "brooklin"
+          },
+          {
+            "name": "Vila Olímpia",
+            "slug": "vila-olimpia"
+          },
+          {
+            "name": "Itaim Bibi",
+            "slug": "itaim-bibi"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Jabaquara",
+        "slug": "jabaquara",
+        "neighborhoods": [
+          {
+            "name": "Jabaquara",
+            "slug": "jabaquara"
+          },
+          {
+            "name": "Vila Guarani",
+            "slug": "vila-guarani"
+          },
+          {
+            "name": "Sacomã",
+            "slug": "sacoma"
+          },
+          {
+            "name": "Cursino",
+            "slug": "cursino"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Ipiranga",
+        "slug": "ipiranga",
+        "neighborhoods": [
+          {
+            "name": "Ipiranga",
+            "slug": "ipiranga"
+          },
+          {
+            "name": "Vila Prudente",
+            "slug": "vila-prudente"
+          },
+          {
+            "name": "Água Rasa",
+            "slug": "agua-rasa"
+          },
+          {
+            "name": "Belém",
+            "slug": "belem"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Cidade Ademar",
+        "slug": "cidade-ademar",
+        "neighborhoods": [
+          {
+            "name": "Cidade Ademar",
+            "slug": "cidade-ademar"
+          },
+          {
+            "name": "Pedreira",
+            "slug": "pedreira"
+          },
+          {
+            "name": "Americanópolis",
+            "slug": "americanopolis"
+          },
+          {
+            "name": "Vila Missionária",
+            "slug": "vila-missionaria"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Campo Limpo",
+        "slug": "campo-limpo",
+        "neighborhoods": [
+          {
+            "name": "Campo Limpo",
+            "slug": "campo-limpo"
+          },
+          {
+            "name": "Vila Andrade",
+            "slug": "vila-andrade"
+          },
+          {
+            "name": "Jardim São Luís",
+            "slug": "jardim-sao-luis"
+          },
+          {
+            "name": "Capão Redondo",
+            "slug": "capao-redondo"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "M'Boi Mirim",
+        "slug": "mboi-mirim",
+        "neighborhoods": [
+          {
+            "name": "Jardim Ângela",
+            "slug": "jardim-angela"
+          },
+          {
+            "name": "Jardim São Luís",
+            "slug": "jardim-sao-luis-mboi"
+          },
+          {
+            "name": "Vila das Belezas",
+            "slug": "vila-das-belezas"
+          },
+          {
+            "name": "Recanto Campo Belo",
+            "slug": "recanto-campo-belo"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Parelheiros",
+        "slug": "parelheiros",
+        "neighborhoods": [
+          {
+            "name": "Parelheiros",
+            "slug": "parelheiros"
+          },
+          {
+            "name": "Grajaú",
+            "slug": "grajau"
+          },
+          {
+            "name": "Marsilac",
+            "slug": "marsilac"
+          },
+          {
+            "name": "Cidade Dutra",
+            "slug": "cidade-dutra"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Morumbi",
+        "slug": "morumbi",
+        "neighborhoods": [
+          {
+            "name": "Morumbi",
+            "slug": "morumbi"
+          },
+          {
+            "name": "Vila Sônia",
+            "slug": "vila-sonia"
+          },
+          {
+            "name": "Raposo Tavares",
+            "slug": "raposo-tavares"
+          },
+          {
+            "name": "Jardim Panorama",
+            "slug": "jardim-panorama"
+          }
+        ],
+        "zone": "Zona Sul",
+        "region": "Zona Sul"
+      },
+      {
+        "name": "Pinheiros",
+        "slug": "pinheiros",
+        "neighborhoods": [
+          {
+            "name": "Pinheiros",
+            "slug": "pinheiros"
+          },
+          {
+            "name": "Vila Madalena",
+            "slug": "vila-madalena"
+          },
+          {
+            "name": "Alto de Pinheiros",
+            "slug": "alto-de-pinheiros"
+          },
+          {
+            "name": "Jardim América",
+            "slug": "jardim-america"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      },
+      {
+        "name": "Butantã",
+        "slug": "butanta",
+        "neighborhoods": [
+          {
+            "name": "Butantã",
+            "slug": "butanta"
+          },
+          {
+            "name": "Rio Pequeno",
+            "slug": "rio-pequeno"
+          },
+          {
+            "name": "Vila Jaguara",
+            "slug": "vila-jaguara"
+          },
+          {
+            "name": "Jardim Bonfiglioli",
+            "slug": "jardim-bonfiglioli"
+          },
+          {
+            "name": "Morumbi",
+            "slug": "morumbi-butanta"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      },
+      {
+        "name": "Lapa",
+        "slug": "lapa",
+        "neighborhoods": [
+          {
+            "name": "Lapa",
+            "slug": "lapa"
+          },
+          {
+            "name": "Barra Funda",
+            "slug": "barra-funda"
+          },
+          {
+            "name": "Água Branca",
+            "slug": "agua-branca"
+          },
+          {
+            "name": "Vila Leopoldina",
+            "slug": "vila-leopoldina"
+          },
+          {
+            "name": "Vila Romana",
+            "slug": "vila-romana"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      },
+      {
+        "name": "Perdizes",
+        "slug": "perdizes",
+        "neighborhoods": [
+          {
+            "name": "Perdizes",
+            "slug": "perdizes"
+          },
+          {
+            "name": "Pompeia",
+            "slug": "pompeia"
+          },
+          {
+            "name": "Sumaré",
+            "slug": "sumare"
+          },
+          {
+            "name": "Santa Cecília",
+            "slug": "santa-cecilia"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      },
+      {
+        "name": "Jaguaré",
+        "slug": "jaguare",
+        "neighborhoods": [
+          {
+            "name": "Jaguaré",
+            "slug": "jaguare"
+          },
+          {
+            "name": "Vila Hamburguesa",
+            "slug": "vila-hamburguesa"
+          },
+          {
+            "name": "Jardim Íris",
+            "slug": "jardim-iris"
+          },
+          {
+            "name": "Real Parque",
+            "slug": "real-parque"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      },
+      {
+        "name": "Osasco / Região",
+        "slug": "osasco-regiao",
+        "neighborhoods": [
+          {
+            "name": "Osasco",
+            "slug": "osasco"
+          },
+          {
+            "name": "Carapicuíba",
+            "slug": "carapicuiba"
+          },
+          {
+            "name": "Barueri",
+            "slug": "barueri"
+          },
+          {
+            "name": "Cotia",
+            "slug": "cotia"
+          }
+        ],
+        "zone": "Zona Oeste",
+        "region": "Zona Oeste"
+      }
+    ]
+  },
+  {
+    "city": "São Vicente",
+    "citySlug": "sao-vicente",
+    "zone": "Baixada Santista",
+    "region": "Baixada Santista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Itararé",
+            "slug": "itarare"
+          },
+          {
+            "name": "Vila Cascatinha",
+            "slug": "vila-cascatinha"
+          },
+          {
+            "name": "Vila Soledad",
+            "slug": "vila-soledad"
+          },
+          {
+            "name": "Ilha Porchat",
+            "slug": "ilha-porchat"
+          }
+        ]
+      },
+      {
+        "name": "Zona Leste",
+        "slug": "zona-leste",
+        "neighborhoods": [
+          {
+            "name": "Vila Valença",
+            "slug": "vila-valenca"
+          },
+          {
+            "name": "Japuí",
+            "slug": "japui"
+          },
+          {
+            "name": "Parque Bitarú",
+            "slug": "parque-bitaru"
+          },
+          {
+            "name": "Jardim Rio Branco",
+            "slug": "jardim-rio-branco"
+          },
+          {
+            "name": "Catiapoa",
+            "slug": "catiapoa"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jockey Club",
+            "slug": "jockey-club"
+          },
+          {
+            "name": "Vila São Jorge",
+            "slug": "vila-sao-jorge"
+          },
+          {
+            "name": "Jardim Independência",
+            "slug": "jardim-independencia"
+          },
+          {
+            "name": "Parque Continental",
+            "slug": "parque-continental"
+          },
+          {
+            "name": "Vila Voturuá",
+            "slug": "vila-voturua"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Suzano",
+    "citySlug": "suzano",
+    "zone": "Alto Tietê",
+    "region": "Alto Tietê",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro-suzano",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro-suzano"
+          },
+          {
+            "name": "Vila Amorim",
+            "slug": "vila-amorim"
+          },
+          {
+            "name": "Vila Urupês",
+            "slug": "vila-urupes"
+          }
+        ]
+      },
+      {
+        "name": "Norte",
+        "slug": "norte-suzano",
+        "neighborhoods": [
+          {
+            "name": "Miguel Badra",
+            "slug": "miguel-badra"
+          },
+          {
+            "name": "Jardim Dona Benta",
+            "slug": "jardim-dona-benta"
+          }
+        ]
+      },
+      {
+        "name": "Sul",
+        "slug": "sul-suzano",
+        "neighborhoods": [
+          {
+            "name": "Jardim Imperador",
+            "slug": "jardim-imperador"
+          },
+          {
+            "name": "Palmeiras de São Paulo",
+            "slug": "palmeiras-sao-paulo"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Várzea Paulista",
+    "citySlug": "varzea-paulista",
+    "zone": "Serra da Mantiqueira Paulista",
+    "region": "Serra da Mantiqueira Paulista",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Vila Municipal",
+            "slug": "vila-municipal"
+          },
+          {
+            "name": "Jardim São Marcos",
+            "slug": "jardim-sao-marcos"
+          },
+          {
+            "name": "Vila Progresso",
+            "slug": "vila-progresso"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Jardim Pinheiros",
+            "slug": "jardim-pinheiros"
+          },
+          {
+            "name": "Parque Novo Mundo",
+            "slug": "parque-novo-mundo"
+          },
+          {
+            "name": "Jardim Tarumã",
+            "slug": "jardim-taruma"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Jardim América",
+            "slug": "jardim-america"
+          },
+          {
+            "name": "Vila Aparecida",
+            "slug": "vila-aparecida"
+          },
+          {
+            "name": "Residencial Jundiaí",
+            "slug": "residencial-jundiai"
+          },
+          {
+            "name": "Jardim Nova Várzea",
+            "slug": "jardim-nova-varzea"
+          }
+        ]
+      }
+    ],
+    "uf": "SP",
+    "ufSlug": "sp"
+  },
+  {
+    "city": "Volta Redonda",
+    "citySlug": "volta-redonda",
+    "uf": "RJ",
+    "ufSlug": "rj",
+    "zone": "Sul Fluminense",
+    "region": "Sul Fluminense",
+    "districts": [
+      {
+        "name": "Centro",
+        "slug": "centro",
+        "neighborhoods": [
+          {
+            "name": "Centro",
+            "slug": "centro"
+          },
+          {
+            "name": "Aterrado",
+            "slug": "aterrado"
+          },
+          {
+            "name": "Niterói",
+            "slug": "niteroi-vr"
+          },
+          {
+            "name": "Retiro",
+            "slug": "retiro-vr"
+          },
+          {
+            "name": "Vila Santa Cecília",
+            "slug": "vila-santa-cecilia"
+          }
+        ]
+      },
+      {
+        "name": "Zona Norte",
+        "slug": "zona-norte",
+        "neighborhoods": [
+          {
+            "name": "Açude",
+            "slug": "acude"
+          },
+          {
+            "name": "Dom Bosco",
+            "slug": "dom-bosco"
+          },
+          {
+            "name": "Jardim Belvedere",
+            "slug": "jardim-belvedere"
+          },
+          {
+            "name": "Siderlândia",
+            "slug": "siderlandia"
+          },
+          {
+            "name": "Vila Mury",
+            "slug": "vila-mury"
+          }
+        ]
+      },
+      {
+        "name": "Zona Sul",
+        "slug": "zona-sul",
+        "neighborhoods": [
+          {
+            "name": "Jardim Paraíba",
+            "slug": "jardim-paraiba-vr"
+          },
+          {
+            "name": "Roma",
+            "slug": "roma"
+          },
+          {
+            "name": "São Lucas",
+            "slug": "sao-lucas"
+          },
+          {
+            "name": "Jardim Normândia",
+            "slug": "jardim-normandia"
+          }
+        ]
+      }
+    ]
+  }
+]

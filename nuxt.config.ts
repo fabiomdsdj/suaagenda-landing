@@ -102,6 +102,7 @@ export default defineNuxtConfig({
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN  ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',
       dailyRegistrationGoal:  process.env.NUXT_PUBLIC_DAILY_REGISTRATION_GOAL  || '0',
+      useLocationsApi: process.env.NUXT_PUBLIC_USE_LOCATIONS_API || 'false',
     },
   },
 
