@@ -1,5 +1,5 @@
 // composables/useLocalSeo.ts
-import { useLocations } from '@/composables/useLocation'
+import { fetchLocations } from '@/composables/useLocation'
 import { allServices, type Neighborhood, type Service, type CityData, type District } from '~/data/locations'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -192,7 +192,7 @@ export function useLocalSeo(
   const key = `seo:${ufSlug}:${citySlug}:${neighborhoodSlug}${serviceSlug ? `:${serviceSlug}` : ''}`
 
   const { data } = useAsyncData<LocalSeoData | null>(key, async () => {
-    const cities = await useLocations()
+    const cities = await fetchLocations()
     return buildSeoData(cities, ufSlug, citySlug, neighborhoodSlug, serviceSlug)
   })
 
