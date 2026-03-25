@@ -314,7 +314,7 @@
         >Limpar</button>
 
         <p class="ml-auto text-xs text-gray-600">
-          <template v-if="filters.wppEngagement && wppFilterIds.size > 0">
+          <template v-if="filters.wppEngagement">
             <span class="text-green-400 font-medium">{{ filteredRows.length }}</span>
             <span class="text-gray-600"> de </span>
           </template>
@@ -442,7 +442,7 @@
                 <!-- ✅ WhatsApp com ícone SVG, verde se passou no filtro wpp -->
                 <span
                   class="inline-flex items-center gap-1 text-[11px]"
-                  :class="wppFilterIds.size > 0 && wppFilterIds.has(shop.id)
+                  :class="filters.wppEngagement && wppFilterIds.has(shop.id)
                     ? 'text-green-400 font-semibold'
                     : 'text-gray-600'"
                   title="Cliques no WhatsApp nos últimos 30 dias"
@@ -641,7 +641,7 @@ const hasFilters = computed(() =>
   !!filters.neighborhood || !!filters.dateRange || !!filters.wppEngagement
 )
 
-// ── Paginação truncada (igual ao portal /barbearias) ──────────────────────
+// ── Paginação truncada ────────────────────────────────────────────────────
 const paginationPages = computed(() => {
   const current = meta.value.page
   const total   = meta.value.pages
@@ -733,6 +733,8 @@ async function fetchAnalytics(ids: string[]) {
 }
 
 // ── Filtro de engajamento WhatsApp ────────────────────────────────────────
+// ✅ FIX: wppFilterIds agora é ref<Set> (não reativo direto) pra evitar
+//    problemas de reatividade com Set no Vue 3
 const wppFilterIds     = ref<Set<string>>(new Set())
 const wppFilterLoading = ref(false)
 
@@ -745,17 +747,21 @@ async function onWppEngagementChange() {
     return
   }
 
-  fetchList()
-
+  // ✅ FIX 1: Busca os IDs ANTES de chamar fetchList,
+  //    assim filteredRows já tem os IDs quando a lista chega
   wppFilterLoading.value = true
   const minCount = filters.wppEngagement === 'any' ? 1 : parseInt(filters.wppEngagement)
   wppFilterIds.value = await fetchFilterIds('whatsapp_click', minCount, 30)
   wppFilterLoading.value = false
+
+  fetchList()
 }
 
-// Rows com filtro wpp aplicado client-side
+// ✅ FIX 2: Removido o check `wppFilterIds.value.size === 0` que fazia
+//    o filtro mostrar tudo quando o resultado era legítimamente vazio.
+//    Agora filtra sempre que wppEngagement estiver ativo.
 const filteredRows = computed(() => {
-  if (!filters.wppEngagement || wppFilterIds.value.size === 0) return rows.value
+  if (!filters.wppEngagement) return rows.value
   return rows.value.filter(shop => wppFilterIds.value.has(shop.id))
 })
 
