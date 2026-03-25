@@ -6,7 +6,6 @@
       <!-- ── Header ──────────────────────────────────────────────── -->
       <div class="flex items-start justify-between mb-8">
         <div>
-          <!-- ✅ Título sempre estático, independente de qualquer filtro -->
           <h1 class="text-2xl font-bold text-white tracking-tight">Barbearias cadastradas</h1>
           <p class="text-sm text-gray-500 mt-1">Gerencie os registros scrapeados e manuais</p>
         </div>
@@ -41,7 +40,7 @@
         </div>
       </div>
 
-      <!-- ✅ Card de metas: semanal + diária -->
+      <!-- ── Metas ───────────────────────────────────────────────── -->
       <div v-if="weeklyGoal > 0 || dailyGoal > 0" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
 
         <!-- Meta semanal -->
@@ -150,7 +149,7 @@
 
       </div>
 
-      <!-- ✅ Card de cobertura de bairros -->
+      <!-- ── Cobertura de bairros ─────────────────────────────────── -->
       <div v-if="coverageStats" class="mb-6">
         <div
           class="rounded-2xl border border-white/[.06] bg-[#111] p-5 cursor-pointer select-none"
@@ -252,6 +251,8 @@
 
       <!-- ── Filtros ─────────────────────────────────────────────── -->
       <div class="flex flex-wrap items-center gap-3 mb-4">
+
+        <!-- Busca por texto -->
         <div class="relative flex-1 min-w-[200px] max-w-sm">
           <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z"/>
@@ -292,15 +293,28 @@
           <option value="thisMonth">Este mês</option>
         </select>
 
-        <!-- ✅ Filtro por engajamento WhatsApp -->
+        <!-- ✅ Filtro de engajamento — evento -->
         <select
-          v-model="filters.wppEngagement"
+          v-model="filters.engagementEvent"
           class="filter-select"
-          :class="filters.wppEngagement ? 'border-green-400/40 text-green-400' : ''"
-          @change="onWppEngagementChange"
+          :class="filters.engagementEvent ? 'border-green-400/40 text-green-400' : ''"
+          @change="onEngagementChange"
         >
-          <option value="">WhatsApp: todos</option>
-          <option value="any">Teve algum clique</option>
+          <option value="">Engajamento: todos</option>
+          <option value="whatsapp_click">WhatsApp</option>
+          <option value="maps_click">Google Maps</option>
+          <option value="waze_click">Waze</option>
+          <option value="copy_address">Copiou endereço</option>
+        </select>
+
+        <!-- ✅ Mínimo de cliques — só aparece quando evento selecionado -->
+        <select
+          v-if="filters.engagementEvent"
+          v-model="filters.engagementMin"
+          class="filter-select border-green-400/40 text-green-400"
+          @change="onEngagementChange"
+        >
+          <option value="1">1+ clique</option>
           <option value="5">5+ cliques</option>
           <option value="10">10+ cliques</option>
           <option value="25">25+ cliques</option>
@@ -314,13 +328,9 @@
         >Limpar</button>
 
         <p class="ml-auto text-xs text-gray-600">
-          <template v-if="filters.wppEngagement">
-            <span class="text-green-400 font-medium">{{ filteredRows.length }}</span>
-            <span class="text-gray-600"> de </span>
-          </template>
           <span class="text-gray-400 font-medium">{{ meta.total }}</span>
           registro{{ meta.total !== 1 ? 's' : '' }}
-          <span v-if="wppFilterLoading" class="ml-1 text-gray-700 animate-pulse">· filtrando...</span>
+          <span v-if="loading" class="ml-1 text-gray-700 animate-pulse">· carregando...</span>
         </p>
       </div>
 
@@ -332,10 +342,8 @@
         </select>
       </div>
 
-      <!-- ── Paginação (topo) ─────────────────────────────────────
-           ✅ Some quando filtro wpp ativo (resultado client-side, sem páginas reais)
-      ──────────────────────────────────────────────────────────── -->
-      <div v-if="!filters.wppEngagement && meta.pages > 1" class="flex items-center justify-center gap-2 my-6">
+      <!-- ── Paginação (topo) ─────────────────────────────────────── -->
+      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 my-6">
         <button
           class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           :disabled="meta.page === 1"
@@ -375,9 +383,9 @@
         </div>
 
         <!-- Lista -->
-        <template v-else-if="filteredRows.length">
+        <template v-else-if="rows.length">
           <div
-            v-for="shop in filteredRows"
+            v-for="shop in rows"
             :key="shop.id"
             class="flex items-center gap-4 px-5 py-4 border-b border-white/[.04] last:border-0 hover:bg-white/[.02] transition-colors group"
           >
@@ -395,7 +403,7 @@
             <!-- Info -->
             <div class="flex-1 min-w-0">
 
-              <!-- Linha 1: nome + badges de status -->
+              <!-- Linha 1: nome + badges -->
               <div class="flex items-center gap-2 flex-wrap">
                 <p class="text-sm font-semibold text-white truncate">{{ shop.name }}</p>
                 <span
@@ -424,10 +432,10 @@
                 <span v-if="shop.createdAt" class="ml-2 text-gray-700" :title="formatDateFull(shop.createdAt)">· {{ formatRelative(shop.createdAt) }}</span>
               </p>
 
-              <!-- ✅ Linha 3: analytics em bloco próprio, bem organizado -->
-              <div v-if="analyticsMap[shop.id]" class="flex items-center gap-3 mt-1.5">
+              <!-- Linha 3: analytics -->
+              <div v-if="analyticsMap[shop.id]" class="flex items-center gap-3 mt-1.5 flex-wrap">
 
-                <!-- Views -->
+                <!-- Pageviews -->
                 <span
                   class="inline-flex items-center gap-1 text-[11px] text-gray-600"
                   title="Visualizações nos últimos 30 dias"
@@ -439,10 +447,10 @@
                   {{ analyticsMap[shop.id].pageviews }}
                 </span>
 
-                <!-- ✅ WhatsApp com ícone SVG, verde se passou no filtro wpp -->
+                <!-- WhatsApp — destaque se for o evento filtrado -->
                 <span
                   class="inline-flex items-center gap-1 text-[11px]"
-                  :class="filters.wppEngagement && wppFilterIds.has(shop.id)
+                  :class="filters.engagementEvent === 'whatsapp_click'
                     ? 'text-green-400 font-semibold'
                     : 'text-gray-600'"
                   title="Cliques no WhatsApp nos últimos 30 dias"
@@ -453,10 +461,13 @@
                   {{ analyticsMap[shop.id].whatsapp_clicks }}
                 </span>
 
-                <!-- Maps (só se > 0) -->
+                <!-- Maps — só se > 0 -->
                 <span
                   v-if="analyticsMap[shop.id].maps_clicks > 0"
-                  class="inline-flex items-center gap-1 text-[11px] text-gray-600"
+                  class="inline-flex items-center gap-1 text-[11px]"
+                  :class="filters.engagementEvent === 'maps_click'
+                    ? 'text-blue-400 font-semibold'
+                    : 'text-gray-600'"
                   title="Cliques no Google Maps nos últimos 30 dias"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -464,6 +475,36 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
                   </svg>
                   {{ analyticsMap[shop.id].maps_clicks }}
+                </span>
+
+                <!-- Waze — só se > 0 -->
+                <span
+                  v-if="analyticsMap[shop.id].waze_clicks > 0"
+                  class="inline-flex items-center gap-1 text-[11px]"
+                  :class="filters.engagementEvent === 'waze_click'
+                    ? 'text-cyan-400 font-semibold'
+                    : 'text-gray-600'"
+                  title="Cliques no Waze nos últimos 30 dias"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"/>
+                  </svg>
+                  {{ analyticsMap[shop.id].waze_clicks }}
+                </span>
+
+                <!-- Copy address — só se > 0 -->
+                <span
+                  v-if="analyticsMap[shop.id].copy_addresses > 0"
+                  class="inline-flex items-center gap-1 text-[11px]"
+                  :class="filters.engagementEvent === 'copy_address'
+                    ? 'text-purple-400 font-semibold'
+                    : 'text-gray-600'"
+                  title="Copiaram o endereço nos últimos 30 dias"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/>
+                  </svg>
+                  {{ analyticsMap[shop.id].copy_addresses }}
                 </span>
 
               </div>
@@ -521,7 +562,9 @@
         <div v-else class="py-20 text-center">
           <p class="text-4xl mb-3 opacity-20">✂️</p>
           <p class="text-gray-500 text-sm">
-            {{ filters.wppEngagement ? 'Nenhuma barbearia passou no filtro de WhatsApp' : 'Nenhuma barbearia encontrada' }}
+            {{ filters.engagementEvent
+                ? `Nenhuma barbearia com engajamento suficiente em ${engagementEventLabel}`
+                : 'Nenhuma barbearia encontrada' }}
           </p>
           <NuxtLink to="/scraper/new" class="inline-block mt-4 text-green-400 text-sm hover:underline">
             Cadastrar primeira barbearia →
@@ -529,10 +572,8 @@
         </div>
       </div>
 
-      <!-- ── Paginação (rodapé) ────────────────────────────────────
-           ✅ Some quando filtro wpp ativo
-      ──────────────────────────────────────────────────────────── -->
-      <div v-if="!filters.wppEngagement && meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
+      <!-- ── Paginação (rodapé) ───────────────────────────────────── -->
+      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
         <button
           class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           :disabled="meta.page === 1"
@@ -607,14 +648,16 @@ const stats   = ref<any>(null)
 const meta    = ref({ total: 0, page: 1, pages: 1, limit: 20 })
 
 const filters = reactive({
-  q:             '',
-  status:        '',
-  claimed:       '',
-  city:          '',
-  neighborhood:  '',
-  dateRange:     '',
-  wppEngagement: '' as string,
-  page:          1,
+  q:               '',
+  status:          '',
+  claimed:         '',
+  city:            '',
+  neighborhood:    '',
+  dateRange:       '',
+  // ✅ Engajamento server-side — dois campos separados
+  engagementEvent: '' as string,   // whatsapp_click | maps_click | waze_click | copy_address
+  engagementMin:   '1' as string,  // mínimo de cliques
+  page:            1,
 })
 
 const cityOptions = ref<string[]>([])
@@ -638,8 +681,19 @@ const neighborhoodChips = computed(() => {
 
 const hasFilters = computed(() =>
   !!filters.q || !!filters.status || !!filters.claimed || !!filters.city ||
-  !!filters.neighborhood || !!filters.dateRange || !!filters.wppEngagement
+  !!filters.neighborhood || !!filters.dateRange || !!filters.engagementEvent
 )
+
+// Label legível do evento de engajamento ativo (para mensagem de "vazio")
+const engagementEventLabel = computed(() => {
+  const map: Record<string, string> = {
+    whatsapp_click: 'WhatsApp',
+    maps_click:     'Google Maps',
+    waze_click:     'Waze',
+    copy_address:   'cópia de endereço',
+  }
+  return map[filters.engagementEvent] ?? filters.engagementEvent
+})
 
 // ── Paginação truncada ────────────────────────────────────────────────────
 const paginationPages = computed(() => {
@@ -672,6 +726,7 @@ function getThumb(shop: any): string | null {
 }
 
 // ── Fetch lista ───────────────────────────────────────────────────────────
+// ✅ Filtro de engajamento vai direto como params — o backend faz a subquery
 async function fetchList() {
   loading.value = true
   try {
@@ -683,9 +738,17 @@ async function fetchList() {
     if (filters.neighborhood)   params.neighborhood = filters.neighborhood
     if (filters.dateRange)      params.dateRange    = filters.dateRange
 
+    // Engajamento server-side
+    if (filters.engagementEvent) {
+      params.filterEvent    = filters.engagementEvent
+      params.filterMinCount = parseInt(filters.engagementMin) || 1
+      params.filterDays     = 30
+    }
+
     const res = await api.listBarbershops(params)
     rows.value = res.data ?? []
     meta.value = res.meta ?? meta.value
+
     const ids = (res.data ?? []).map((r: any) => r.id).filter(Boolean)
     fetchAnalytics(ids)
   } catch (e) {
@@ -710,60 +773,32 @@ function onNeighborhoodChange() {
   fetchList()
 }
 
+function onEngagementChange() {
+  filters.page = 1
+  fetchList()
+}
+
 function clearFilters() {
-  filters.q             = ''
-  filters.status        = ''
-  filters.claimed       = ''
-  filters.city          = ''
-  filters.neighborhood  = ''
-  filters.dateRange     = ''
-  filters.wppEngagement = ''
-  filters.page          = 1
-  wppFilterIds.value    = new Set()
+  filters.q               = ''
+  filters.status          = ''
+  filters.claimed         = ''
+  filters.city            = ''
+  filters.neighborhood    = ''
+  filters.dateRange       = ''
+  filters.engagementEvent = ''
+  filters.engagementMin   = '1'
+  filters.page            = 1
   fetchList()
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────
-const { fetchBulkSummary, fetchFilterIds } = useAnalytics()
+const { fetchBulkSummary } = useAnalytics()
 const analyticsMap = ref<Record<string, any>>({})
 
 async function fetchAnalytics(ids: string[]) {
   if (!ids.length) return
   analyticsMap.value = await fetchBulkSummary(ids, 30)
 }
-
-// ── Filtro de engajamento WhatsApp ────────────────────────────────────────
-// ✅ FIX: wppFilterIds agora é ref<Set> (não reativo direto) pra evitar
-//    problemas de reatividade com Set no Vue 3
-const wppFilterIds     = ref<Set<string>>(new Set())
-const wppFilterLoading = ref(false)
-
-async function onWppEngagementChange() {
-  filters.page = 1
-
-  if (!filters.wppEngagement) {
-    wppFilterIds.value = new Set()
-    fetchList()
-    return
-  }
-
-  // ✅ FIX 1: Busca os IDs ANTES de chamar fetchList,
-  //    assim filteredRows já tem os IDs quando a lista chega
-  wppFilterLoading.value = true
-  const minCount = filters.wppEngagement === 'any' ? 1 : parseInt(filters.wppEngagement)
-  wppFilterIds.value = await fetchFilterIds('whatsapp_click', minCount, 30)
-  wppFilterLoading.value = false
-
-  fetchList()
-}
-
-// ✅ FIX 2: Removido o check `wppFilterIds.value.size === 0` que fazia
-//    o filtro mostrar tudo quando o resultado era legítimamente vazio.
-//    Agora filtra sempre que wppEngagement estiver ativo.
-const filteredRows = computed(() => {
-  if (!filters.wppEngagement) return rows.value
-  return rows.value.filter(shop => wppFilterIds.value.has(shop.id))
-})
 
 // ── Metas de cadastros ────────────────────────────────────────────────────
 const { public: runtimeConfig } = useRuntimeConfig()
