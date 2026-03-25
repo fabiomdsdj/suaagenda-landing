@@ -484,7 +484,7 @@ const pending           = ref(true)
 const barbershop        = ref<Awaited<ReturnType<typeof fetchBarbershopBySlug>>>(null)
 const nearbyBarbershops = ref<any[]>([])
 
-const { trackBarbershopView, trackWhatsappClick, trackMapsClick } = useAnalytics()
+const { trackBarbershopView, trackWhatsappClick, trackMapsClick, trackWazeClick, trackCopyAddress } = useAnalytics()
 
 onMounted(async () => {
   // Principal — aguarda antes de renderizar
@@ -594,6 +594,14 @@ function onWhatsappClick() {
 }
 function onMapsClick() {
   if (barbershop.value?.id) trackMapsClick(barbershop.value.id, barbershop.value.name)
+}
+
+function onWazeClick() {
+  if (barbershop.value?.id) trackWazeClick(barbershop.value.id, barbershop.value.name)
+}
+function onCopyAddress() {
+  if (barbershop.value?.id) trackCopyAddress(barbershop.value.id, barbershop.value.name)
+  navigator.clipboard?.writeText(fullAddress.value ?? '')
 }
 
 // ── Texto corrido de serviços ─────────────────────────────────────────────────

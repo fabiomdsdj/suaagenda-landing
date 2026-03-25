@@ -33,22 +33,81 @@
       </div>
 
       <!-- ── Analytics ────────────────────────────────────────────── -->
-      <div v-if="!isNew && analytics" class="grid grid-cols-3 gap-3 mb-6">
-        <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
-          <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">{{ analytics.pageviews }}</p>
-          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Views 30d</p>
-        </div>
-        <div class="rounded-xl border border-green-400/20 bg-green-400/[.04] p-4 text-center">
-          <p class="text-2xl font-black text-green-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.whatsapp_clicks }}</p>
-          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">WhatsApp 30d</p>
-        </div>
-        <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
-          <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">
-            {{ analytics.pageviews > 0 ? Math.round(analytics.whatsapp_clicks / analytics.pageviews * 100) : 0 }}%
-          </p>
-          <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Conversão</p>
-        </div>
-      </div>
+<div v-if="!isNew && analytics" class="mb-6 space-y-3">
+
+<!-- Linha 1: métricas principais -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
+    <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">{{ analytics.pageviews }}</p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Views 30d</p>
+  </div>
+  <div class="rounded-xl border border-green-400/20 bg-green-400/[.04] p-4 text-center">
+    <p class="text-2xl font-black text-green-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.whatsapp_clicks }}</p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">WhatsApp 30d</p>
+  </div>
+  <div class="rounded-xl border border-blue-400/20 bg-blue-400/[.04] p-4 text-center">
+    <p class="text-2xl font-black text-blue-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.maps_clicks }}</p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Maps 30d</p>
+  </div>
+  <div class="rounded-xl border border-cyan-400/20 bg-cyan-400/[.04] p-4 text-center">
+    <p class="text-2xl font-black text-cyan-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.waze_clicks }}</p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Waze 30d</p>
+  </div>
+</div>
+
+<!-- Linha 2: métricas secundárias -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+  <div class="rounded-xl border border-purple-400/20 bg-purple-400/[.04] p-4 text-center">
+    <p class="text-2xl font-black text-purple-400" style="font-family:'Bebas Neue',sans-serif">{{ analytics.copy_addresses }}</p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">End. copiados 30d</p>
+  </div>
+  <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
+    <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">
+      {{ analytics.pageviews > 0 ? Math.round(analytics.whatsapp_clicks / analytics.pageviews * 100) : 0 }}%
+    </p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Conv. WhatsApp</p>
+  </div>
+  <div class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center">
+    <p class="text-2xl font-black text-white" style="font-family:'Bebas Neue',sans-serif">
+      {{ analytics.pageviews > 0
+        ? Math.round((analytics.whatsapp_clicks + analytics.maps_clicks + analytics.waze_clicks + analytics.copy_addresses) / analytics.pageviews * 100)
+        : 0 }}%
+    </p>
+    <p class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-widest">Engaj. total</p>
+  </div>
+</div>
+</div>
+
+<!-- ── Seletor de evento para o gráfico ───────────────────── -->
+<div v-if="!isNew && dailyViews.length" class="mb-6 rounded-xl border border-white/[.06] bg-[#111] p-4">
+<div class="flex items-center justify-between mb-3">
+  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-500">
+    {{ chartEventLabel }} — últimos 30 dias
+  </p>
+  <div class="flex gap-1">
+    <button
+      v-for="opt in chartEventOptions"
+      :key="opt.value"
+      type="button"
+      class="px-2 py-0.5 rounded text-[10px] font-bold border transition-all"
+      :class="chartEvent === opt.value
+        ? 'bg-green-400/20 text-green-400 border-green-400/30'
+        : 'bg-white/[.03] text-gray-600 border-white/[.06] hover:text-gray-400'"
+      @click="switchChart(opt.value)"
+    >{{ opt.label }}</button>
+  </div>
+</div>
+<div class="flex items-end gap-0.5 h-12">
+  <div
+    v-for="point in dailyViews"
+    :key="point.date"
+    class="flex-1 rounded-sm transition-colors min-h-[2px]"
+    :class="chartBarColor"
+    :style="{ height: maxDailyViews > 0 ? `${Math.max(2, Math.round(point.count / maxDailyViews * 100))}%` : '2px' }"
+    :title="`${point.date}: ${point.count}`"
+  />
+</div>
+</div>
 
       <!-- ── Mini gráfico de views ───────────────────────────────── -->
       <div v-if="!isNew && dailyViews.length" class="mb-6 rounded-xl border border-white/[.06] bg-[#111] p-4">
@@ -770,10 +829,51 @@ onMounted(async () => {
 })
 
 // ── Analytics ─────────────────────────────────────────────────────────────────
-const { fetchSummary, fetchDaily, fetchBulkSummary } = useAnalytics()
+const { fetchSummary, fetchDaily } = useAnalytics()
 const analytics     = ref<any>(null)
 const dailyViews    = ref<{ date: string; count: number }[]>([])
 const maxDailyViews = computed(() => Math.max(...dailyViews.value.map(p => p.count), 1))
+
+// Seletor de evento para o gráfico
+type ChartEvent = 'pageview' | 'whatsapp_click' | 'maps_click' | 'waze_click' | 'copy_address'
+const chartEvent = ref<ChartEvent>('pageview')
+
+const chartEventOptions: { value: ChartEvent; label: string }[] = [
+  { value: 'pageview',       label: 'Views'    },
+  { value: 'whatsapp_click', label: 'WA'       },
+  { value: 'maps_click',     label: 'Maps'     },
+  { value: 'waze_click',     label: 'Waze'     },
+  { value: 'copy_address',   label: 'End.'     },
+]
+
+const chartEventLabel = computed(() => {
+  const map: Record<string, string> = {
+    pageview:       'Views diárias',
+    whatsapp_click: 'Cliques WhatsApp',
+    maps_click:     'Cliques Google Maps',
+    waze_click:     'Cliques Waze',
+    copy_address:   'Endereços copiados',
+  }
+  return map[chartEvent.value] ?? chartEvent.value
+})
+
+const chartBarColor = computed(() => {
+  const map: Record<string, string> = {
+    pageview:       'bg-green-400/40 hover:bg-green-400/70',
+    whatsapp_click: 'bg-green-400/40 hover:bg-green-400/70',
+    maps_click:     'bg-blue-400/40  hover:bg-blue-400/70',
+    waze_click:     'bg-cyan-400/40  hover:bg-cyan-400/70',
+    copy_address:   'bg-purple-400/40 hover:bg-purple-400/70',
+  }
+  return map[chartEvent.value] ?? 'bg-green-400/40 hover:bg-green-400/70'
+})
+
+async function switchChart(event: ChartEvent) {
+  chartEvent.value = event
+  if (!id || isNew) return
+  const daily = await fetchDaily(id, 30, event)
+  dailyViews.value = daily?.data ?? []
+}
 
 async function loadAnalytics(shopId: string) {
   const [summary, daily] = await Promise.all([

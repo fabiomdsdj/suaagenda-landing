@@ -1,5 +1,6 @@
 <!-- pages/barbearias/[uf]/[cidade]/[bairro]/index.vue -->
 <template>
+  <!-- ───────────────────────────── PÁGINA NORMAL ───────────────────────────── -->
   <div v-if="seo" class="text-[15px]">
 
     <!-- BREADCRUMB -->
@@ -45,12 +46,7 @@
       </div>
     </section>
 
-    <!-- ── BUSCA + CARDS ──────────────────────────────────────────────────────── -->
-    <!--
-      ✅ FIX: usa seo.ufSlug / seo.citySlug que vêm do useLocalSeo já normalizados
-      (lowercase, sem acento). neighborhoodSlug vem do route.params.bairro diretamente,
-      já é um slug lowercase pela estrutura da URL.
-    -->
+    <!-- BUSCA + CARDS -->
     <div class="bg-[#0a0a0a]">
       <PageSearchSection
         :uf="seo.ufSlug"
@@ -181,13 +177,142 @@
 
   </div>
 
-  <!-- 404 local -->
-  <div v-else class="min-h-screen flex items-center justify-center bg-[#0a0a0a] pt-20">
-    <div class="text-center px-6">
-      <p class="font-black text-green-400/20 leading-none mb-4" style="font-family:'Bebas Neue',sans-serif;font-size:120px">404</p>
-      <h1 class="text-2xl font-bold text-white mb-3">Bairro não encontrado</h1>
-      <p class="text-gray-400 mb-6">Esse bairro não está mapeado ainda.</p>
-      <NuxtLink to="/barbearias" class="text-green-400 hover:underline">Ver todas as regiões →</NuxtLink>
+  <!-- ─────────────────────────── FALLBACK 404 ─────────────────────────────── -->
+  <!--
+    Chegou aqui porque o bairro não está mapeado no locations.ts.
+    Tentamos aproveitar o lead mostrando bairros da mesma cidade/distrito.
+    Três níveis de fallback:
+      1. Bairros do mesmo distrito (mais relevante)
+      2. Bairros da mesma cidade (cidade existe mas distrito não)
+      3. Link geral pra /barbearias (cidade também não existe)
+  -->
+  <div v-else class="min-h-screen bg-[#0a0a0a] pt-28">
+
+    <!-- Breadcrumb mínimo mesmo no 404 -->
+    <div class="px-6 md:px-16 pb-6 border-b border-white/5">
+      <div class="max-w-6xl mx-auto">
+        <nav class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+          <NuxtLink to="/" class="hover:text-green-400 transition-colors">Início</NuxtLink>
+          <span class="text-gray-700">/</span>
+          <NuxtLink to="/barbearias" class="hover:text-green-400 transition-colors">Barbearias</NuxtLink>
+          <template v-if="fallbackCity">
+            <span class="text-gray-700">/</span>
+            <NuxtLink :to="`/barbearias/${ufSlug}/${citySlug}`" class="hover:text-green-400 transition-colors">
+              {{ fallbackCity.city }}
+            </NuxtLink>
+          </template>
+          <span class="text-gray-700">/</span>
+          <span class="text-gray-600">{{ neighborhoodSlug }}</span>
+        </nav>
+      </div>
+    </div>
+
+    <div class="px-6 md:px-16 py-20">
+      <div class="max-w-6xl mx-auto">
+
+        <!-- Cabeçalho do 404 -->
+        <div class="mb-14">
+          <p class="font-black text-green-400/10 leading-none mb-2 select-none" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,15vw,160px)">404</p>
+          <h1 class="text-2xl md:text-3xl font-black text-white mb-3" style="font-family:'Bebas Neue',sans-serif">
+            BAIRRO NÃO MAPEADO AINDA
+          </h1>
+          <p class="text-gray-400 text-[16px] max-w-lg">
+            <template v-if="fallbackCity">
+              Ainda não temos barbearias cadastradas em <strong class="text-white">{{ neighborhoodSlug.replace(/-/g, ' ') }}</strong>,
+              mas encontramos opções perto de você em <strong class="text-white">{{ fallbackCity.city }}</strong>.
+            </template>
+            <template v-else>
+              Esse bairro ainda não está no nosso mapa. Explore outras regiões ou cadastre sua barbearia.
+            </template>
+          </p>
+        </div>
+
+        <!-- ── Caso 1 & 2: cidade existe → mostra bairros ── -->
+        <template v-if="fallbackCity">
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+            <!-- Bairros sugeridos -->
+            <div class="lg:col-span-2 space-y-10">
+
+              <!-- Bairros do mesmo distrito (mais próximos) -->
+              <div v-if="fallbackSameDistrict.length">
+                <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-4 flex items-center gap-2">
+                  <span class="w-4 h-px bg-green-400/40 inline-block"/>Bairros do mesmo distrito
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <NuxtLink
+                    v-for="n in fallbackSameDistrict" :key="n.slug"
+                    :to="`/barbearias/${ufSlug}/${citySlug}/${n.slug}`"
+                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/[.06] bg-[#181818] hover:border-green-400/40 hover:text-green-400 hover:bg-green-400/[.03] text-sm text-gray-400 transition-all duration-150"
+                  >📍 {{ n.name }}</NuxtLink>
+                </div>
+              </div>
+
+              <!-- Outros bairros da cidade -->
+              <div v-if="fallbackOtherNeighborhoods.length">
+                <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4 flex items-center gap-2">
+                  <span class="w-4 h-px bg-gray-700 inline-block"/>Outros bairros em {{ fallbackCity.city }}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <NuxtLink
+                    v-for="n in fallbackOtherNeighborhoods" :key="n.slug"
+                    :to="`/barbearias/${ufSlug}/${citySlug}/${n.slug}`"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/[.06] bg-[#181818] hover:border-green-400/30 hover:text-green-400 text-sm text-gray-500 transition-all duration-150"
+                  >📍 {{ n.name }}</NuxtLink>
+                </div>
+              </div>
+
+              <NuxtLink
+                :to="`/barbearias/${ufSlug}/${citySlug}`"
+                class="inline-flex items-center gap-2 text-sm text-green-400 hover:text-green-300 transition-colors"
+              >
+                Ver todos os bairros em {{ fallbackCity.city }} →
+              </NuxtLink>
+            </div>
+
+            <!-- Sidebar CTA — aproveita o tráfego orgânico -->
+            <aside>
+              <div class="rounded-2xl border-2 border-green-400 bg-[#181818] p-7 relative overflow-hidden sticky top-24">
+                <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-green-400 to-emerald-300"></div>
+                <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-3">Você é barbeiro?</p>
+                <h3 class="font-black leading-none text-white mb-3" style="font-family:'Bebas Neue',sans-serif;font-size:26px">
+                  COLOCA SEU BAIRRO NO MAPA
+                </h3>
+                <p class="text-[13px] text-gray-400 leading-relaxed mb-5">
+                  Cadastre sua barbearia em {{ neighborhoodSlug.replace(/-/g, ' ') }} e apareça no Google quando alguém buscar aqui.
+                </p>
+                <a
+                  href="https://wa.me/5511941649284"
+                  class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300"
+                >
+                  🔥 Testar 7 dias grátis
+                </a>
+                <p class="text-xs text-center text-gray-600 mt-3">Sem cartão de crédito · Cancela quando quiser</p>
+              </div>
+            </aside>
+          </div>
+        </template>
+
+        <!-- ── Caso 3: cidade também não existe → CTA geral ── -->
+        <template v-else>
+          <div class="flex flex-col items-center text-center gap-6 py-10">
+            <p class="text-gray-500 text-[15px]">Essa região ainda não está mapeada.</p>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <NuxtLink to="/barbearias" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-green-400 hover:border-green-400/30 text-sm transition-all">
+                ← Ver todas as regiões
+              </NuxtLink>
+              <a
+                href="https://wa.me/5511941649284"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-400 text-black text-sm font-bold transition hover:bg-green-300"
+              >
+                ✂️ Cadastrar minha barbearia
+              </a>
+            </div>
+          </div>
+        </template>
+
+      </div>
     </div>
   </div>
 </template>
@@ -196,24 +321,83 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLocalSeo } from '~/composables/useLocalSeo'
+import { allCities, type CityData, type Neighborhood } from '~/data/locations'
 
 definePageMeta({ layout: 'barber' })
 
 const route = useRoute()
 
-// ✅ FIX: normaliza params na origem — lowercase e trim
-// Evita mismatch "SP" vs "sp", "São Paulo" vs "sao-paulo", etc.
 const ufSlug           = (route.params.uf     as string).toLowerCase().trim()
 const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 
 const { data: seo } = useLocalSeo(ufSlug, citySlug, neighborhoodSlug)
 
+// ─────────────────────────────────────────────────────────────────
+// Fallback 404 — só entra quando seo === null
+// ─────────────────────────────────────────────────────────────────
+
+// Cidade existe mas bairro não foi mapeado
+const fallbackCity = computed<CityData | null>(() =>
+  allCities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug) ?? null
+)
+
+// Tenta achar o distrito mais provável pelo prefixo do slug
+// ex: "vila-mariana-norte" → tenta bater com distrito que tenha "vila-mariana" nos slugs dos bairros
+const fallbackDistrict = computed(() => {
+  if (!fallbackCity.value) return null
+  const prefix = neighborhoodSlug.split('-').slice(0, 2).join('-')
+  return (
+    fallbackCity.value.districts.find(d =>
+      d.neighborhoods.some(n => n.slug.startsWith(prefix))
+    ) ??
+    // fallback: primeiro distrito com mais bairros (geralmente o principal)
+    [...fallbackCity.value.districts].sort(
+      (a, b) => b.neighborhoods.length - a.neighborhoods.length
+    )[0] ??
+    null
+  )
+})
+
+// Bairros do mesmo distrito — até 16, sem o slug atual
+const fallbackSameDistrict = computed<Neighborhood[]>(() => {
+  if (!fallbackDistrict.value) return []
+  return fallbackDistrict.value.neighborhoods
+    .filter(n => n.slug !== neighborhoodSlug)
+    .slice(0, 16)
+})
+
+// Outros bairros da cidade (excluindo os do distrito já mostrado) — até 20
+const fallbackOtherNeighborhoods = computed<Neighborhood[]>(() => {
+  if (!fallbackCity.value) return []
+  const districtSlug = fallbackDistrict.value?.slug
+  return fallbackCity.value.districts
+    .filter(d => d.slug !== districtSlug)
+    .flatMap(d => d.neighborhoods)
+    .slice(0, 20)
+})
+
+// ─────────────────────────────────────────────────────────────────
+// Dados da página normal
+// ─────────────────────────────────────────────────────────────────
+
 const howItWorks = computed(() => [
-  { title: 'Cria a conta em 2 minutos', desc: `Só o nome da barbearia e o endereço em ${seo.value?.neighborhoodName}. O sistema monta a estrutura do site automaticamente.` },
-  { title: 'Confirma os serviços pré-preenchidos', desc: 'Corte, barba, combo já estão lá. A disponibilidade dos profissionais também vem configurada pelo horário de funcionamento.' },
-  { title: 'Informa o WhatsApp pra receber agendamentos', desc: 'Cada novo agendamento chega direto no seu celular — enquanto você está cortando cabelo.' },
-  { title: 'Site no ar e Google indexando', desc: `A tecnologia exclusiva da SuaAgenda coloca sua barbearia nas primeiras posições quando alguém busca "barbearia em ${seo.value?.neighborhoodName}".` },
+  {
+    title: 'Cria a conta em 2 minutos',
+    desc:  `Só o nome da barbearia e o endereço em ${seo.value?.neighborhoodName}. O sistema monta a estrutura do site automaticamente.`,
+  },
+  {
+    title: 'Confirma os serviços pré-preenchidos',
+    desc:  'Corte, barba, combo já estão lá. A disponibilidade dos profissionais também vem configurada pelo horário de funcionamento.',
+  },
+  {
+    title: 'Informa o WhatsApp pra receber agendamentos',
+    desc:  'Cada novo agendamento chega direto no seu celular — enquanto você está cortando cabelo.',
+  },
+  {
+    title: 'Site no ar e Google indexando',
+    desc:  `A tecnologia exclusiva da SuaAgenda coloca sua barbearia nas primeiras posições quando alguém busca "barbearia em ${seo.value?.neighborhoodName}".`,
+  },
 ])
 
 const localStats = [
@@ -223,18 +407,67 @@ const localStats = [
 ]
 
 const benefits = computed(() => [
-  { emoji: '📍', title: `Apareça quando buscam barbearia em ${seo.value?.neighborhoodName}`, desc: 'A tecnologia de SEO local da SuaAgenda coloca sua barbearia nas primeiras posições do Google para buscas do seu bairro.' },
-  { emoji: '📱', title: 'Agendamento direto no WhatsApp', desc: 'Cliente clica no link, escolhe horário e confirma — sem você largar a tesoura. Notificação chega no seu celular na hora.' },
-  { emoji: '✅', title: 'Confirmação automática anti-furo', desc: 'Sistema pede confirmação via WhatsApp. Não respondeu? Horário volta pra agenda e chama o próximo da fila automaticamente.' },
-  { emoji: '🚀', title: 'No ar em 5 minutos', desc: 'Serviços e disponibilidade já vêm pré-preenchidos. Você só confirma o que usa — sem técnico, sem treinamento.' },
-  { emoji: '📊', title: 'Portal de descoberta regional', desc: `Sua barbearia também aparece no portal da SuaAgenda, onde clientes da região de ${seo.value?.districtName} buscam barbeiros perto deles.` },
-  { emoji: '💬', title: 'WhatsApp oficial (parceiro Facebook)', desc: 'Somos parceiros oficiais do Facebook. As mensagens saem pela API oficial — chegam de verdade, não caem em spam.' },
+  {
+    emoji: '📍',
+    title: `Apareça quando buscam barbearia em ${seo.value?.neighborhoodName}`,
+    desc:  'A tecnologia de SEO local da SuaAgenda coloca sua barbearia nas primeiras posições do Google para buscas do seu bairro.',
+  },
+  {
+    emoji: '📱',
+    title: 'Agendamento direto no WhatsApp',
+    desc:  'Cliente clica no link, escolhe horário e confirma — sem você largar a tesoura. Notificação chega no seu celular na hora.',
+  },
+  {
+    emoji: '✅',
+    title: 'Confirmação automática anti-furo',
+    desc:  'Sistema pede confirmação via WhatsApp. Não respondeu? Horário volta pra agenda e chama o próximo da fila automaticamente.',
+  },
+  {
+    emoji: '🚀',
+    title: 'No ar em 5 minutos',
+    desc:  'Serviços e disponibilidade já vêm pré-preenchidos. Você só confirma o que usa — sem técnico, sem treinamento.',
+  },
+  {
+    emoji: '📊',
+    title: 'Portal de descoberta regional',
+    desc:  `Sua barbearia também aparece no portal da SuaAgenda, onde clientes da região de ${seo.value?.districtName} buscam barbeiros perto deles.`,
+  },
+  {
+    emoji: '💬',
+    title: 'WhatsApp oficial (parceiro Facebook)',
+    desc:  'Somos parceiros oficiais do Facebook. As mensagens saem pela API oficial — chegam de verdade, não caem em spam.',
+  },
 ])
+
+// ─────────────────────────────────────────────────────────────────
+// Head
+// ─────────────────────────────────────────────────────────────────
 
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 useHead(computed(() => {
-  if (!seo.value) return { title: 'Bairro não encontrado' }
+  // 404 com cidade encontrada
+  if (!seo.value && fallbackCity.value) {
+    const city = fallbackCity.value
+    const label = neighborhoodSlug.replace(/-/g, ' ')
+    return {
+      title: `Barbearias perto de ${label} — ${city.city}`,
+      meta: [
+        { name: 'description', content: `Não encontramos barbearias em ${label}, mas veja opções em bairros próximos de ${city.city}.` },
+        { name: 'robots',      content: 'noindex, follow' },
+      ],
+    }
+  }
+
+  // 404 sem cidade
+  if (!seo.value) {
+    return {
+      title: 'Bairro não encontrado',
+      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+    }
+  }
+
+  // Página normal
   return {
     title: seo.value.metaTitle,
     meta: [
@@ -248,7 +481,7 @@ useHead(computed(() => {
       { name: 'twitter:card',       content: 'summary_large_image' },
       { name: 'robots',             content: 'index, follow' },
     ],
-    link: [{ rel: 'canonical', href: seo.value.canonicalUrl }],
+    link:   [{ rel: 'canonical', href: seo.value.canonicalUrl }],
     script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(seo.value.jsonLd) }],
   }
 }))
