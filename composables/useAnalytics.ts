@@ -25,6 +25,13 @@ export interface AnalyticsDailyResult {
   data:        AnalyticsDailyPoint[]
 }
 
+export interface AnalyticsFilterResult {
+  event:       string
+  minCount:    number
+  period_days: number
+  ids:         string[]
+}
+
 export function useAnalytics() {
   const config  = useRuntimeConfig()
   const baseUrl = config.public.apiBase as string
@@ -46,8 +53,6 @@ export function useAnalytics() {
   }
 
   // ── Backend próprio — fire-and-forget, nunca bloqueia a UI ───────────────
-  // Salva no banco pra exibir views/cliques no scraper admin.
-  // Se o backend estiver fora do ar, falha silenciosamente.
   function trackBackend(barbershopId: string, event: AnalyticsEvent): void {
     if (!barbershopId) return
     fetch(`${baseUrl}/analytics/event`, {
@@ -58,22 +63,17 @@ export function useAnalytics() {
   }
 
   // ── Atalhos que disparam GA4 + backend juntos ─────────────────────────────
-  // Use esses nas páginas de barbearia em vez de chamar os dois separado.
-
-  // Chama ao montar a página da barbearia
   function trackBarbershopView(barbershopId: string, barbershopName?: string): void {
     trackPageview()
     trackEvent('barbershop_view', { barbershop_id: barbershopId, barbershop_name: barbershopName })
     trackBackend(barbershopId, 'pageview')
   }
 
-  // Chama ao clicar em qualquer botão de WhatsApp
   function trackWhatsappClick(barbershopId: string, barbershopName?: string): void {
     trackEvent('whatsapp_click', { barbershop_id: barbershopId, barbershop_name: barbershopName })
     trackBackend(barbershopId, 'whatsapp_click')
   }
 
-  // Chama ao clicar em "Ver no Google Maps"
   function trackMapsClick(barbershopId: string, barbershopName?: string): void {
     trackEvent('maps_click', { barbershop_id: barbershopId, barbershop_name: barbershopName })
     trackBackend(barbershopId, 'maps_click')
@@ -107,6 +107,22 @@ export function useAnalytics() {
     } catch { return {} }
   }
 
+  // ── Novo: busca IDs que passam no filtro de engajamento ──────────────────
+  // Usado pelo scraper pra filtrar barbearias que tiveram N+ cliques no WhatsApp.
+  // Retorna Set<string> de IDs pra lookup O(1) no filtro do frontend.
+  async function fetchFilterIds(
+    event: AnalyticsEvent = 'whatsapp_click',
+    minCount = 1,
+    days = 30,
+  ): Promise<Set<string>> {
+    try {
+      const res = await $fetch<AnalyticsFilterResult>(`${baseUrl}/analytics/filter-ids`, {
+        params: { event, minCount, days },
+      })
+      return new Set(res.ids ?? [])
+    } catch { return new Set() }
+  }
+
   return {
     // GA4 originais
     trackEvent,
@@ -119,5 +135,6 @@ export function useAnalytics() {
     fetchSummary,
     fetchDaily,
     fetchBulkSummary,
+    fetchFilterIds,
   }
 }

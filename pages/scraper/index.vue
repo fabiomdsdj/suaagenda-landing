@@ -6,6 +6,7 @@
       <!-- ── Header ──────────────────────────────────────────────── -->
       <div class="flex items-start justify-between mb-8">
         <div>
+          <!-- ✅ Título sempre estático, independente de qualquer filtro -->
           <h1 class="text-2xl font-bold text-white tracking-tight">Barbearias cadastradas</h1>
           <p class="text-sm text-gray-500 mt-1">Gerencie os registros scrapeados e manuais</p>
         </div>
@@ -66,7 +67,6 @@
               :class="goalWeekly.done ? 'text-green-400' : 'text-white'"
             >{{ Math.min(goalWeekly.pct, 999) }}%</p>
           </div>
-
           <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden mb-2">
             <div
               class="h-full rounded-full transition-all duration-700"
@@ -74,7 +74,6 @@
               :style="{ width: `${Math.min(goalWeekly.pct, 100)}%` }"
             />
           </div>
-
           <div class="flex items-center justify-between text-xs text-gray-600">
             <span>
               <span class="text-white font-medium">{{ goalWeekly.current }}</span>
@@ -120,7 +119,6 @@
               :class="goalDaily.done ? 'text-green-400' : 'text-white'"
             >{{ Math.min(goalDaily.pct, 999) }}%</p>
           </div>
-
           <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden mb-2">
             <div
               class="h-full rounded-full transition-all duration-700"
@@ -128,7 +126,6 @@
               :style="{ width: `${Math.min(goalDaily.pct, 100)}%` }"
             />
           </div>
-
           <div class="flex items-center justify-between text-xs text-gray-600">
             <span>
               <span class="text-white font-medium">{{ goalDaily.current }}</span>
@@ -155,8 +152,6 @@
 
       <!-- ✅ Card de cobertura de bairros -->
       <div v-if="coverageStats" class="mb-6">
-
-        <!-- Header expansível -->
         <div
           class="rounded-2xl border border-white/[.06] bg-[#111] p-5 cursor-pointer select-none"
           @click="showCoverage = !showCoverage"
@@ -171,7 +166,6 @@
                   <span class="ml-2 text-gray-600 font-normal text-xs">em {{ coverageStats.totalCities }} cidades</span>
                 </p>
               </div>
-              <!-- Barra geral -->
               <div class="flex-1 max-w-xs hidden sm:block">
                 <div class="h-1.5 rounded-full bg-white/[.06] overflow-hidden">
                   <div
@@ -199,7 +193,6 @@
           </div>
         </div>
 
-        <!-- Detalhe por cidade (expansível) -->
         <Transition name="coverage">
           <div v-if="showCoverage" class="mt-2 space-y-2">
             <div
@@ -228,7 +221,6 @@
                   >{{ city.pct }}%</span>
                 </div>
               </div>
-
               <div class="h-1 rounded-full bg-white/[.06] overflow-hidden mb-3">
                 <div
                   class="h-full rounded-full transition-all duration-700"
@@ -236,7 +228,6 @@
                   :style="{ width: `${city.pct}%` }"
                 />
               </div>
-
               <div class="flex flex-wrap gap-1.5">
                 <button
                   v-for="n in city.neighborhoods"
@@ -301,6 +292,21 @@
           <option value="thisMonth">Este mês</option>
         </select>
 
+        <!-- ✅ Filtro por engajamento WhatsApp -->
+        <select
+          v-model="filters.wppEngagement"
+          class="filter-select"
+          :class="filters.wppEngagement ? 'border-green-400/40 text-green-400' : ''"
+          @change="onWppEngagementChange"
+        >
+          <option value="">WhatsApp: todos</option>
+          <option value="any">Teve algum clique</option>
+          <option value="5">5+ cliques</option>
+          <option value="10">10+ cliques</option>
+          <option value="25">25+ cliques</option>
+          <option value="50">50+ cliques</option>
+        </select>
+
         <button
           v-if="hasFilters"
           class="text-xs text-gray-500 hover:text-red-400 transition-colors underline"
@@ -308,7 +314,13 @@
         >Limpar</button>
 
         <p class="ml-auto text-xs text-gray-600">
-          <span class="text-gray-400 font-medium">{{ meta.total }}</span> registro{{ meta.total !== 1 ? 's' : '' }}
+          <template v-if="filters.wppEngagement && wppFilterIds.size > 0">
+            <span class="text-green-400 font-medium">{{ filteredRows.length }}</span>
+            <span class="text-gray-600"> de </span>
+          </template>
+          <span class="text-gray-400 font-medium">{{ meta.total }}</span>
+          registro{{ meta.total !== 1 ? 's' : '' }}
+          <span v-if="wppFilterLoading" class="ml-1 text-gray-700 animate-pulse">· filtrando...</span>
         </p>
       </div>
 
@@ -320,8 +332,10 @@
         </select>
       </div>
 
-      <!-- ── Paginação (topo) ────────────────────────────────────── -->
-      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 my-6">
+      <!-- ── Paginação (topo) ─────────────────────────────────────
+           ✅ Some quando filtro wpp ativo (resultado client-side, sem páginas reais)
+      ──────────────────────────────────────────────────────────── -->
+      <div v-if="!filters.wppEngagement && meta.pages > 1" class="flex items-center justify-center gap-2 my-6">
         <button
           class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           :disabled="meta.page === 1"
@@ -361,12 +375,13 @@
         </div>
 
         <!-- Lista -->
-        <template v-else-if="rows.length">
+        <template v-else-if="filteredRows.length">
           <div
-            v-for="shop in rows"
+            v-for="shop in filteredRows"
             :key="shop.id"
             class="flex items-center gap-4 px-5 py-4 border-b border-white/[.04] last:border-0 hover:bg-white/[.02] transition-colors group"
           >
+            <!-- Thumb -->
             <div class="w-10 h-10 rounded-lg overflow-hidden bg-[#181818] border border-white/[.06] flex-shrink-0">
               <img
                 v-if="getThumb(shop)"
@@ -377,7 +392,10 @@
               <div v-else class="w-full h-full flex items-center justify-center text-lg opacity-20">✂️</div>
             </div>
 
+            <!-- Info -->
             <div class="flex-1 min-w-0">
+
+              <!-- Linha 1: nome + badges de status -->
               <div class="flex items-center gap-2 flex-wrap">
                 <p class="text-sm font-semibold text-white truncate">{{ shop.name }}</p>
                 <span
@@ -397,18 +415,61 @@
                   class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-400/10 text-blue-400 border border-blue-400/20"
                 >✓ claimed</span>
               </div>
+
+              <!-- Linha 2: localização + rating + serviços + data -->
               <p class="text-xs text-gray-500 mt-0.5 truncate">
                 {{ [shop.neighborhood, shop.city, shop.state].filter(Boolean).join(', ') }}
                 <span v-if="shop.googleRating" class="ml-2 text-yellow-400">★ {{ Number(shop.googleRating).toFixed(1) }}</span>
                 <span v-if="shop.services?.length" class="ml-2 text-gray-600">{{ shop.services.length }} serviços</span>
                 <span v-if="shop.createdAt" class="ml-2 text-gray-700" :title="formatDateFull(shop.createdAt)">· {{ formatRelative(shop.createdAt) }}</span>
-                <span v-if="analyticsMap[shop.id]" class="ml-2 text-gray-600 flex items-center gap-2">
-                  <span title="Views 30 dias">👁 {{ analyticsMap[shop.id].pageviews }}</span>
-                  <span title="Cliques WhatsApp 30 dias">💬 {{ analyticsMap[shop.id].whatsapp_clicks }}</span>
-                </span>
               </p>
+
+              <!-- ✅ Linha 3: analytics em bloco próprio, bem organizado -->
+              <div v-if="analyticsMap[shop.id]" class="flex items-center gap-3 mt-1.5">
+
+                <!-- Views -->
+                <span
+                  class="inline-flex items-center gap-1 text-[11px] text-gray-600"
+                  title="Visualizações nos últimos 30 dias"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                  </svg>
+                  {{ analyticsMap[shop.id].pageviews }}
+                </span>
+
+                <!-- ✅ WhatsApp com ícone SVG, verde se passou no filtro wpp -->
+                <span
+                  class="inline-flex items-center gap-1 text-[11px]"
+                  :class="wppFilterIds.size > 0 && wppFilterIds.has(shop.id)
+                    ? 'text-green-400 font-semibold'
+                    : 'text-gray-600'"
+                  title="Cliques no WhatsApp nos últimos 30 dias"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12a11.93 11.93 0 0 0 1.64 6.06L0 24l6.17-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22c-1.84 0-3.62-.49-5.18-1.4l-.37-.22-3.66.96.98-3.57-.24-.37A9.95 9.95 0 0 1 2 12C2 6.48 6.48 2 12 2c2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10Zm5.52-7.46c-.3-.15-1.78-.88-2.06-.98s-.47-.15-.67.15-.77.98-.95 1.18-.35.22-.65.07a8.2 8.2 0 0 1-2.42-1.5 9.07 9.07 0 0 1-1.67-2.09c-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52s.2-.3.3-.5.05-.37-.02-.52-.67-1.62-.92-2.22c-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.14.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.78-.73 2.03-1.43s.25-1.31.17-1.43-.27-.2-.57-.35Z"/>
+                  </svg>
+                  {{ analyticsMap[shop.id].whatsapp_clicks }}
+                </span>
+
+                <!-- Maps (só se > 0) -->
+                <span
+                  v-if="analyticsMap[shop.id].maps_clicks > 0"
+                  class="inline-flex items-center gap-1 text-[11px] text-gray-600"
+                  title="Cliques no Google Maps nos últimos 30 dias"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                  </svg>
+                  {{ analyticsMap[shop.id].maps_clicks }}
+                </span>
+
+              </div>
             </div>
 
+            <!-- Plano badge -->
             <span
               class="hidden sm:inline-flex px-2 py-1 rounded text-[10px] font-bold border flex-shrink-0"
               :class="{
@@ -419,6 +480,7 @@
               }"
             >{{ shop.plan }}</span>
 
+            <!-- Ações (hover) -->
             <div class="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
               <NuxtLink
                 v-if="shop.ufSlug && shop.citySlug && shop.neighborhoodSlug && shop.slug"
@@ -458,15 +520,19 @@
         <!-- Empty -->
         <div v-else class="py-20 text-center">
           <p class="text-4xl mb-3 opacity-20">✂️</p>
-          <p class="text-gray-500 text-sm">Nenhuma barbearia encontrada</p>
+          <p class="text-gray-500 text-sm">
+            {{ filters.wppEngagement ? 'Nenhuma barbearia passou no filtro de WhatsApp' : 'Nenhuma barbearia encontrada' }}
+          </p>
           <NuxtLink to="/scraper/new" class="inline-block mt-4 text-green-400 text-sm hover:underline">
             Cadastrar primeira barbearia →
           </NuxtLink>
         </div>
       </div>
 
-      <!-- ── Paginação (rodapé) ──────────────────────────────────── -->
-      <div v-if="meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
+      <!-- ── Paginação (rodapé) ────────────────────────────────────
+           ✅ Some quando filtro wpp ativo
+      ──────────────────────────────────────────────────────────── -->
+      <div v-if="!filters.wppEngagement && meta.pages > 1" class="flex items-center justify-center gap-2 mt-6">
         <button
           class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           :disabled="meta.page === 1"
@@ -541,13 +607,14 @@ const stats   = ref<any>(null)
 const meta    = ref({ total: 0, page: 1, pages: 1, limit: 20 })
 
 const filters = reactive({
-  q:            '',
-  status:       '',
-  claimed:      '',
-  city:         '',
-  neighborhood: '',
-  dateRange:    '',
-  page:         1,
+  q:             '',
+  status:        '',
+  claimed:       '',
+  city:          '',
+  neighborhood:  '',
+  dateRange:     '',
+  wppEngagement: '' as string,
+  page:          1,
 })
 
 const cityOptions = ref<string[]>([])
@@ -570,27 +637,27 @@ const neighborhoodChips = computed(() => {
 })
 
 const hasFilters = computed(() =>
-  !!filters.q || !!filters.status || !!filters.claimed || !!filters.city || !!filters.neighborhood || !!filters.dateRange
+  !!filters.q || !!filters.status || !!filters.claimed || !!filters.city ||
+  !!filters.neighborhood || !!filters.dateRange || !!filters.wppEngagement
 )
 
-// ── Paginação truncada ────────────────────────────────────────────────────
+// ── Paginação truncada (igual ao portal /barbearias) ──────────────────────
 const paginationPages = computed(() => {
   const current = meta.value.page
   const total   = meta.value.pages
-  const delta   = 2
+  if (total <= 1) return []
 
-  const pages: (number | string)[] = []
+  const delta = 2
   const range: number[] = []
-
   for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
     range.push(i)
   }
 
-  pages.push(1)
-  if (range[0] > 2) pages.push('...')
+  const pages: (number | string)[] = [1]
+  if (range.length && range[0] > 2)                        pages.push('...')
   pages.push(...range)
-  if (range[range.length - 1] < total - 1) pages.push('...')
-  if (total > 1) pages.push(total)
+  if (range.length && range[range.length - 1] < total - 1) pages.push('...')
+  if (total > 1)                                            pages.push(total)
 
   return pages
 })
@@ -644,24 +711,53 @@ function onNeighborhoodChange() {
 }
 
 function clearFilters() {
-  filters.q            = ''
-  filters.status       = ''
-  filters.claimed      = ''
-  filters.city         = ''
-  filters.neighborhood = ''
-  filters.dateRange    = ''
-  filters.page         = 1
+  filters.q             = ''
+  filters.status        = ''
+  filters.claimed       = ''
+  filters.city          = ''
+  filters.neighborhood  = ''
+  filters.dateRange     = ''
+  filters.wppEngagement = ''
+  filters.page          = 1
+  wppFilterIds.value    = new Set()
   fetchList()
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────
-const { fetchBulkSummary } = useAnalytics()
+const { fetchBulkSummary, fetchFilterIds } = useAnalytics()
 const analyticsMap = ref<Record<string, any>>({})
 
 async function fetchAnalytics(ids: string[]) {
   if (!ids.length) return
   analyticsMap.value = await fetchBulkSummary(ids, 30)
 }
+
+// ── Filtro de engajamento WhatsApp ────────────────────────────────────────
+const wppFilterIds     = ref<Set<string>>(new Set())
+const wppFilterLoading = ref(false)
+
+async function onWppEngagementChange() {
+  filters.page = 1
+
+  if (!filters.wppEngagement) {
+    wppFilterIds.value = new Set()
+    fetchList()
+    return
+  }
+
+  fetchList()
+
+  wppFilterLoading.value = true
+  const minCount = filters.wppEngagement === 'any' ? 1 : parseInt(filters.wppEngagement)
+  wppFilterIds.value = await fetchFilterIds('whatsapp_click', minCount, 30)
+  wppFilterLoading.value = false
+}
+
+// Rows com filtro wpp aplicado client-side
+const filteredRows = computed(() => {
+  if (!filters.wppEngagement || wppFilterIds.value.size === 0) return rows.value
+  return rows.value.filter(shop => wppFilterIds.value.has(shop.id))
+})
 
 // ── Metas de cadastros ────────────────────────────────────────────────────
 const { public: runtimeConfig } = useRuntimeConfig()
@@ -676,8 +772,6 @@ const dailyGoal = computed(() => {
   return raw ? parseInt(String(raw)) : 0
 })
 
-// ── Dia de negócio: vira às 05:00 ─────────────────────────────────────────
-// Antes das 05h, ainda é o "dia anterior" para fins de meta
 const BUSINESS_DAY_START_HOUR = 5
 
 function businessDay(date = new Date()): string {
@@ -685,13 +779,11 @@ function businessDay(date = new Date()): string {
   return adjusted.toISOString().split('T')[0]
 }
 
-function todayStr(): string {
-  return businessDay()
-}
+function todayStr(): string { return businessDay() }
 
 function mondayStr(): string {
-  const now      = new Date()
-  const adjusted = new Date(now.getTime() - BUSINESS_DAY_START_HOUR * 60 * 60 * 1000)
+  const now       = new Date()
+  const adjusted  = new Date(now.getTime() - BUSINESS_DAY_START_HOUR * 60 * 60 * 1000)
   const dayOfWeek = adjusted.getDay()
   const daysSince = dayOfWeek === 0 ? 6 : dayOfWeek - 1
   adjusted.setDate(adjusted.getDate() - daysSince)
@@ -731,9 +823,7 @@ const goalWeekly = computed(() => {
   return makeGoalStatus(weeklyCount.value, weeklyGoal.value, daysLeft)
 })
 
-const goalDaily = computed(() =>
-  makeGoalStatus(dailyCount.value, dailyGoal.value)
-)
+const goalDaily = computed(() => makeGoalStatus(dailyCount.value, dailyGoal.value))
 
 // ── Cobertura de bairros ──────────────────────────────────────────────────
 const showCoverage = ref(false)

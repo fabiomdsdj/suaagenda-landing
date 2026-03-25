@@ -1,0 +1,21 @@
+app = "suaagenda-landing"
+primary_region = "gru"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  NUXT_PUBLIC_API_BASE_URL = "https://backend.suaagenda.link"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory_mb = 256
+  cpu_kind = "shared"
+  cpus = 1
