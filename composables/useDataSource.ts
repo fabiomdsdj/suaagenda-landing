@@ -1,22 +1,9 @@
 // composables/useDataSource.ts
-//
-// Controla se o portal usa o mock local ou a API real.
-// O estado persiste em localStorage e pode ser togglado
-// em qualquer página (inclusive com hotkey Ctrl+Shift+D em dev).
-//
-// Uso:
-//   const { isApi, toggle, label } = useDataSource()
-
 const DATA_SOURCE_KEY = 'portal:dataSource'
 
-// Estado global compartilhado entre todos que usarem o composable
-const _source = ref<'mock' | 'api'>(
-  // Valor padrão: 'mock' em dev, 'api' em produção
-  import.meta.env.DEV ? 'mock' : 'api',
-)
+const _source = ref<'mock' | 'api'>('api') // ← era: import.meta.env.DEV ? 'mock' : 'api'
 
 export function useDataSource() {
-  // Hidrata do localStorage na primeira chamada (client-side only)
   onMounted(() => {
     if (import.meta.client) {
       const saved = localStorage.getItem(DATA_SOURCE_KEY) as 'mock' | 'api' | null
@@ -35,7 +22,6 @@ export function useDataSource() {
     set(_source.value === 'mock' ? 'api' : 'mock')
   }
 
-  // Hotkey Ctrl+Shift+D — só em dev
   if (import.meta.dev) {
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') toggle()
