@@ -40,12 +40,37 @@ function findNeighborhoodData(
   citySlug: string,
   neighborhoodSlug: string,
 ): { city: CityData; district: District; neighborhood: Neighborhood } | null {
+  console.log('🔍 [findNeighborhoodData] Procurando:', {
+    ufSlug,
+    citySlug,
+    neighborhoodSlug,
+    totalCities: cities.length
+  })
+
   const city = cities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug)
-  if (!city) return null
+  
+  if (!city) {
+    console.log('❌ [findNeighborhoodData] Cidade NÃO encontrada')
+    return null
+  }
+
+  console.log('✅ [findNeighborhoodData] Cidade encontrada:', {
+    city: city.city,
+    districtsCount: city.districts.length
+  })
+
   for (const district of city.districts) {
     const neighborhood = district.neighborhoods.find(n => n.slug === neighborhoodSlug)
-    if (neighborhood) return { city, district, neighborhood }
+    if (neighborhood) {
+      console.log('✅ [findNeighborhoodData] Bairro encontrado:', {
+        neighborhood: neighborhood.name,
+        district: district.name
+      })
+      return { city, district, neighborhood }
+    }
   }
+
+  console.log('❌ [findNeighborhoodData] Bairro NÃO encontrado em nenhum distrito')
   return null
 }
 
@@ -60,10 +85,27 @@ function buildSeoData(
   neighborhoodSlug: string,
   serviceSlug?: string,
 ): LocalSeoData | null {
+  console.log('🏗️ [buildSeoData] INÍCIO', {
+    ufSlug,
+    citySlug,
+    neighborhoodSlug,
+    serviceSlug
+  })
+
   const result = findNeighborhoodData(cities, ufSlug, citySlug, neighborhoodSlug)
-  if (!result) return null
+  
+  if (!result) {
+    console.log('❌ [buildSeoData] findNeighborhoodData retornou NULL')
+    return null
+  }
 
   const { city, district, neighborhood } = result
+
+  console.log('✅ [buildSeoData] Dados encontrados:', {
+    city: city.city,
+    district: district.name,
+    neighborhood: neighborhood.name
+  })
 
   const neighborhoodName = neighborhood.name
   const cityName         = city.city
@@ -76,6 +118,12 @@ function buildSeoData(
   const service      = serviceSlug ? allServices.find(s => s.slug === serviceSlug) : undefined
   const serviceName  = service?.name  ?? ''
   const serviceEmoji = service?.emoji ?? '💈'
+
+  console.log('🔧 [buildSeoData] Serviço:', {
+    serviceSlug,
+    found: !!service,
+    serviceName
+  })
 
   // ── H1 / Meta ─────────────────────────────────────────────────────────────
   const h1 = service
@@ -124,6 +172,8 @@ function buildSeoData(
     .filter(n => n.slug !== neighborhoodSlug)
     .slice(0, 8)
 
+  console.log('🗺️ [buildSeoData] Bairros próximos:', nearbyNeighborhoods.length)
+
   // ── JSON-LD ───────────────────────────────────────────────────────────────
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -150,7 +200,7 @@ function buildSeoData(
     },
   }
 
-  return {
+  const seoData = {
     neighborhoodName,
     districtName,
     zoneName,
@@ -173,6 +223,10 @@ function buildSeoData(
     nearbyNeighborhoods,
     availableServices: allServices,
   }
+
+  console.log('✅ [buildSeoData] SEO data construído com sucesso')
+
+  return seoData
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -185,16 +239,43 @@ export function useLocalSeo(
   neighborhoodSlug: string,
   serviceSlug?: string,
 ) {
+  console.log('🚀 [useLocalSeo] INÍCIO', {
+    ufSlug,
+    citySlug,
+    neighborhoodSlug,
+    serviceSlug,
+    timestamp: new Date().toISOString()
+  })
+
   // useAsyncData garante:
   // - roda 1x no SSR, hidrata no client sem refetch
   // - chave única por rota — sem colisão entre páginas
   // - data é Ref<LocalSeoData | null>, igual ao uso atual nas páginas
   const key = `seo:${ufSlug}:${citySlug}:${neighborhoodSlug}${serviceSlug ? `:${serviceSlug}` : ''}`
 
+  console.log('🔑 [useLocalSeo] Cache key:', key)
+
   const { data } = useAsyncData<LocalSeoData | null>(key, async () => {
+    console.log('💾 [useLocalSeo useAsyncData] Buscando locations...')
     const cities = await fetchLocations()
-    return buildSeoData(cities, ufSlug, citySlug, neighborhoodSlug, serviceSlug)
+    
+    console.log('📍 [useLocalSeo useAsyncData] Locations carregados:', {
+      citiesCount: cities.length,
+      firstCity: cities[0] ? cities[0].city : null
+    })
+    
+    console.log('🏗️ [useLocalSeo useAsyncData] Chamando buildSeoData...')
+    const result = buildSeoData(cities, ufSlug, citySlug, neighborhoodSlug, serviceSlug)
+    
+    console.log('📦 [useLocalSeo useAsyncData] Resultado buildSeoData:', {
+      found: !!result,
+      metaTitle: result?.metaTitle
+    })
+    
+    return result
   })
+
+  console.log('✨ [useLocalSeo] Retornando composable')
 
   return { data }
 }

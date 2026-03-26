@@ -1,22 +1,27 @@
 // composables/useFallbackSuggestions.ts
 //
-// Resolve barbearias próximas quando o bairro não tem shops cadastrados.
+// Resolve sugestões de barbearias próximas mesmo quando o bairro ou cidade
+// NÃO estão mapeados no locations.ts.
+//
+// ⚠️  NÃO usa useBarbershopsUnified — o unified compartilha uma instância de
+//     api e sofre race condition em chamadas sequenciais dentro do useAsyncData.
+//     Aqui cada tentativa usa fetchIsolated(), que cria sua própria instância
+//     de useBarbershopApi para que os resultados não se sobrescrevam.
 //
 // Hierarquia de tentativas:
-//   1. 'neighborhood' — bairro exato
-//   2. 'district'     — cidade inteira, filtra bairros do distrito client-side
-//   3. 'city'         — cidade toda (fallback da 2 se distrito deu 0)
-//   4. 'uf'           — estado todo
-//   5. 'empty'        — nada encontrado
-//
-// IMPORTANTE: NÃO usa onMounted internamente.
-// O componente deve chamar execute() dentro do seu próprio onMounted.
+//   1. bairro + cidade (exato)           → level = 'neighborhood'
+//   2. cidade sem bairro                 → level = 'city'
+//   3. só UF                             → level = 'uf'
+//   4. sem resultado em nenhum nível     → level = 'empty'
 
-import { fetchLocations } from '~/composables/useLocation'
-import type { Barbershop } from '~/data/barbershops'
-import type { SearchResult } from '~/composables/useBarbershops'
+import { useBarbershopApi }    from '~/composables/useBarbershopApi'
+import { useDataSource }       from '~/composables/useDataSource'
+import { useBarbershopSearch } from '~/composables/useBarbershops'
+import { allCities }           from '~/data/locations'
+import type { Barbershop }     from '~/data/barbershops'
+import type { SearchResult }   from '~/composables/useBarbershops'
 
-export type FallbackLevel = 'neighborhood' | 'district' | 'city' | 'uf' | 'empty'
+export type FallbackLevel = 'neighborhood' | 'city' | 'uf' | 'empty'
 
 interface FallbackData {
   level: FallbackLevel
@@ -25,170 +30,65 @@ interface FallbackData {
     nearbyNeighborhoods: Array<{ name: string; slug: string; count: number }>
     relatedServices:     Array<{ name: string; slug: string; count: number; emoji?: string }>
   }
-  districtNeighborhoodSlugs: string[]
 }
 
-// ── Config lazy (singleton) ───────────────────────────────────────────────────
-let _baseUrl = ''
-let _apiKey  = ''
-
-function initConfig() {
-  if (_baseUrl) return
-  const config = useRuntimeConfig()
-  _baseUrl = (config.public.apiBase as string) || ''
-  _apiKey  = (config.public.apiKey  as string) || ''
-}
-
-// ── Normalização inline ───────────────────────────────────────────────────────
-function slugify(str: string): string {
-  return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
-
-function normalizeShop(raw: any): Barbershop {
-  const ufSlug           = raw.ufSlug ?? raw.state?.toLowerCase() ?? ''
-  const neighborhoodSlug = raw.neighborhoodSlug ?? slugify(raw.neighborhood ?? '')
-  const neighborhood     = raw.neighborhood ||
-    neighborhoodSlug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-
-  return {
-    id:                raw.id,
-    name:              raw.name,
-    slug:              raw.slug,
-    subdomain:         raw.subdomain       ?? undefined,
-    status:            raw.status,
-    plan:              raw.plan,
-    isClaimed:         Boolean(raw.isClaimed),
-    featured:          raw.featured        ?? false,
-    phone:             raw.phone           ?? undefined,
-    whatsapp:          raw.whatsapp        ?? undefined,
-    email:             raw.email           ?? undefined,
-    website:           raw.website         ?? undefined,
-    street:            raw.street          ?? undefined,
-    number:            raw.number          ?? undefined,
-    complement:        raw.complement      ?? undefined,
-    neighborhood,
-    neighborhoodSlug,
-    city:              raw.city,
-    citySlug:          raw.citySlug,
-    state:             raw.state,
-    ufSlug,
-    zipCode:           raw.zipCode         ?? undefined,
-    country:           raw.country,
-    address:           raw.address ?? [raw.street, raw.number, raw.complement].filter(Boolean).join(', '),
-    latitude:          raw.latitude        ?? undefined,
-    longitude:         raw.longitude       ?? undefined,
-    description:       raw.description     ?? undefined,
-    metaTitle:         raw.metaTitle       ?? undefined,
-    metaDescription:   raw.metaDescription ?? undefined,
-    coverImageUrl:     raw.coverImageUrl   ?? undefined,
-    logoUrl:           raw.logoUrl         ?? undefined,
-    googlePlaceId:     raw.googlePlaceId   ?? undefined,
-    googleRating:      raw.googleRating    ?? undefined,
-    googleReviewCount: raw.googleReviewCount ?? 0,
-    nativeRating:      raw.nativeRating    ?? undefined,
-    nativeReviewCount: raw.nativeReviewCount ?? 0,
-    openingHours:      raw.openingHours    ?? undefined,
-    services: (raw.services ?? []).map((s: any) => ({
-      id:          s.id,
-      name:        s.name,
-      slug:        s.slug,
-      category:    s.category    ?? undefined,
-      description: s.description ?? undefined,
-      price:       Number(s.price),
-      priceMin:    s.priceMin != null ? Number(s.priceMin) : undefined,
-      priceMax:    s.priceMax != null ? Number(s.priceMax) : undefined,
-      durationMin: s.durationMin,
-      isActive:    Boolean(s.isActive),
-      isFeatured:  Boolean(s.isFeatured),
-      seoTag:      s.seoTag    ?? undefined,
-      sortOrder:   s.sortOrder,
-    })),
-    photos: (raw.photos ?? [])
-      .sort((a: any, b: any) => {
-        if (Number(b.isCover) !== Number(a.isCover)) return Number(b.isCover) - Number(a.isCover)
-        return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
-      })
-      .map((p: any) => p.url),
-    createdAt: raw.createdAt,
-    updatedAt: raw.updatedAt,
-  }
-}
-
-// ── fetchIsolated ─────────────────────────────────────────────────────────────
-interface FetchParams {
-  uf:            string
-  city?:         string
+// ── Busca isolada ────────────────────────────────────────────────────────────
+// Cada chamada tem sua própria instância de api para evitar race condition.
+// No modo mock usa useBarbershopSearch síncrono (sem instância compartilhada).
+async function fetchIsolated(params: {
+  uf?:          string
+  city?:        string
   neighborhood?: string
-  svc?:          string
-  limit?:        number
-}
+  svc?:         string
+  limit?:       number
+  isApi:        boolean
+}): Promise<SearchResult> {
+  const { uf, city, neighborhood, svc, limit = 6, isApi } = params
 
-async function fetchIsolated(params: FetchParams): Promise<SearchResult> {
-  const emptyResult: SearchResult = {
-    data: [],
-    meta: { total: 0, page: 1, limit: params.limit ?? 6, pages: 0, stats: { avgRating: null, avgPrice: null, hasPhotos: 0, proCount: 0 } },
-    suggestions: { nearbyNeighborhoods: [], relatedServices: [] },
+  console.log('🔍 [fetchIsolated] INÍCIO', {
+    uf,
+    city,
+    neighborhood,
+    svc,
+    limit,
+    isApi,
+    timestamp: new Date().toISOString()
+  })
+
+  if (!isApi) {
+    console.log('📦 [fetchIsolated] Usando MOCK (useBarbershopSearch)')
+    const result = useBarbershopSearch({ uf, city, neighborhood, svc, limit })
+    console.log('✅ [fetchIsolated] MOCK retornou:', {
+      dataLength: result.data.length,
+      hasNeighborhoods: result.suggestions.nearbyNeighborhoods.length,
+      hasServices: result.suggestions.relatedServices.length
+    })
+    return result
   }
 
-  try {
-    const query: Record<string, string | number> = { uf: params.uf }
-    if (params.city)         query.city         = params.city
-    if (params.neighborhood) query.neighborhood = params.neighborhood
-    if (params.svc)          query.svc          = params.svc
-    if (params.limit)        query.limit        = params.limit
-
-    const raw = await $fetch<{ data: any[]; meta: any; suggestions?: any }>(
-      `${_baseUrl}/barbershops`,
-      {
-        params: query,
-        headers: _apiKey ? { 'x-api-key': _apiKey } : {},
-      }
-    )
-
-    return {
-      data:        (raw.data ?? []).map(normalizeShop),
-      meta: {
-        total:  raw.meta?.total  ?? 0,
-        page:   raw.meta?.page   ?? 1,
-        limit:  raw.meta?.limit  ?? (params.limit ?? 6),
-        pages:  raw.meta?.pages  ?? 0,
-        stats:  raw.meta?.stats  ?? { avgRating: null, avgPrice: null, hasPhotos: 0, proCount: 0 },
-      },
-      suggestions: raw.suggestions ?? { nearbyNeighborhoods: [], relatedServices: [] },
-    }
-  } catch (err: any) {
-    console.error('[fetchIsolated] ERRO —', JSON.stringify(params), err?.message)
-    return emptyResult
-  }
+  // API real: nova instância por chamada (sem estado compartilhado)
+  console.log('🌐 [fetchIsolated] Usando API REAL (useBarbershopApi)')
+  const api = useBarbershopApi()
+  
+  console.log('📡 [fetchIsolated] Chamando api.fetch...')
+  await api.fetch({ uf, city, neighborhood, svc, limit })
+  
+  const result = api.result.value
+  console.log('✅ [fetchIsolated] API retornou:', {
+    dataLength: result.data.length,
+    hasNeighborhoods: result.suggestions.nearbyNeighborhoods.length,
+    hasServices: result.suggestions.relatedServices.length,
+    firstShop: result.data[0] ? {
+      id: result.data[0].id,
+      name: result.data[0].name,
+      neighborhood: result.data[0].neighborhood
+    } : null
+  })
+  
+  return result
 }
 
-// ── resolveDistrictSlugs ──────────────────────────────────────────────────────
-async function resolveDistrictSlugs(
-  ufSlug: string,
-  citySlug: string,
-  neighborhoodSlug: string,
-): Promise<string[]> {
-  const cities = await fetchLocations()
-  const city   = cities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug)
-  if (!city) return []
-
-  let district = city.districts.find(d =>
-    d.neighborhoods.some(n => n.slug === neighborhoodSlug)
-  )
-  if (!district) {
-    const prefix = neighborhoodSlug.split('-').slice(0, 2).join('-')
-    district = city.districts.find(d =>
-      d.neighborhoods.some(n => n.slug.startsWith(prefix))
-    ) ?? [...city.districts].sort((a, b) => b.neighborhoods.length - a.neighborhoods.length)[0]
-  }
-  if (!district) return []
-  return district.neighborhoods.map(n => n.slug).filter(s => s !== neighborhoodSlug)
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ── Composable público ───────────────────────────────────────────────────────
 export function useFallbackSuggestions(opts: {
   ufSlug:            string
   citySlug:          string
@@ -198,120 +98,256 @@ export function useFallbackSuggestions(opts: {
 }) {
   const { ufSlug, citySlug, neighborhoodSlug, serviceSlug, limit = 6 } = opts
 
-  initConfig()
-
-  // ── Labels legíveis ───────────────────────────────────────────────────────
-  const cityLabelRef     = ref('')
-  const districtLabelRef = ref('')
-
-  const labelKey = `fallback-labels:${ufSlug}:${citySlug}:${neighborhoodSlug ?? '_'}`
-  const { data: labelData } = useAsyncData(labelKey, async () => {
-    const cities = await fetchLocations()
-    const city   = cities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug)
-    if (!city) return { cityLabel: citySlug, districtLabel: '' }
-
-    const cityLabel = city.city
-    if (!neighborhoodSlug) return { cityLabel, districtLabel: '' }
-
-    let district = city.districts.find(d =>
-      d.neighborhoods.some(n => n.slug === neighborhoodSlug)
-    )
-    if (!district) {
-      const prefix = neighborhoodSlug.split('-').slice(0, 2).join('-')
-      district = city.districts.find(d =>
-        d.neighborhoods.some(n => n.slug.startsWith(prefix))
-      ) ?? [...city.districts].sort((a, b) => b.neighborhoods.length - a.neighborhoods.length)[0]
-    }
-    if (!district) return { cityLabel, districtLabel: '' }
-
-    return { cityLabel, districtLabel: district.name }
+  console.log('🚀 [useFallbackSuggestions] INÍCIO', {
+    ufSlug,
+    citySlug,
+    neighborhoodSlug,
+    serviceSlug,
+    limit,
+    timestamp: new Date().toISOString()
   })
 
-  watch(labelData, val => {
-    if (!val) return
-    cityLabelRef.value     = val.cityLabel
-    districtLabelRef.value = val.districtLabel
-  }, { immediate: true })
+  // ── Labels legíveis mesmo sem locations.ts ──────────────────────────────
+  const cityData = allCities.find(
+    c => c.ufSlug === ufSlug && c.citySlug === citySlug,
+  )
 
-  // ── Estado reativo ────────────────────────────────────────────────────────
-  // pending começa TRUE → skeleton aparece imediatamente no template
-  const pending      = ref(true)
-  const fallbackData = ref<FallbackData>({
-    level:                     'empty',
-    data:                      [],
-    suggestions:               { nearbyNeighborhoods: [], relatedServices: [] },
-    districtNeighborhoodSlugs: [],
+  console.log('📍 [useFallbackSuggestions] cityData lookup:', {
+    found: !!cityData,
+    cityData: cityData ? {
+      city: cityData.city,
+      ufSlug: cityData.ufSlug,
+      citySlug: cityData.citySlug,
+      districtsCount: cityData.districts.length
+    } : null
   })
 
-  // ── execute() — chamado pelo componente no seu onMounted ──────────────────
-  async function execute() {
-    pending.value = true
-    try {
-      const districtSlugs = neighborhoodSlug
-        ? await resolveDistrictSlugs(ufSlug, citySlug, neighborhoodSlug)
-        : []
+  const cityLabel = cityData?.city
+    ?? citySlug
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ')
 
-      // Tentativa 1: bairro exato
+  const districtLabel = (() => {
+    if (!cityData || !neighborhoodSlug) return ''
+    const prefix   = neighborhoodSlug.split('-').slice(0, 2).join('-')
+    const district =
+      cityData.districts.find(d =>
+        d.neighborhoods.some(n => n.slug.startsWith(prefix)),
+      ) ??
+      [...cityData.districts].sort(
+        (a, b) => b.neighborhoods.length - a.neighborhoods.length,
+      )[0]
+    return district?.name ?? ''
+  })()
+
+  console.log('🏷️ [useFallbackSuggestions] Labels:', {
+    cityLabel,
+    districtLabel
+  })
+
+  // ── isApi lido ANTES do useAsyncData (não pode chamar composable async) ─
+  const { isApi } = useDataSource()
+  const useRealApi = isApi.value
+
+  console.log('⚙️ [useFallbackSuggestions] Data source:', {
+    isApi: useRealApi,
+    source: useRealApi ? 'API' : 'MOCK'
+  })
+
+  // ── Cache key única por rota ─────────────────────────────────────────────
+  const cacheKey = [
+    'fallback',
+    ufSlug,
+    citySlug,
+    neighborhoodSlug ?? '_',
+    serviceSlug      ?? '_',
+  ].join(':')
+
+  console.log('🔑 [useFallbackSuggestions] Cache key:', cacheKey)
+
+  // ── useAsyncData: aguarda no SSR, hidrata no client sem refetch ──────────
+  const { data, pending, error } = useAsyncData<FallbackData>(
+    cacheKey,
+    async () => {
+      console.log('💾 [useAsyncData] INÍCIO da função async', {
+        cacheKey,
+        timestamp: new Date().toISOString()
+      })
+
+      const empty: FallbackData = {
+        level: 'empty',
+        data:  [],
+        suggestions: { nearbyNeighborhoods: [], relatedServices: [] },
+      }
+
+      // Tentativa 1: bairro + cidade
+      console.log('🎯 [useAsyncData] TENTATIVA 1: bairro + cidade')
       if (neighborhoodSlug && citySlug) {
+        console.log('📍 [useAsyncData] Buscando com:', {
+          uf: ufSlug,
+          city: citySlug,
+          neighborhood: neighborhoodSlug,
+          svc: serviceSlug
+        })
+
         const r = await fetchIsolated({
           uf: ufSlug, city: citySlug, neighborhood: neighborhoodSlug,
-          svc: serviceSlug, limit,
+          svc: serviceSlug, limit, isApi: useRealApi,
         })
+
+        console.log('📊 [useAsyncData] Resultado TENTATIVA 1:', {
+          dataLength: r.data.length,
+          hasResults: r.data.length > 0
+        })
+
         if (r.data.length > 0) {
-          fallbackData.value = { level: 'neighborhood', data: r.data, suggestions: r.suggestions, districtNeighborhoodSlugs: districtSlugs }
-          return
+          console.log('✅ [useAsyncData] SUCESSO na TENTATIVA 1 (neighborhood)')
+          const result = {
+            level:       'neighborhood' as FallbackLevel,
+            data:        r.data,
+            suggestions: r.suggestions,
+          }
+          console.log('📦 [useAsyncData] Retornando resultado:', {
+            level: result.level,
+            dataCount: result.data.length,
+            neighborhoodsCount: result.suggestions.nearbyNeighborhoods.length,
+            servicesCount: result.suggestions.relatedServices.length
+          })
+          return result
         }
+        console.log('❌ [useAsyncData] TENTATIVA 1 falhou (sem resultados)')
+      } else {
+        console.log('⏭️ [useAsyncData] TENTATIVA 1 pulada (faltam neighborhoodSlug ou citySlug)')
       }
 
-      // Tentativa 2+3: city-wide, filtra distrito client-side
+      // Tentativa 2: cidade sem bairro
+      console.log('🎯 [useAsyncData] TENTATIVA 2: cidade sem bairro')
       if (citySlug) {
-        const r = await fetchIsolated({ uf: ufSlug, city: citySlug, svc: serviceSlug, limit: limit * 4 })
+        console.log('📍 [useAsyncData] Buscando com:', {
+          uf: ufSlug,
+          city: citySlug,
+          svc: serviceSlug
+        })
+
+        const r = await fetchIsolated({
+          uf: ufSlug, city: citySlug,
+          svc: serviceSlug, limit, isApi: useRealApi,
+        })
+
+        console.log('📊 [useAsyncData] Resultado TENTATIVA 2:', {
+          dataLength: r.data.length,
+          hasResults: r.data.length > 0
+        })
+
         if (r.data.length > 0) {
-          const districtShops    = districtSlugs.length > 0 ? r.data.filter(s => districtSlugs.includes(s.neighborhoodSlug)) : []
-          const shops            = districtShops.length > 0 ? districtShops.slice(0, limit) : r.data.slice(0, limit)
-          const level: FallbackLevel = districtShops.length > 0 ? 'district' : 'city'
-          fallbackData.value = { level, data: shops, suggestions: r.suggestions, districtNeighborhoodSlugs: districtSlugs }
-          return
+          console.log('✅ [useAsyncData] SUCESSO na TENTATIVA 2 (city)')
+          const result = {
+            level:       'city' as FallbackLevel,
+            data:        r.data,
+            suggestions: r.suggestions,
+          }
+          console.log('📦 [useAsyncData] Retornando resultado:', {
+            level: result.level,
+            dataCount: result.data.length
+          })
+          return result
         }
+        console.log('❌ [useAsyncData] TENTATIVA 2 falhou (sem resultados)')
+      } else {
+        console.log('⏭️ [useAsyncData] TENTATIVA 2 pulada (falta citySlug)')
       }
 
-      // Tentativa 4: só UF
+      // Tentativa 3: só UF
+      console.log('🎯 [useAsyncData] TENTATIVA 3: só UF')
       if (ufSlug) {
-        const r = await fetchIsolated({ uf: ufSlug, svc: serviceSlug, limit })
+        console.log('📍 [useAsyncData] Buscando com:', {
+          uf: ufSlug,
+          svc: serviceSlug
+        })
+
+        const r = await fetchIsolated({
+          uf: ufSlug,
+          svc: serviceSlug, limit, isApi: useRealApi,
+        })
+
+        console.log('📊 [useAsyncData] Resultado TENTATIVA 3:', {
+          dataLength: r.data.length,
+          hasResults: r.data.length > 0
+        })
+
         if (r.data.length > 0) {
-          fallbackData.value = { level: 'uf', data: r.data, suggestions: r.suggestions, districtNeighborhoodSlugs: districtSlugs }
-          return
+          console.log('✅ [useAsyncData] SUCESSO na TENTATIVA 3 (uf)')
+          const result = {
+            level:       'uf' as FallbackLevel,
+            data:        r.data,
+            suggestions: r.suggestions,
+          }
+          console.log('📦 [useAsyncData] Retornando resultado:', {
+            level: result.level,
+            dataCount: result.data.length
+          })
+          return result
         }
+        console.log('❌ [useAsyncData] TENTATIVA 3 falhou (sem resultados)')
+      } else {
+        console.log('⏭️ [useAsyncData] TENTATIVA 3 pulada (falta ufSlug)')
       }
 
-      // empty
-      fallbackData.value = {
-        level: 'empty', data: [], suggestions: { nearbyNeighborhoods: [], relatedServices: [] },
-        districtNeighborhoodSlugs: districtSlugs,
-      }
-    } catch (err) {
-      console.error('[useFallbackSuggestions] erro:', err)
-    } finally {
-      pending.value = false
-    }
-  }
+      console.log('💀 [useAsyncData] TODAS as tentativas falhar am. Retornando empty.')
+      return empty
+    },
+    {
+      // default garante que .value nunca é null — sem guards no template
+      default: (): FallbackData => {
+        console.log('🔄 [useAsyncData] Usando valor default (empty)')
+        return {
+          level: 'empty',
+          data:  [],
+          suggestions: { nearbyNeighborhoods: [], relatedServices: [] },
+        }
+      },
+    },
+  )
 
-  const level               = computed<FallbackLevel>(() => fallbackData.value.level)
-  const shops               = computed<Barbershop[]>(() => fallbackData.value.data)
-  const nearbyNeighborhoods = computed(() => fallbackData.value.suggestions?.nearbyNeighborhoods ?? [])
-  const relatedServices     = computed(() => fallbackData.value.suggestions?.relatedServices     ?? [])
-  const districtSlugs       = computed(() => fallbackData.value.districtNeighborhoodSlugs        ?? [])
+  // ── Computed derivados ───────────────────────────────────────────────────
+  const level               = computed<FallbackLevel>(() => {
+    const val = data.value?.level ?? 'empty'
+    console.log('🔢 [computed level]:', val)
+    return val
+  })
+
+  const shops               = computed<Barbershop[]>(() => {
+    const val = data.value?.data ?? []
+    console.log('🏪 [computed shops]:', {
+      length: val.length,
+      firstShop: val[0] ? { id: val[0].id, name: val[0].name } : null
+    })
+    return val
+  })
+
+  const nearbyNeighborhoods = computed(() => {
+    const val = data.value?.suggestions?.nearbyNeighborhoods ?? []
+    console.log('🗺️ [computed nearbyNeighborhoods]:', { length: val.length })
+    return val
+  })
+
+  const relatedServices = computed(() => {
+    const val = data.value?.suggestions?.relatedServices ?? []
+    console.log('🔧 [computed relatedServices]:', { length: val.length })
+    return val
+  })
+
+  console.log('✨ [useFallbackSuggestions] Retornando composable')
 
   return {
     shops,
-    level,
-    pending,
-    error: ref(null),
+    cityLabel,
+    districtLabel,
     nearbyNeighborhoods,
     relatedServices,
-    districtSlugs,
-    execute,
-    get cityLabel()     { return cityLabelRef.value     || citySlug },
-    get districtLabel() { return districtLabelRef.value || ''       },
+    pending,
+    error,
+    level,
   }
 }

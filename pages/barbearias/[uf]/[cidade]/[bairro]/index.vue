@@ -2,9 +2,44 @@
 <template>
   <div>
 
+    <!-- DEBUG INFO (remover em produção) 
+    <div v-if="showDebug" class="fixed bottom-4 right-4 max-w-md bg-black/90 text-white p-4 rounded-lg text-xs font-mono z-50 max-h-96 overflow-auto">
+      <div class="font-bold mb-2 text-green-400">🐛 DEBUG INFO</div>
+      <div class="space-y-1">
+        <div><span class="text-gray-400">seo:</span> {{ seo ? '✅ FOUND' : '❌ NULL' }}</div>
+        <div><span class="text-gray-400">fallback.level:</span> {{ fallback.level.value }}</div>
+        <div><span class="text-gray-400">fallback.shops:</span> {{ fallback.shops.value.length }}</div>
+        <div><span class="text-gray-400">fallback.pending:</span> {{ fallback.pending.value }}</div>
+        <div><span class="text-gray-400">showFullPage:</span> {{ showFullPage }}</div>
+        <div><span class="text-gray-400">usePageSearch:</span> {{ usePageSearchForCards }}</div>
+        <div class="mt-2 pt-2 border-t border-gray-700">
+          <div class="text-gray-400">Route params:</div>
+          <div>uf: {{ ufSlug }}</div>
+          <div>city: {{ citySlug }}</div>
+          <div>neighborhood: {{ neighborhoodSlug }}</div>
+        </div>
+        <div class="mt-2 pt-2 border-t border-gray-700">
+          <div class="text-gray-400">Computed:</div>
+          <div>cityLabel: {{ fallback.cityLabel }}</div>
+          <div>districtLabel: {{ fallback.districtLabel }}</div>
+          <div>neighborhoodLabel: {{ neighborhoodLabel }}</div>
+        </div>
+        <div v-if="fallback.shops.value.length > 0" class="mt-2 pt-2 border-t border-gray-700">
+          <div class="text-gray-400">Primeiro shop:</div>
+          <div>id: {{ fallback.shops.value[0].id }}</div>
+          <div>name: {{ fallback.shops.value[0].name }}</div>
+          <div>neighborhood: {{ fallback.shops.value[0].neighborhood }}</div>
+        </div>
+      </div>
+      <button @click="showDebug = false" class="mt-2 px-2 py-1 bg-red-500 rounded text-white text-xs">Fechar</button>
+    </div>
+    <button v-else @click="showDebug = true" class="fixed bottom-4 right-4 px-3 py-2 bg-green-400 text-black rounded-lg text-xs font-bold z-50">
+      🐛 DEBUG
+    </button>
+  -->
     <!-- ═══════════════════════════ PÁGINA COMPLETA ═══════════════════════════
-         Condição: seo != null  OU  fallback encontrou shops neste bairro exato
-    ═══════════════════════════════════════════════════════════════════════════ -->
+         Condição: seo != null  OU  fallback encontrou shops em qualquer nível
+    ════════════════════════════════════════════════════════════════════════ -->
     <div v-if="showFullPage" class="text-[15px]">
 
       <!-- BREADCRUMB -->
@@ -55,23 +90,54 @@
         </div>
       </section>
 
-      <!-- CARDS -->
+      <!-- ══════════════════════════════════════════════════════════════════
+           CARDS — lógica de qual componente usar:
+           (a) seo existe E fallback.level === 'neighborhood'
+               → PageSearchSection (busca filtrada pelo bairro via API)
+           (b) qualquer outro caso (seo sem shops locais, ou sem seo)
+               → BarbershopCards direto do fallback
+      ══════════════════════════════════════════════════════════════════ -->
       <div class="bg-[#0a0a0a]">
-        <!-- Bairro mapeado no locations → PageSearchSection normal -->
+
+        <!-- (a) Bairro mapeado no locations E tem shops no bairro exato -->
         <PageSearchSection
-          v-if="seo"
-          :uf="seo.ufSlug"
-          :city="seo.citySlug"
+          v-if="usePageSearchForCards"
+          :uf="seo!.ufSlug"
+          :city="seo!.citySlug"
           :neighborhood="neighborhoodSlug"
-          :context-label="seo.neighborhoodName"
+          :context-label="seo!.neighborhoodName"
         />
-        <!-- Bairro existe no banco mas não no locations → cards direto do banco -->
+
+        <!-- (b) Fallback: bairro sem shops na API ou bairro não mapeado no locations -->
         <div v-else class="py-12 px-6 md:px-16">
           <div class="max-w-6xl mx-auto">
-            <!-- Skeleton enquanto carrega -->
+
+            <!-- Label contextual de qual nível o fallback está mostrando -->
+            <div v-if="fallback.level.value !== 'neighborhood' && !fallback.pending.value" class="mb-6">
+              <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-1">
+                <template v-if="fallback.level.value === 'city'">
+                  ⚠️ Ainda não temos barbearias cadastradas em {{ seo?.neighborhoodName ?? neighborhoodLabel }}
+                </template>
+                <template v-else-if="fallback.level.value === 'uf'">
+                  ⚠️ Ainda não temos cobertura nessa cidade
+                </template>
+              </p>
+              <p class="text-sm text-gray-500">
+                <template v-if="fallback.level.value === 'city'">
+                  Mostrando barbearias em <strong class="text-gray-300">{{ fallback.cityLabel }}</strong> mais próximas.
+                </template>
+                <template v-else-if="fallback.level.value === 'uf'">
+                  Mostrando barbearias disponíveis no estado.
+                </template>
+              </p>
+            </div>
+
+            <!-- Skeleton -->
             <div v-if="fallback.pending.value" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div v-for="i in 6" :key="i" class="h-64 rounded-2xl bg-[#111] animate-pulse border border-white/[.04]" />
             </div>
+
+            <!-- Cards reais -->
             <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <BarbershopCard
                 v-for="shop in fallback.shops.value"
@@ -79,11 +145,48 @@
                 :shop="shop"
               />
             </div>
+
+            <!-- Bairros próximos (da API) -->
+            <div v-if="!fallback.pending.value && fallback.nearbyNeighborhoods.value.length" class="mt-10">
+              <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-4 flex items-center gap-2">
+                <span class="w-4 h-px bg-green-400/40 inline-block" />
+                Outros bairros com barbearias
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <NuxtLink
+                  v-for="n in fallback.nearbyNeighborhoods.value" :key="n.slug"
+                  :to="`/barbearias/${ufSlug}/${citySlug}/${n.slug}`"
+                  class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/[.06] bg-[#181818] hover:border-green-400/40 hover:text-green-400 hover:bg-green-400/[.03] text-sm text-gray-400 transition-all duration-150"
+                >
+                  📍 {{ n.name }}
+                  <span v-if="n.count" class="text-gray-600 text-xs">({{ n.count }})</span>
+                </NuxtLink>
+              </div>
+            </div>
+
+            <!-- Serviços disponíveis na região (da API) -->
+            <div v-if="!fallback.pending.value && fallback.relatedServices.value.length" class="mt-8">
+              <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4 flex items-center gap-2">
+                <span class="w-4 h-px bg-gray-700 inline-block" />
+                Serviços disponíveis na região
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="s in fallback.relatedServices.value" :key="s.slug"
+                  class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[.06] bg-[#181818] hover:border-green-400/30 hover:bg-green-400/[.03] hover:text-white text-sm text-gray-400 transition-all duration-150"
+                  @click="$router.push(`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}`)"
+                >
+                  {{ s.emoji ?? '✂️' }} {{ s.name }}
+                  <span v-if="s.count" class="text-gray-600 text-xs">({{ s.count }})</span>
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
-      <!-- CONTEÚDO SEO (só quando temos seo completo do locations) -->
+      <!-- CONTEÚDO SEO (só quando temos dados completos do locations) -->
       <template v-if="seo">
         <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
           <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -190,8 +293,8 @@
     </div>
 
     <!-- ════════════════════════════ FALLBACK ════════════════════════════════
-         Bairro sem shops (ou nível district/city/uf como fallback)
-         Mostra BarbershopCards reais dos bairros mais próximos
+         Sem seo E sem shops em nenhum nível.
+         Mostra BarbershopCards dos bairros mais próximos (cidade / uf).
     ════════════════════════════════════════════════════════════════════════ -->
     <div v-else class="min-h-screen bg-[#0a0a0a] pt-28">
 
@@ -210,6 +313,30 @@
         </div>
       </div>
 
+      <!-- Banner GeoIP — quando cidade não está no locations.ts -->
+      <div
+        v-if="geoSuggestion && !hasCityInLocations"
+        class="px-6 md:px-16 py-3 bg-[#111] border-b border-white/[.05]"
+      >
+        <div class="max-w-6xl mx-auto flex items-center gap-3 flex-wrap">
+          <span class="text-xs text-gray-500">📍 Detectamos que você está em</span>
+          <NuxtLink
+            :to="`/barbearias/${geoSuggestion.ufSlug}/${geoSuggestion.citySlug}`"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20 hover:bg-green-400/20 transition-colors"
+          >
+            {{ geo.result.value?.city }} →
+          </NuxtLink>
+        </div>
+      </div>
+      <div
+        v-else-if="geo.pending.value && !hasCityInLocations"
+        class="px-6 md:px-16 py-3 bg-[#111] border-b border-white/[.05]"
+      >
+        <div class="max-w-6xl mx-auto">
+          <span class="text-xs text-gray-600 animate-pulse">📍 Detectando sua localização...</span>
+        </div>
+      </div>
+
       <!-- Hero -->
       <section class="relative w-full py-16 px-6 md:px-16 bg-[#0a0a0a] overflow-hidden border-b border-white/[.04]">
         <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 50% at 60% 50%,rgba(52,211,153,.05) 0%,transparent 70%)"></div>
@@ -219,10 +346,8 @@
             <span class="text-green-400">{{ neighborhoodLabel.toUpperCase() }}</span>
           </h1>
           <p class="text-lg text-gray-400 max-w-2xl leading-relaxed">
-            <template v-if="fallback.level.value === 'district'">
-              Ainda não temos barbearias cadastradas em <strong class="text-white">{{ neighborhoodLabel }}</strong>,
-              mas encontramos profissionais nos bairros vizinhos de
-              <strong class="text-white">{{ fallback.districtLabel || fallback.cityLabel }}</strong>.
+            <template v-if="fallback.level.value === 'neighborhood'">
+              Encontramos barbearias em <strong class="text-white">{{ neighborhoodLabel }}</strong> com agendamento online.
             </template>
             <template v-else-if="fallback.level.value === 'city'">
               Ainda não temos barbearias neste bairro. Veja os profissionais mais próximos em
@@ -230,6 +355,9 @@
             </template>
             <template v-else-if="fallback.level.value === 'uf'">
               Ainda não temos cobertura nessa cidade. Confira barbearias no estado.
+            </template>
+            <template v-else-if="fallback.pending.value">
+              Buscando barbearias próximas...
             </template>
             <template v-else>
               Essa região ainda não está no nosso mapa.
@@ -250,18 +378,14 @@
                 <div v-for="i in 6" :key="i" class="h-64 rounded-2xl bg-[#111] animate-pulse border border-white/[.04]" />
               </div>
 
-              <!-- Cards reais (bairros vizinhos / cidade / uf) -->
+              <!-- Cards reais -->
               <template v-else-if="fallback.shops.value.length > 0">
                 <div>
                   <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-1 flex items-center gap-2">
                     <span class="w-4 h-px bg-green-400/40 inline-block" />
-                    <template v-if="fallback.level.value === 'district'">
-                      Barbearias em {{ fallback.districtLabel || fallback.cityLabel }}
-                    </template>
-                    <template v-else-if="fallback.level.value === 'city'">
-                      Barbearias em {{ fallback.cityLabel }}
-                    </template>
-                    <template v-else>Barbearias no estado</template>
+                    <template v-if="fallback.level.value === 'city'">Barbearias em {{ fallback.cityLabel }}</template>
+                    <template v-else-if="fallback.level.value === 'uf'">Barbearias no estado</template>
+                    <template v-else>Barbearias próximas de {{ neighborhoodLabel }}</template>
                   </p>
                   <p class="text-[13px] text-gray-600 mb-6">
                     Profissionais que atendem próximo a <strong class="text-gray-400">{{ neighborhoodLabel }}</strong>
@@ -288,7 +412,7 @@
                 </div>
               </template>
 
-              <!-- Outros bairros com barbearias -->
+              <!-- Bairros com barbearias (da API) -->
               <div v-if="fallback.nearbyNeighborhoods.value.length">
                 <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-4 flex items-center gap-2">
                   <span class="w-4 h-px bg-green-400/40 inline-block" />
@@ -306,7 +430,7 @@
                 </div>
               </div>
 
-              <!-- Serviços disponíveis na região -->
+              <!-- Serviços disponíveis na região (da API) -->
               <div v-if="fallback.relatedServices.value.length">
                 <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4 flex items-center gap-2">
                   <span class="w-4 h-px bg-gray-700 inline-block" />
@@ -356,43 +480,91 @@
 </template>
 
 <script setup lang="ts">
-import { computed }               from 'vue'
-import { useRoute }               from 'vue-router'
-import { useLocalSeo }            from '~/composables/useLocalSeo'
-import { useFallbackSuggestions } from '~/composables/useFallbackSuggestions'
+import { computed, ref, watchEffect } from 'vue'
+import { useRoute }                   from 'vue-router'
+import { useLocalSeo }                from '~/composables/useLocalSeo'
+import { useFallbackSuggestions }     from '~/composables/useFallbackSuggestions'
+import { useGeoIp }                   from '~/composables/useGeoIp'
+import { allCities }                  from '~/data/locations'
 
+// ─── DEBUG ───────────────────────────────────────────────────────────────────
+const showDebug = ref(false)
+
+// ─── FIX LAYOUT ──────────────────────────────────────────────────────────────
 definePageMeta({ layout: 'barber' })
 
 const nuxtApp = useNuxtApp()
 if (import.meta.server) nuxtApp.payload.layout = 'barber'
 
 const route = useRoute()
+
 const ufSlug           = (route.params.uf     as string).toLowerCase().trim()
 const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
-
 const neighborhoodLabel = neighborhoodSlug.replace(/-/g, ' ')
 
-// SEO completo (só resolve quando bairro está no locations mapeado)
+console.log('🎬 [PAGE SETUP] Params extraídos:', { ufSlug, citySlug, neighborhoodSlug, neighborhoodLabel })
+
+// ── SEO completo (só resolve quando bairro está no locations) ─────────────
 const { data: seo } = useLocalSeo(ufSlug, citySlug, neighborhoodSlug)
 
-// ✅ Fallback: hierarquia bairro → distrito → cidade → uf
+// ── Fallback dinâmico via API ─────────────────────────────────────────────
 const fallback = useFallbackSuggestions({ ufSlug, citySlug, neighborhoodSlug, limit: 6 })
 
-// ✅ CRÍTICO: executa no onMounted do componente
-onMounted(() => {
-  fallback.execute()
+// ── Lógica de exibição ────────────────────────────────────────────────────
+//
+// showFullPage = true quando:
+//   (a) seo resolvido → bairro no locations com dados completos, OU
+//   (b) fallback encontrou shops em qualquer nível (neighborhood, city ou uf)
+//
+// usePageSearchForCards = true apenas quando:
+//   seo existe E o fallback confirmou que há shops no bairro EXATO (level = 'neighborhood')
+//   → Nesse caso confiamos que a PageSearchSection vai retornar resultados.
+//   Em qualquer outro caso, usamos os BarbershopCards do fallback diretamente.
+//
+const showFullPage = computed(() => {
+  const result = !!seo.value || fallback.shops.value.length > 0
+
+  console.log('🔍 [showFullPage computed]', {
+    seo: !!seo.value,
+    fallbackLevel: fallback.level.value,
+    shopsLength: fallback.shops.value.length,
+    result,
+  })
+
+  return result
 })
 
-// Mostra página completa quando:
-//   (a) seo resolvido (bairro no locations com dados completos), OU
-//   (b) o banco tem shops neste bairro exato (nível 'neighborhood')
-const showFullPage = computed(() =>
-  !!seo.value ||
-  (fallback.level.value === 'neighborhood' && fallback.shops.value.length > 0)
+const usePageSearchForCards = computed(() => {
+  // Só delega à PageSearchSection quando temos certeza que ela vai encontrar algo:
+  // o fallback já consultou a API e confirmou shops no bairro exato.
+  const result = !!seo.value && fallback.level.value === 'neighborhood'
+
+  console.log('🔍 [usePageSearchForCards computed]', {
+    hasSeo: !!seo.value,
+    fallbackLevel: fallback.level.value,
+    result,
+  })
+
+  return result
+})
+
+// ── GeoIP: detecta cidade do usuário quando está totalmente fora do mapa ──
+const hasCityInLocations = computed(
+  () => !!allCities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug),
 )
 
-// ── Dados estáticos da página completa ───────────────────────────────────────
+const geo = useGeoIp()
+const geoSuggestion = ref<{ citySlug: string; ufSlug: string } | null>(null)
+
+watchEffect(async () => {
+  if (!showFullPage.value && !hasCityInLocations.value && !geo.detected.value) {
+    const loc = await geo.detect()
+    if (loc) geoSuggestion.value = { citySlug: loc.citySlug, ufSlug: loc.ufSlug }
+  }
+})
+
+// ── Dados estáticos da página completa ───────────────────────────────────
 
 const howItWorks = computed(() => {
   const name = seo.value?.neighborhoodName ?? neighborhoodLabel
@@ -424,7 +596,7 @@ const localStats = [
 
 const benefits = computed(() => {
   const name     = seo.value?.neighborhoodName ?? neighborhoodLabel
-  const district = seo.value?.districtName     ?? fallback.districtLabel ?? fallback.cityLabel
+  const district = seo.value?.districtName ?? fallback.districtLabel ?? fallback.cityLabel
   return [
     {
       emoji: '📍',
@@ -459,12 +631,11 @@ const benefits = computed(() => {
   ]
 })
 
-// ── Head ─────────────────────────────────────────────────────────────────────
+// ── Head ─────────────────────────────────────────────────────────────────
 
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 useHead(computed(() => {
-  // Fallback com shops encontrados: noindex mas com dados úteis
   if (!seo.value && fallback.shops.value.length > 0) {
     return {
       title: `Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
@@ -474,14 +645,12 @@ useHead(computed(() => {
       ],
     }
   }
-  // Fallback vazio: noindex + nofollow
   if (!seo.value) {
     return {
       title: `Barbearias perto de ${neighborhoodLabel}`,
       meta: [{ name: 'robots', content: 'noindex, nofollow' }],
     }
   }
-  // Página completa com SEO
   return {
     title: seo.value.metaTitle,
     meta: [
@@ -499,4 +668,6 @@ useHead(computed(() => {
     script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(seo.value.jsonLd) }],
   }
 }))
+
+console.log('✅ [PAGE SETUP] Setup completo')
 </script>
