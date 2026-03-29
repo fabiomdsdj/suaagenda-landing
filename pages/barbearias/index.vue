@@ -289,8 +289,14 @@
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20 mb-8">
             💈 {{ totalCidades }} cidades · {{ totalBairros }} bairros
           </div>
-          <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);letter-spacing:.03em">
-            ENCONTRE SUA<br><span class="text-green-400">BARBEARIA</span>
+                    <!-- ✅ H1 com contador dinâmico nacional -->
+                    <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);letter-spacing:.03em">
+            <template v-if="nationalCount.pending.value">
+              <span class="animate-pulse">CARREGANDO...</span>
+            </template>
+            <template v-else>
+              {{ nationalCount.count.value.toLocaleString('pt-BR') }} BARBEARIAS<br>NO <span class="text-green-400">BRASIL</span>
+            </template>
           </h1>
           <p class="text-lg md:text-xl text-gray-400 max-w-xl mx-auto leading-relaxed mb-10">
             O maior diretório de barbearias do Brasil. Busque por bairro, filtre por serviço e agende em segundos.
@@ -442,11 +448,19 @@ import { allCities, allServices } from '~/data/locations'
 import { allBarbershops } from '~/data/barbershops'
 import { useBarbershopSearch, getBarbershopNeighborhoodLabel, minPrice } from '~/composables/useBarbershops'
 import type { Barbershop } from '~/data/barbershops'
+import { useBarbershopCounts } from '~/composables/useBarbershopCounts'
 
 definePageMeta({ layout: 'barber' })
 
 const router = useRouter()
 const route  = useRoute()
+
+// ✅ Contador nacional
+const nationalCount = useBarbershopCounts()
+
+onMounted(() => {
+  nationalCount.fetch()
+})
 
 // ── Query params (fonte da verdade) ──────────────────────────────────────────
 const currentQ            = computed(() => (route.query.q            as string) || '')
@@ -852,13 +866,16 @@ const totalBairros = computed(() =>
   allCities.reduce((acc, c) => acc + c.districts.reduce((a, d) => a + d.neighborhoods.length, 0), 0)
 )
 
-// ── SEO ────────────────────────────────────────────────────────────────────────
+// SEO
 useHead(computed(() => ({
   title: isSearchMode.value
     ? `Busca: ${currentQ.value || neighborhoodLabel.value || cityLabel.value || 'Barbearias'} — SuaAgenda`
-    : 'As melhores Barbearias no Brasil ',
+    : `${nationalCount.count.value.toLocaleString('pt-BR')} Barbearias no Brasil | Agende Online`,
   meta: [
-    { name: 'description', content: `Encontre barbearias em ${totalCidades.value} cidades do Brasil.` },
+    { 
+      name: 'description', 
+      content: `Encontre entre ${nationalCount.count.value.toLocaleString('pt-BR')} barbearias em ${totalCidades.value} cidades do Brasil. Agende online pelo WhatsApp.` 
+    },
     { name: 'robots', content: isSearchMode.value ? 'noindex, follow' : 'index, follow' },
   ],
   link: [{ rel: 'canonical', href: 'https://suaagenda.link/barbearias' }],

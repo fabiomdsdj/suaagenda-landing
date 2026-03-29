@@ -148,14 +148,38 @@
           </div>
   
           <!-- Paginação -->
+          <!-- Substituir o bloco de paginação atual no PageSearchSection -->
           <div v-if="search.result.value.meta.pages > 1" class="flex items-center justify-center gap-2 mt-10">
+            
+            <!-- Anterior -->
             <button
-              v-for="p in search.result.value.meta.pages"
-              :key="p"
-              class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
-              :class="search.page.value === p ? 'bg-green-400 text-black' : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
-              @click="search.setPage(p)"
-            >{{ p }}</button>
+              class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              :disabled="search.page.value === 1"
+              @click="search.setPage(search.page.value - 1)"
+            >‹</button>
+
+            <!-- Páginas com truncate -->
+            <template v-for="p in paginationPages" :key="p">
+              <span
+                v-if="p === '...'"
+                class="w-9 h-9 flex items-center justify-center text-gray-600 text-sm"
+              >…</span>
+              <button
+                v-else
+                class="w-9 h-9 rounded-xl text-sm font-medium transition-all"
+                :class="search.page.value === p
+                  ? 'bg-green-400 text-black'
+                  : 'bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white'"
+                @click="search.setPage(p)"
+              >{{ p }}</button>
+            </template>
+
+            <!-- Próximo -->
+            <button
+              class="w-9 h-9 rounded-xl text-sm font-medium bg-[#181818] border border-white/[.06] text-gray-500 hover:border-green-400/30 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              :disabled="search.page.value === search.result.value.meta.pages"
+              @click="search.setPage(search.page.value + 1)"
+            >›</button>
           </div>
   
           <!-- Sugestões de serviços relacionados -->
@@ -240,6 +264,27 @@
     uf:           props.uf,
     city:         props.city,
     neighborhood: props.neighborhood,
+  })
+
+  // adiciona no <script setup> do PageSearchSection.vue
+  const paginationPages = computed((): (number | '...')[] => {
+    const current = search.page.value
+    const total   = search.result.value.meta.pages
+    if (total <= 1) return []
+
+    const delta = 2
+    const range: number[] = []
+    for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+      range.push(i)
+    }
+
+    const result: (number | '...')[] = [1]
+    if (range.length && range[0] > 2)                        result.push('...')
+    result.push(...range)
+    if (range.length && range[range.length - 1] < total - 1) result.push('...')
+    if (total > 1) result.push(total)
+
+    return result
   })
   </script>
   

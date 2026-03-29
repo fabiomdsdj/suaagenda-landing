@@ -25,8 +25,14 @@
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">✂️ {{ cityData?.uf }}</span>
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">📍 {{ totalBairros }} bairros</span>
         </div>
+        <!-- ✅ H1 com contador dinâmico da cidade -->
         <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
-          BARBEARIAS EM<br><span class="text-green-400">{{ cityData?.city.toUpperCase() }}</span>
+          <template v-if="cityCount.pending.value">
+            <span class="animate-pulse">CARREGANDO...</span>
+          </template>
+          <template v-else>
+            {{ cityCount.count.value.toLocaleString('pt-BR') }} BARBEARIAS EM<br><span class="text-green-400">{{ cityData?.city.toUpperCase() }}</span>
+          </template>
         </h1>
         <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
           Encontre barbearias em {{ cityData?.city }} com agendamento online. Escolha seu bairro e agende direto pelo WhatsApp.
@@ -136,6 +142,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { allCities, allServices, type District, type Neighborhood } from '~/data/locations'
+import { useBarbershopCounts } from '~/composables/useBarbershopCounts'
 
 definePageMeta({ layout: 'barber' })
 
@@ -146,6 +153,15 @@ const citySlug = route.params.cidade as string
 const cityData     = computed(() => allCities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug) ?? null)
 const totalBairros = computed(() => cityData.value?.districts.reduce((acc, d) => acc + d.neighborhoods.length, 0) ?? 0)
 const hasZones     = computed(() => cityData.value?.districts.some(d => d.zone != null) ?? false)
+
+// ✅ Contador da cidade
+const cityCount = useBarbershopCounts()
+ 
+onMounted(() => {
+  if (cityData.value) {
+    cityCount.fetch({ uf: ufSlug, city: citySlug })
+  }
+})
 
 const districtsByZone = computed(() => {
   const groups: Record<string, District[]> = {}
@@ -161,13 +177,17 @@ function flatNeighborhoods(districts: District[]): Neighborhood[] {
   return districts.flatMap(d => d.neighborhoods)
 }
 
+// SEO
 useHead(computed(() => {
   if (!cityData.value) return { title: 'Cidade não encontrada' }
   const c = cityData.value
   return {
-    title: `Barbearia perto de mim em ${c.city}, ${c.uf}`,
+    title: `${cityCount.count.value.toLocaleString('pt-BR')} Barbearias em ${c.city}, ${c.uf} | Agende Online`,
     meta: [
-      { name: 'description', content: `Encontre barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.` },
+      { 
+        name: 'description', 
+        content: `Encontre entre ${cityCount.count.value.toLocaleString('pt-BR')} barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.` 
+      },
       { name: 'robots', content: 'index, follow' },
     ],
     link: [{ rel: 'canonical', href: `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}` }],

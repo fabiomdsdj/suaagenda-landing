@@ -43,8 +43,20 @@
             </span>
           </div>
           <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
-            {{ (seo?.serviceName ?? serviceLabel).toUpperCase() }} EM<br>
-            <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+            <template v-if="serviceCount.pending.value">
+              <span class="animate-pulse">CARREGANDO...</span>
+            </template>
+            <template v-else-if="serviceCount.count.value > 0">
+              {{ (seo?.serviceName ?? serviceLabel).toUpperCase() }} EM<br>
+              <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+              <span class="block text-sm text-gray-500 mt-2 normal-case" style="font-family:inherit;letter-spacing:normal">
+                {{ serviceCount.count.value }} {{ serviceCount.count.value === 1 ? 'barbearia' : 'barbearias' }} encontrada{{ serviceCount.count.value === 1 ? '' : 's' }}
+              </span>
+            </template>
+            <template v-else>
+              {{ (seo?.serviceName ?? serviceLabel).toUpperCase() }} EM<br>
+              <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+            </template>
           </h1>
           <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
             {{ seo?.introParagraph ?? `Encontre profissionais de ${serviceLabel} próximos a ${neighborhoodLabel} com agendamento online pelo WhatsApp.` }}
@@ -439,6 +451,7 @@ import { useRoute }                   from 'vue-router'
 import { useLocalSeo }                from '~/composables/useLocalSeo'
 import { useFallbackSuggestions }     from '~/composables/useFallbackSuggestions'
 import { useGeoIp }                   from '~/composables/useGeoIp'
+import { useBarbershopCounts }        from '~/composables/useBarbershopCounts'
 import { allCities }                  from '~/data/locations'
 
 // ─── FIX LAYOUT ──────────────────────────────────────────────────────────────
@@ -456,6 +469,17 @@ const serviceSlug      = (route.params.servico as string).toLowerCase().trim()
 
 const neighborhoodLabel = neighborhoodSlug.replace(/-/g, ' ')
 const serviceLabel      = serviceSlug.replace(/-/g, ' ')
+
+// ✅ Contador do bairro+serviço
+const serviceCount = useBarbershopCounts()
+ 
+// Obs: a API de counts NÃO filtra por serviço ainda — seria necessário estender.
+// Por ora, vamos mostrar o count total do bairro.
+watchEffect(() => {
+  if (seo.value || fallback.shops.value.length > 0) {
+    serviceCount.fetch({ uf: ufSlug, city: citySlug, neighborhood: neighborhoodSlug })
+  }
+})
 
 // ── SEO completo (só resolve quando bairro + serviço mapeados) ─────────────
 const { data: seo } = useLocalSeo(ufSlug, citySlug, neighborhoodSlug, serviceSlug)
@@ -511,11 +535,17 @@ watchEffect(async () => {
 
 useHead(computed(() => {
   if (!seo.value && fallback.shops.value.length > 0) {
+    const count = serviceCount.count.value
     return {
-      title: `${serviceLabel} perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
+      title: count > 0
+        ? `${count} Barbearias com ${serviceLabel} perto de ${neighborhoodLabel}`
+        : `${serviceLabel} perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
       meta: [
-        { name: 'description', content: `Encontre profissionais de ${serviceLabel} próximos de ${neighborhoodLabel} em ${fallback.cityLabel}.` },
-        { name: 'robots',      content: 'noindex, follow' },
+        { 
+          name: 'description', 
+          content: `Encontre profissionais de ${serviceLabel} próximos de ${neighborhoodLabel} em ${fallback.cityLabel}.` 
+        },
+        { name: 'robots', content: 'noindex, follow' },
       ],
     }
   }
@@ -525,11 +555,17 @@ useHead(computed(() => {
       meta: [{ name: 'robots', content: 'noindex, follow' }],
     }
   }
+  
+  const count = serviceCount.count.value
+  const titleWithCount = count > 0
+    ? `${count} Barbearias com ${seo.value.serviceName} em ${seo.value.neighborhoodName}`
+    : seo.value.metaTitle
+    
   return {
-    title: seo.value.metaTitle,
+    title: titleWithCount,
     meta: [
       { name: 'description',        content: seo.value.metaDescription },
-      { property: 'og:title',       content: seo.value.metaTitle },
+      { property: 'og:title',       content: titleWithCount },
       { property: 'og:description', content: seo.value.metaDescription },
       { property: 'og:url',         content: seo.value.canonicalUrl },
       { property: 'og:type',        content: 'website' },

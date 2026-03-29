@@ -73,8 +73,18 @@
             </span>
           </div>
           <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
-            BARBEARIA PERTO DE MIM EM<br>
-            <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+            <template v-if="neighborhoodCount.pending.value">
+              <span class="animate-pulse">CARREGANDO...</span>
+            </template>
+            <template v-else-if="neighborhoodCount.count.value > 0">
+              {{ neighborhoodCount.count.value.toLocaleString('pt-BR') }}
+              {{ neighborhoodCount.count.value === 1 ? 'BARBEARIA' : 'BARBEARIAS' }} EM<br>
+              <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+            </template>
+            <template v-else>
+              BARBEARIA PERTO DE MIM EM<br>
+              <span class="text-green-400">{{ (seo?.neighborhoodName ?? neighborhoodLabel).toUpperCase() }}</span>
+            </template>
           </h1>
           <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
             {{ seo?.introParagraph ?? `Encontramos barbearias que atendem próximo a ${neighborhoodLabel} com agendamento online pelo WhatsApp.` }}
@@ -485,7 +495,9 @@ import { useRoute }                   from 'vue-router'
 import { useLocalSeo }                from '~/composables/useLocalSeo'
 import { useFallbackSuggestions }     from '~/composables/useFallbackSuggestions'
 import { useGeoIp }                   from '~/composables/useGeoIp'
+import { useBarbershopCounts }        from '~/composables/useBarbershopCounts'
 import { allCities }                  from '~/data/locations'
+
 
 // ─── DEBUG ───────────────────────────────────────────────────────────────────
 const showDebug = ref(false)
@@ -503,6 +515,9 @@ const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const neighborhoodLabel = neighborhoodSlug.replace(/-/g, ' ')
 
+// ✅ Contador do bairro
+const neighborhoodCount = useBarbershopCounts()
+ 
 console.log('🎬 [PAGE SETUP] Params extraídos:', { ufSlug, citySlug, neighborhoodSlug, neighborhoodLabel })
 
 // ── SEO completo (só resolve quando bairro está no locations) ─────────────
@@ -631,17 +646,34 @@ const benefits = computed(() => {
   ]
 })
 
+// [bairro]/index.vue — troca o watchEffect/onMounted por isso:
+watch(
+  [() => seo.value, () => fallback.shops.value.length],
+  ([seoVal, shopsLen]) => {
+    if ((seoVal || shopsLen > 0) && !neighborhoodCount.pending.value && neighborhoodCount.count.value === 0) {
+      neighborhoodCount.fetch({ uf: ufSlug, city: citySlug, neighborhood: neighborhoodSlug })
+    }
+  },
+  { immediate: true }
+)
+
 // ── Head ─────────────────────────────────────────────────────────────────
 
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 useHead(computed(() => {
   if (!seo.value && fallback.shops.value.length > 0) {
+    const count = neighborhoodCount.count.value
     return {
-      title: `Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
+      title: count > 0
+        ? `${count.toLocaleString('pt-BR')} Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`
+        : `Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
       meta: [
-        { name: 'description', content: `Encontre barbearias próximas de ${neighborhoodLabel} em ${fallback.cityLabel} com agendamento online pelo WhatsApp.` },
-        { name: 'robots',      content: 'noindex, follow' },
+        { 
+          name: 'description', 
+          content: `Encontre ${count > 0 ? `entre ${count}` : ''} barbearias próximas de ${neighborhoodLabel} em ${fallback.cityLabel} com agendamento online pelo WhatsApp.` 
+        },
+        { name: 'robots', content: 'noindex, follow' },
       ],
     }
   }
@@ -651,11 +683,17 @@ useHead(computed(() => {
       meta: [{ name: 'robots', content: 'noindex, nofollow' }],
     }
   }
+  
+  const count = neighborhoodCount.count.value
+  const titleWithCount = count > 0
+    ? `${count.toLocaleString('pt-BR')} Barbearias em ${seo.value.neighborhoodName} — ${seo.value.cityName}`
+    : seo.value.metaTitle
+    
   return {
-    title: seo.value.metaTitle,
+    title: titleWithCount,
     meta: [
       { name: 'description',        content: seo.value.metaDescription },
-      { property: 'og:title',       content: seo.value.metaTitle },
+      { property: 'og:title',       content: titleWithCount },
       { property: 'og:description', content: seo.value.metaDescription },
       { property: 'og:url',         content: seo.value.canonicalUrl },
       { property: 'og:type',        content: 'website' },
