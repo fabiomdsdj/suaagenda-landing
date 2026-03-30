@@ -2,7 +2,13 @@
   <div class="text-[15px]">
 
     <!-- ─── FOMO ─────────────────────────────────────────────────────────────── -->
-    <FomoToast :initial-delay="4000" :interval="8000" :duration="5000" />
+    <FomoToast
+      :initial-delay="3500"
+      :first-interval="11000"
+      :interval="13000"
+      :duration="5000"
+      :scroll-threshold="0.30"
+    />
 
     <!-- ─── HERO ─────────────────────────────────────────────────────────────── -->
     <section class="relative min-h-screen flex flex-col-reverse md:flex-row items-center gap-12 px-6 md:px-16 pt-28 pb-16 overflow-hidden">
@@ -60,7 +66,6 @@
     <!-- ─── SOCIAL PROOF — barbearias cadastradas no Brasil ─────────────────── -->
     <section class="w-full py-12 px-6 md:px-16 bg-[#0d0d0d] border-y border-green-400/10">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-        <!-- contador principal -->
         <div class="flex items-center gap-5">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-green-400/10 border border-green-400/20 text-green-400 flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
@@ -77,10 +82,8 @@
           </div>
         </div>
 
-        <!-- divisor vertical (só desktop) -->
         <div class="hidden md:block w-px h-12 bg-white/5"></div>
 
-        <!-- stats rápidos -->
         <div class="flex flex-wrap gap-8 justify-center md:justify-end">
           <div v-for="s in socialProofStats" :key="s.label" class="text-center md:text-left">
             <p class="font-black text-green-400 leading-none" style="font-family:'Bebas Neue',sans-serif;font-size:28px">{{ s.num }}</p>
@@ -88,7 +91,6 @@
           </div>
         </div>
 
-        <!-- CTA texto -->
         <div class="hidden lg:block text-right">
           <p class="text-sm text-gray-400 leading-relaxed max-w-xs">
             Sua barbearia ainda não está aqui?<br>
@@ -491,7 +493,6 @@ useBarberJsonLd()
 const { count: totalCount, pending: totalCountPending, fetch: fetchCount } = useBarbershopCounts()
 
 onMounted(async () => {
-  // scroll animations
   if (process.client) {
     document.querySelectorAll('.fade-on-scroll').forEach(el => {
       el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700')
@@ -507,7 +508,6 @@ onMounted(async () => {
     })
   }
 
-  // busca o total de barbearias cadastradas no BR
   fetchCount()
 })
 

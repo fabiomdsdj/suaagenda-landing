@@ -47,18 +47,24 @@ import { useBarbershopCounts } from '~/composables/useBarbershopCounts'
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface Props {
-  /** Delay inicial em ms antes do primeiro toast (default: 4000) */
+  /** Delay em ms após o trigger de scroll antes do 1º toast (default: 3500) */
   initialDelay?: number
-  /** Intervalo entre toasts em ms (default: 8000) */
+  /** Intervalo entre o 1º e o 2º toast em ms (default: 11000) */
+  firstInterval?: number
+  /** Intervalo entre toasts subsequentes em ms (default: 13000) */
   interval?: number
   /** Duração de cada toast em ms (default: 5000) */
   duration?: number
+  /** Percentual de scroll (0–1) que destrava o componente (default: 0.30) */
+  scrollThreshold?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  initialDelay: 4000,
-  interval:     8000,
-  duration:     5000,
+  initialDelay:    3500,
+  firstInterval:   11000,
+  interval:        13000,
+  duration:        5000,
+  scrollThreshold: 0.30,
 })
 
 const DURATION = props.duration
@@ -77,14 +83,16 @@ const visible        = ref(false)
 const current        = ref<ToastItem | null>(null)
 const progressActive = ref(false)
 
-// Pool de toasts — preenchido pelos fetches da API + fallbacks
 const pool = ref<ToastItem[]>([])
-let poolIndex = 0
+let poolIndex  = 0
+let toastCount = 0
 
-// ─── Timers ───────────────────────────────────────────────────────────────────
-let initTimer:     ReturnType<typeof setTimeout>  | null = null
-let hideTimer:     ReturnType<typeof setTimeout>  | null = null
-let intervalTimer: ReturnType<typeof setInterval> | null = null
+// ─── Timers / listeners ───────────────────────────────────────────────────────
+let initTimer:       ReturnType<typeof setTimeout>  | null = null
+let hideTimer:       ReturnType<typeof setTimeout>  | null = null
+let intervalTimer:   ReturnType<typeof setInterval> | null = null
+let scrollUnlisten:  (() => void) | null = null
+let headlineObserver: IntersectionObserver | null = null
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function initials(name: string): string {
@@ -100,16 +108,53 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5)
+}
+
+// Garante que cidades se alternem no pool — round-robin por citySlug.
+// Evita sequências tipo: SP, SP, SP, SP, RJ, RJ, RJ...
+function interleaveByCidade<T extends { location: string }>(items: T[]): T[] {
+  // Extrai cidade do campo location ("Pinheiros, SP" → "SP" como fallback key)
+  const buckets = new Map<string, T[]>()
+  for (const item of items) {
+    // Usa a última parte da location como chave de agrupamento (estado/cidade)
+    const parts = item.location?.split(',') ?? []
+    const key   = parts[parts.length - 1]?.trim() || 'other'
+    if (!buckets.has(key)) buckets.set(key, [])
+    buckets.get(key)!.push(item)
+  }
+
+  // Embaralha a ordem interna de cada bucket
+  for (const [, bucket] of buckets) bucket.sort(() => Math.random() - 0.5)
+
+  // Embaralha a ordem dos buckets
+  const keys = [...buckets.keys()].sort(() => Math.random() - 0.5)
+
+  // Round-robin
+  const result: T[] = []
+  let hasMore = true
+  while (hasMore) {
+    hasMore = false
+    for (const key of keys) {
+      const bucket = buckets.get(key)!
+      if (bucket.length) {
+        result.push(bucket.shift()!)
+        if (bucket.length) hasMore = true
+      }
+    }
+  }
+  return result
+}
+
 const TIMES = ['agora', 'há 1 min', 'há 2 min', 'há pouco', 'há instantes']
 
 // ─── Templates de mensagem ────────────────────────────────────────────────────
-// Cada template recebe o nome da shop e retorna { msg, color }
 const MSG_TEMPLATES: Array<{
-  fn:    (name: string, extra?: string) => string
+  fn:    (name: string) => string
   color: 'green' | 'blue' | 'yellow'
-  event: 'cadastro' | 'agendamento' | 'whatsapp' | 'google' | 'confirmacao' | 'fila'
+  event: 'cadastro' | 'agendamento' | 'whatsapp' | 'google' | 'confirmacao' | 'fila' | 'perda'
 }> = [
-  // Cadastro / ativação
   {
     fn:    n => `<strong class="text-white">${n}</strong> acabou de ativar a SuaAgenda 🎉`,
     color: 'green',
@@ -125,9 +170,8 @@ const MSG_TEMPLATES: Array<{
     color: 'green',
     event: 'cadastro',
   },
-  // Agendamento
   {
-    fn:    n => `<strong class="text-white">${n}</strong> recebeu <span class="text-green-400 font-semibold">+3 agendamentos</span> hoje`,
+    fn:    n => `<strong class="text-white">${n}</strong> recebeu novos clientes sem responder WhatsApps hoje`,
     color: 'green',
     event: 'agendamento',
   },
@@ -141,7 +185,6 @@ const MSG_TEMPLATES: Array<{
     color: 'green',
     event: 'agendamento',
   },
-  // WhatsApp click
   {
     fn:    n => `Cliente entrou em contato com <strong class="text-white">${n}</strong> pelo WhatsApp`,
     color: 'green',
@@ -152,7 +195,6 @@ const MSG_TEMPLATES: Array<{
     color: 'green',
     event: 'whatsapp',
   },
-  // Google
   {
     fn:    n => `<strong class="text-white">${n}</strong> apareceu na <span class="text-green-400 font-semibold">1ª posição</span> do Google`,
     color: 'blue',
@@ -168,7 +210,6 @@ const MSG_TEMPLATES: Array<{
     color: 'blue',
     event: 'google',
   },
-  // Confirmação automática
   {
     fn:    n => `Horário confirmado automaticamente em <strong class="text-white">${n}</strong>`,
     color: 'green',
@@ -184,7 +225,6 @@ const MSG_TEMPLATES: Array<{
     color: 'green',
     event: 'confirmacao',
   },
-  // Fila de espera
   {
     fn:    n => `Fila de espera preencheu horário vago em <strong class="text-white">${n}</strong>`,
     color: 'yellow',
@@ -195,23 +235,33 @@ const MSG_TEMPLATES: Array<{
     color: 'yellow',
     event: 'fila',
   },
+  {
+    fn:    n => `Cliente saiu de <strong class="text-white">${n}</strong> por demora na resposta`,
+    color: 'yellow',
+    event: 'perda',
+  },
+  {
+    fn:    n => `<strong class="text-white">${n}</strong> perdeu um horário por falta de confirmação`,
+    color: 'yellow',
+    event: 'perda',
+  },
 ]
 
-// ─── Fallback pool (usado antes/se a API não retornar) ─────────────────────────
+// ─── Fallback pool ─────────────────────────────────────────────────────────────
 const FALLBACK_NAMES = [
-  'Barbearia do João',   'Barber Prime',        'Corte Fino',
-  'Navalha Gold',        'Studio RJ Barber',    'BarberKing SP',
-  'Old School Barber',   'Barbearia do Marcos',  'RL Barber Shop',
-  'Corte & Estilo',      'Barbearia Paulistana', 'Tesoura de Ouro',
-  'Barber House',        'Nobre Barber',         'Studio Cut',
+  'Barbearia do João',    'Barber Prime',         'Corte Fino',
+  'Navalha Gold',         'Studio RJ Barber',     'BarberKing SP',
+  'Old School Barber',    'Barbearia do Marcos',  'RL Barber Shop',
+  'Corte & Estilo',       'Barbearia Paulistana', 'Tesoura de Ouro',
+  'Barber House',         'Nobre Barber',         'Studio Cut',
 ]
 
 const FALLBACK_LOCATIONS = [
-  'Pinheiros, SP',   'Moema, SP',         'Vila Mariana, SP',
-  'Lapa, SP',        'Santana, SP',       'Tijuca, RJ',
-  'Botafogo, RJ',    'Barra da Tijuca, RJ','Centro, BH',
-  'Savassi, BH',     'Boa Viagem, PE',    'Meireles, CE',
-  'Batel, PR',       'Cidade Baixa, RS',  'Itaim Bibi, SP',
+  'Pinheiros, SP',        'Moema, SP',            'Vila Mariana, SP',
+  'Lapa, SP',             'Santana, SP',          'Tijuca, RJ',
+  'Botafogo, RJ',         'Barra da Tijuca, RJ',  'Centro, BH',
+  'Savassi, BH',          'Boa Viagem, PE',       'Meireles, CE',
+  'Batel, PR',            'Cidade Baixa, RS',     'Itaim Bibi, SP',
 ]
 
 function buildFallbackPool(): ToastItem[] {
@@ -231,22 +281,17 @@ function buildFallbackPool(): ToastItem[] {
 // ─── Fetch de barbearias reais da API ──────────────────────────────────────────
 async function buildApiPool() {
   try {
-    const { fetch: fetchShops, data } = useBarbershopApi({
-      sort:  'relevance',
-      limit: 30,
-    })
+    // sort=random → DB embaralha com RAND(seed diário), garantindo variedade
+    // limit=60    → lote maior para interleaveByCidade ter mais cidades pra alternar
+    const { fetch: fetchShops, data } = useBarbershopApi({ sort: 'random', limit: 60 })
     await fetchShops()
 
     if (!data.value.length) return
 
     const items: ToastItem[] = data.value.map(shop => {
-      const tpl  = pick(MSG_TEMPLATES)
-      const name = shop.name
-
-      // Monta localização legível
-      const location = [shop.neighborhood, shop.city, shop.state]
-        .filter(Boolean)
-        .join(', ')
+      const tpl      = pick(MSG_TEMPLATES)
+      const name     = shop.name
+      const location = [shop.neighborhood, shop.city, shop.state].filter(Boolean).join(', ')
 
       return {
         shopName: name,
@@ -258,41 +303,38 @@ async function buildApiPool() {
       }
     })
 
-    // Mistura com fallbacks pra ter variedade mesmo com poucos resultados
-    pool.value = shuffle([...items, ...buildFallbackPool()])
+    // interleaveByCidade garante SP, RJ, BH, SP, RJ, BH...
+    // em vez de SP, SP, SP, SP... (ordem do DB)
+    pool.value = interleaveByCidade([...items, ...buildFallbackPool()])
   } catch {
     pool.value = shuffle(buildFallbackPool())
   }
 }
 
-function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => Math.random() - 0.5)
-}
-
-// ─── Exibição ──────────────────────────────────────────────────────────────────
+// ─── Próximo item do pool ──────────────────────────────────────────────────────
 function nextItem(): ToastItem {
   if (!pool.value.length) pool.value = shuffle(buildFallbackPool())
 
-  // Avança no pool ciclicamente; randomiza a mensagem a cada passagem
   const shop = pool.value[poolIndex % pool.value.length]
   poolIndex++
 
-  // Re-sorteia template e time para parecer mais orgânico
+  // Re-sorteia template e time a cada exibição para parecer orgânico
   const tpl = pick(MSG_TEMPLATES)
   return {
     ...shop,
-    msg:  tpl.fn(shop.shopName),
-    time: pick(TIMES),
+    msg:   tpl.fn(shop.shopName),
+    time:  pick(TIMES),
     color: tpl.color,
   }
 }
 
+// ─── Exibição ──────────────────────────────────────────────────────────────────
 function fire() {
   current.value        = nextItem()
   visible.value        = true
   progressActive.value = false
+  toastCount++
 
-  // Dois frames para garantir que a transição CSS dispare do zero
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       progressActive.value = true
@@ -306,22 +348,89 @@ function fire() {
   }, DURATION)
 }
 
-// ─── Lifecycle ────────────────────────────────────────────────────────────────
-onMounted(async () => {
-  // Carrega pool em background; enquanto isso usa fallback
+// ─── Scheduler com frequência progressiva ─────────────────────────────────────
+// O 1º intervalo é menor; os seguintes são mais espaçados para não parecer robô.
+function scheduleNext() {
+  const delay = toastCount === 1
+    ? props.firstInterval + DURATION   // ~16s após o 1º toast
+    : props.interval      + DURATION   // ~18s entre os demais
+
+  clearInterval(intervalTimer!)
+
+  // Usa setTimeout recursivo para poder variar o intervalo a cada chamada
+  function loop() {
+    fire()
+    const next = props.interval + DURATION
+    intervalTimer = setTimeout(loop, next) as unknown as ReturnType<typeof setInterval>
+  }
+
+  intervalTimer = setTimeout(() => {
+    fire()
+    intervalTimer = setTimeout(function repeat() {
+      fire()
+      intervalTimer = setTimeout(repeat, props.interval + DURATION) as unknown as ReturnType<typeof setInterval>
+    }, props.interval + DURATION) as unknown as ReturnType<typeof setInterval>
+  }, delay) as unknown as ReturnType<typeof setInterval>
+}
+
+// ─── Inicia a sequência (chamado uma única vez pelo trigger de scroll) ─────────
+function startSequence() {
+  scrollUnlisten?.()
+  headlineObserver?.disconnect()
+
   pool.value = shuffle(buildFallbackPool())
-  buildApiPool() // fire-and-forget — atualiza pool.value quando terminar
+  buildApiPool() // fire-and-forget — atualiza pool.value em background
 
   initTimer = setTimeout(() => {
     fire()
-    intervalTimer = setInterval(fire, props.interval + DURATION)
+    scheduleNext()
   }, props.initialDelay)
+}
+
+// ─── Trigger por scroll ────────────────────────────────────────────────────────
+// Dispara quando o usuário scrollou ≥ scrollThreshold da página
+// OU quando a primeira <h1> ficou pelo menos 50% visível.
+function setupScrollTrigger() {
+  let triggered = false
+
+  function trigger() {
+    if (triggered) return
+    triggered = true
+    startSequence()
+  }
+
+  // Opção A: percentual de scroll
+  function onScroll() {
+    const total    = document.documentElement.scrollHeight - window.innerHeight
+    const scrolled = total > 0 ? window.scrollY / total : 0
+    if (scrolled >= props.scrollThreshold) trigger()
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true })
+  scrollUnlisten = () => window.removeEventListener('scroll', onScroll)
+
+  // Opção B: headline visível (dispara para quem lê sem scrollar muito)
+  const headline = document.querySelector('h1')
+  if (headline) {
+    headlineObserver = new IntersectionObserver(
+      entries => { if (entries[0].isIntersecting) trigger() },
+      { threshold: 0.5 },
+    )
+    headlineObserver.observe(headline)
+  }
+}
+
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
+onMounted(() => {
+  if (process.client) setupScrollTrigger()
 })
 
 onUnmounted(() => {
   clearTimeout(initTimer!)
   clearTimeout(hideTimer!)
-  clearInterval(intervalTimer!)
+  clearTimeout(intervalTimer as unknown as ReturnType<typeof setTimeout>)
+  scrollUnlisten?.()
+  headlineObserver?.disconnect()
 })
 </script>
 

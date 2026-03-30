@@ -11,7 +11,7 @@ const influencer = computed(() => ({
   nome:   route.query.nome   || 'Parceiro',
   foto:   route.query.foto   || null,          // URL da foto (encodeURIComponent)
   cor:    route.query.cor    || '34d399',       // hex sem #
-  frase:  route.query.frase  || 'Eu uso e indico a SuaAgenda pra toda a minha audiência.',
+  frase:  route.query.frase  || 'Se você quer escalar sua barbearia, isso aqui faz sentido.',
   ticket: Number(route.query.ticket  || 99.90),
   comissao: Number(route.query.comissao || 30),
 }))
@@ -104,7 +104,7 @@ const fmt = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
       </blockquote>
 
       <a :href="whatsappLink" target="_blank" class="fos btn-primary hero-cta">
-        🤝 Quero ativar a parceria
+        🤝 Quero isso rodando pra mim
       </a>
 
       <div class="fos hero-stats">
@@ -230,6 +230,9 @@ const fmt = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
       </h2>
       <p class="fos cta-sub">
         Você já tem a audiência. Aqui você transforma isso em renda recorrente estruturada — {{ influencer.comissao }}% todo mês.
+      </p>
+      <p style="color:#666; font-size:13px; margin-top:10px;">
+        Ativação limitada pra manter qualidade das indicações.
       </p>
       <a :href="whatsappLink" target="_blank" class="fos btn-primary cta-btn">
         💬 Falar agora
