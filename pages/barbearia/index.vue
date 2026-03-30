@@ -1,6 +1,10 @@
 <template>
   <div class="text-[15px]">
 
+    <!-- ─── FOMO ─────────────────────────────────────────────────────────────── -->
+    <FomoToast :initial-delay="4000" :interval="8000" :duration="5000" />
+
+    <!-- ─── HERO ─────────────────────────────────────────────────────────────── -->
     <section class="relative min-h-screen flex flex-col-reverse md:flex-row items-center gap-12 px-6 md:px-16 pt-28 pb-16 overflow-hidden">
       <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 65% 60% at 60% 50%,rgba(52,211,153,.10) 0%,transparent 70%)"></div>
       <div class="z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
@@ -53,7 +57,48 @@
       </div>
     </section>
 
-    <!-- 5 MINUTOS -->
+    <!-- ─── SOCIAL PROOF — barbearias cadastradas no Brasil ─────────────────── -->
+    <section class="w-full py-12 px-6 md:px-16 bg-[#0d0d0d] border-y border-green-400/10">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        <!-- contador principal -->
+        <div class="flex items-center gap-5">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-green-400/10 border border-green-400/20 text-green-400 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-white font-black leading-none" style="font-family:'Bebas Neue',sans-serif;font-size:36px">
+              <span v-if="totalCountPending">...</span>
+              <span v-else>{{ totalCount.toLocaleString('pt-BR') }}+</span>
+              <span class="text-green-400"> barbearias</span>
+            </p>
+            <p class="text-sm text-gray-500 mt-0.5">cadastradas no Brasil</p>
+          </div>
+        </div>
+
+        <!-- divisor vertical (só desktop) -->
+        <div class="hidden md:block w-px h-12 bg-white/5"></div>
+
+        <!-- stats rápidos -->
+        <div class="flex flex-wrap gap-8 justify-center md:justify-end">
+          <div v-for="s in socialProofStats" :key="s.label" class="text-center md:text-left">
+            <p class="font-black text-green-400 leading-none" style="font-family:'Bebas Neue',sans-serif;font-size:28px">{{ s.num }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ s.label }}</p>
+          </div>
+        </div>
+
+        <!-- CTA texto -->
+        <div class="hidden lg:block text-right">
+          <p class="text-sm text-gray-400 leading-relaxed max-w-xs">
+            Sua barbearia ainda não está aqui?<br>
+            <a href="https://wa.me/5511941649284" class="text-green-400 font-semibold hover:underline">Coloca no ar em 5 minutos →</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 5 MINUTOS ────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div class="fade-on-scroll relative overflow-hidden rounded-2xl border border-green-400/20 bg-[#181818] p-10 text-center">
@@ -80,7 +125,7 @@
       </div>
     </section>
 
-    <!-- IDENTIFICAÇÃO -->
+    <!-- ─── IDENTIFICAÇÃO ─────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">Isso parece com você?</span>
@@ -102,7 +147,7 @@
       </div>
     </section>
 
-    <!-- DORES -->
+    <!-- ─── DORES ──────────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">O problema real</span>
@@ -120,7 +165,7 @@
       </div>
     </section>
 
-    <!-- SOLUÇÃO -->
+    <!-- ─── SOLUÇÃO ────────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a]" id="como-funciona">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">A solução</span>
@@ -140,7 +185,7 @@
       </div>
     </section>
 
-    <!-- COMPARAÇÃO -->
+    <!-- ─── COMPARAÇÃO ────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">Por que SuaAgenda</span>
@@ -200,7 +245,7 @@
       </div>
     </section>
 
-    <!-- FEITO PRO CELULAR -->
+    <!-- ─── FEITO PRO CELULAR ──────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-4xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">A verdade sobre os outros sistemas</span>
@@ -227,7 +272,7 @@
       </div>
     </section>
 
-    <!-- PASSOS -->
+    <!-- ─── PASSOS ─────────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a] text-center" id="como-funciona-passos">
       <div class="max-w-5xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">Do zero ao ar</span>
@@ -247,7 +292,7 @@
       </div>
     </section>
 
-    <!-- DEPOIMENTOS -->
+    <!-- ─── DEPOIMENTOS ───────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111] text-center" id="depoimentos">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">O que dizem os barbeiros</span>
@@ -284,14 +329,35 @@
       </div>
     </section>
 
-    <!-- PREÇO -->
+    <!-- ─── PREÇO ──────────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a] text-center" id="preco">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">Preço</span>
         <h2 class="fade-on-scroll mt-3 mb-4 font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)">PLANO DO SEU <span class="text-green-400">TAMANHO.</span></h2>
         <p class="fade-on-scroll mb-4 mx-auto max-w-lg text-xl leading-relaxed text-gray-400">Sem taxa de setup. Sem letra miúda. Cancela quando quiser.</p>
-        <p class="fade-on-scroll mb-14 mx-auto max-w-lg text-sm leading-relaxed text-gray-500">💬 Notificações via WhatsApp são cobradas por uso (créditos avulsos) — você compra separado e paga só o que usar.</p>
-        <!-- grid de planos -->
+        <p class="fade-on-scroll mb-10 mx-auto max-w-lg text-sm leading-relaxed text-gray-500">💬 Notificações via WhatsApp são cobradas por uso (créditos avulsos) — você compra separado e paga só o que usar.</p>
+
+        <div class="fade-on-scroll flex items-center justify-center gap-4 mb-14">
+          <span class="text-sm font-semibold" :class="!isAnual ? 'text-white' : 'text-gray-500'">Mensal</span>
+          <button
+            @click="isAnual = !isAnual"
+            class="relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none"
+            :class="isAnual ? 'bg-green-400' : 'bg-white/10 border border-white/20'"
+            aria-label="Alternar plano anual"
+          >
+            <span
+              class="absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-300"
+              :class="isAnual ? 'translate-x-7' : 'translate-x-0'"
+            ></span>
+          </button>
+          <span class="text-sm font-semibold flex items-center gap-2" :class="isAnual ? 'text-white' : 'text-gray-500'">
+            Anual
+            <span class="inline-block text-[11px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full bg-green-400/20 text-green-400 border border-green-400/30">
+              {{ discountLabel }}
+            </span>
+          </span>
+        </div>
+
         <div class="fade-on-scroll grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           <div
             v-for="(plano, i) in planos"
@@ -305,10 +371,20 @@
             <p class="text-xs font-bold tracking-widest uppercase mb-3" :class="plano.destaque ? 'text-green-400' : 'text-gray-500'">{{ plano.label }}</p>
             <p class="text-sm text-gray-500 leading-relaxed mb-5 min-h-[40px]">{{ plano.desc }}</p>
             <div class="mb-6">
-              <div v-if="plano.preco" class="flex items-start gap-1">
-                <span class="text-base font-bold mt-1" :class="plano.destaque ? 'text-green-400' : 'text-gray-400'">R$</span>
-                <span class="font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:52px">{{ plano.preco }}</span>
-                <span class="text-sm font-bold mt-3 text-gray-500">/mês</span>
+              <div v-if="plano.preco" class="flex flex-col items-start gap-1">
+                <div v-if="isAnual" class="flex items-start gap-1 opacity-40 line-through">
+                  <span class="text-sm font-bold mt-1 text-gray-400">R$</span>
+                  <span class="font-black leading-none text-gray-400" style="font-family:'Bebas Neue',sans-serif;font-size:32px">{{ plano.preco }}</span>
+                  <span class="text-sm font-bold mt-2 text-gray-500">/mês</span>
+                </div>
+                <div class="flex items-start gap-1">
+                  <span class="text-base font-bold mt-1" :class="plano.destaque ? 'text-green-400' : 'text-gray-400'">R$</span>
+                  <span class="font-black leading-none text-white transition-all duration-300" style="font-family:'Bebas Neue',sans-serif;font-size:52px">{{ precoExibido(plano.preco) }}</span>
+                  <span class="text-sm font-bold mt-3 text-gray-500">/mês</span>
+                </div>
+                <p v-if="isAnual" class="text-xs text-green-400 font-semibold">
+                  cobrado R$ {{ precoAnualTotal(plano.preco) }}/ano · economia de R$ {{ economiaAnual(plano.preco) }}
+                </p>
               </div>
               <div v-else class="flex items-center" style="height:52px">
                 <span class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:28px">Sob consulta</span>
@@ -320,8 +396,7 @@
                 {{ f.texto }}
               </li>
             </ul>
-            <a
-              href="https://wa.me/5511941649284"
+            <a href="https://wa.me/5511941649284"
               class="inline-flex items-center justify-center w-full gap-2 text-sm font-bold px-4 py-3 rounded-xl transition hover:-translate-y-0.5"
               :class="plano.destaque ? 'bg-green-400 text-black hover:bg-green-300' : 'border border-green-400/30 text-green-400 hover:border-green-400 hover:bg-green-400/10'"
             >{{ plano.preco ? '✂️ Começar agora' : '💬 Falar com a gente' }}</a>
@@ -331,7 +406,7 @@
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- ─── FAQ ────────────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400 block text-center">Dúvidas</span>
@@ -352,7 +427,7 @@
       </div>
     </section>
 
-    <!-- CTA FINAL -->
+    <!-- ─── CTA FINAL ──────────────────────────────────────────────────────────── -->
     <section class="relative w-full py-32 px-6 md:px-16 bg-[#0a0a0a] text-center overflow-hidden">
       <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(circle 350px at 50% 50%,rgba(52,211,153,.07),transparent)"></div>
       <div class="relative max-w-2xl mx-auto">
@@ -376,11 +451,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation, Pagination } from 'swiper/modules'
 import { useBarberJsonLd } from '~/composables/useBarberJsonLd'
+import { useRuntimeConfig } from '#app'
+import { useBarbershopCounts } from '~/composables/useBarbershopCounts'
+
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -409,38 +487,52 @@ useHead({
 })
 useBarberJsonLd()
 
-const faqOpen = ref(null)
+// ─── CONTADOR BRASIL ──────────────────────────────────────────────────────────
+const { count: totalCount, pending: totalCountPending, fetch: fetchCount } = useBarbershopCounts()
 
-onMounted(() => {
-  if (!process.client) return
-  document.querySelectorAll('.fade-on-scroll').forEach(el => {
-    el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700')
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('opacity-100', 'translate-y-0')
-          entry.target.classList.remove('opacity-0', 'translate-y-10')
-        }
-      })
-    }, { threshold: 0.1 })
-    observer.observe(el)
-  })
+onMounted(async () => {
+  // scroll animations
+  if (process.client) {
+    document.querySelectorAll('.fade-on-scroll').forEach(el => {
+      el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700')
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100', 'translate-y-0')
+            entry.target.classList.remove('opacity-0', 'translate-y-10')
+          }
+        })
+      }, { threshold: 0.1 })
+      observer.observe(el)
+    })
+  }
+
+  // busca o total de barbearias cadastradas no BR
+  fetchCount()
 })
 
-// ─── dados ────────────────────────────────────────────────────────────────────
+// ─── DADOS ────────────────────────────────────────────────────────────────────
+
+const faqOpen = ref<number | null>(null)
+const config  = useRuntimeConfig()
+const annualDiscount = Number(config.public.annualDiscount)
+const isAnual = ref(true)
+const discountLabel = computed(() => `-${annualDiscount}%`)
 
 const heroStats = [
-  { num: '500+', label: 'Barbearias ativas' },
-  { num: 'a partr de R$79', label: 'por mês' },
-  { num: '5min', label: 'pra estar no ar' },
+  { num: '500+',             label: 'Barbearias ativas' },
+  { num: 'a partir de R$79', label: 'por mês' },
+  { num: '5min',             label: 'pra estar no ar' },
 ]
 
-const metaBadge = {
-  label: 'Parceiro oficial Facebook (META)',
-  sublabel: 'WhatsApp Business API oficial',
-}
+const socialProofStats = [
+  { num: '97%',  label: 'de satisfação' },
+  { num: '+40h', label: 'economizadas/mês por barbeiro' },
+  { num: '3x',   label: 'mais clientes novos via Google' },
+]
 
-// fluxo real: conta → serviços/disponibilidade pré-preenchidos → WhatsApp → site otimizado no ar
+const metaBadge = { label: 'Parceiro oficial Facebook (META)' }
+
 const cincoSteps = [
   'Cria sua conta — nome da barbearia e endereço',
   'Serviços e disponibilidade já vêm pré-preenchidos — só confirma o que usa',
@@ -462,37 +554,37 @@ const dores = [
   {
     icon: 'M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z',
     title: 'Barbeiro não vende produto — vende tempo de cadeira',
-    desc: 'Cadeira vazia é dinheiro que foi embora e não volta. Cada horário que fura sem aviso é prejuízo direto no seu bolso. Toda semana.',
+    desc:  'Cadeira vazia é dinheiro que foi embora e não volta. Cada horário que fura sem aviso é prejuízo direto no seu bolso. Toda semana.',
     hl: true,
   },
   {
     icon: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5',
     title: 'Agenda desorganizada',
-    desc: 'Papel rabiscado, mensagem no zap, memória. Hora que aparecem dois clientes no mesmo horário, a situação fica tensa.',
+    desc:  'Papel rabiscado, mensagem no zap, memória. Hora que aparecem dois clientes no mesmo horário, a situação fica tensa.',
     hl: false,
   },
   {
     icon: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6',
     title: 'Invisível no Google',
-    desc: 'Todo dia alguém busca "barbearia no [seu bairro]" — e vai no concorrente porque você não aparece. Cliente novo perdido, todo dia.',
+    desc:  'Todo dia alguém busca "barbearia no [seu bairro]" — e vai no concorrente porque você não aparece. Cliente novo perdido, todo dia.',
     hl: false,
   },
   {
     icon: 'M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
     title: 'Tempo perdido respondendo',
-    desc: 'Passa horas respondendo "tem horário pra sexta?". Esse tempo todo poderia ser cortando cabelo e faturando mais.',
+    desc:  'Passa horas respondendo "tem horário pra sexta?". Esse tempo todo poderia ser cortando cabelo e faturando mais.',
     hl: false,
   },
   {
     icon: 'M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181',
     title: 'Refém do algoritmo',
-    desc: 'Quando o Instagram derruba o alcance, seu movimento cai junto. Você não tem controle nenhum sobre isso.',
+    desc:  'Quando o Instagram derruba o alcance, seu movimento cai junto. Você não tem controle nenhum sobre isso.',
     hl: false,
   },
   {
     icon: 'M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z',
     title: 'Sistemas complicados demais',
-    desc: 'Os concorrentes são cheios de relatório, aba, configuração. Você não precisa de ERP — precisa de cadeira cheia.',
+    desc:  'Os concorrentes são cheios de relatório, aba, configuração. Você não precisa de ERP — precisa de cadeira cheia.',
     hl: false,
   },
 ]
@@ -501,32 +593,32 @@ const solucoes = [
   {
     icon: 'M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z',
     title: 'Apareça no Google e no portal',
-    desc: 'Tecnologia exclusiva desenvolvida com referências como Neil Patel coloca sua barbearia nas primeiras posições do Google. E ainda aparece no portal da SuaAgenda — onde clientes da região buscam barbeiros perto deles.',
+    desc:  'Tecnologia exclusiva desenvolvida com referências como Neil Patel coloca sua barbearia nas primeiras posições do Google. E ainda aparece no portal da SuaAgenda — onde clientes da região buscam barbeiros perto deles.',
   },
   {
     icon: 'M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244',
     title: 'Link de agendamento no WhatsApp',
-    desc: 'Você recebe um link único. Manda no zap, coloca na bio do Instagram. O cliente escolhe o horário sozinho — sem você largar a tesoura.',
+    desc:  'Você recebe um link único. Manda no zap, coloca na bio do Instagram. O cliente escolhe o horário sozinho — sem você largar a tesoura.',
   },
   {
     icon: 'M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0',
     title: 'Confirmação real via WhatsApp',
-    desc: 'Somos parceiros oficiais do Facebook (WhatsApp/Instagram). Quando o cliente pede horário, recebe um WhatsApp real pedindo confirmação. SIM → garantido. Silêncio → horário libera sozinho.',
+    desc:  'Somos parceiros oficiais do Facebook (WhatsApp/Instagram). Quando o cliente pede horário, recebe um WhatsApp real pedindo confirmação. SIM → garantido. Silêncio → horário libera sozinho.',
   },
   {
     icon: 'M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3',
     title: 'Página profissional da barbearia',
-    desc: 'Serviços, profissionais e horários disponíveis numa única página. O cliente vê tudo e agenda na hora — sem mandar mensagem, sem esperar resposta.',
+    desc:  'Serviços, profissionais e horários disponíveis numa única página. O cliente vê tudo e agenda na hora — sem mandar mensagem, sem esperar resposta.',
   },
   {
     icon: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5',
     title: 'Agenda sem confusão',
-    desc: 'Disponibilidade dos barbeiros já configurada com base no horário de funcionamento. Ajusta o que quiser, bloqueia quando precisar.',
+    desc:  'Disponibilidade dos barbeiros já configurada com base no horário de funcionamento. Ajusta o que quiser, bloqueia quando precisar.',
   },
   {
     icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z',
     title: 'No ar em 5 minutos',
-    desc: 'Cria a conta, confirma os serviços, informa o WhatsApp. Pronto — site no ar, pronto pra aparecer no Google e receber agendamentos.',
+    desc:  'Cria a conta, confirma os serviços, informa o WhatsApp. Pronto — site no ar, pronto pra aparecer no Google e receber agendamentos.',
   },
 ]
 
@@ -549,46 +641,45 @@ const nossasSolucoes = [
 const comparacao = [
   { f: 'Site próprio + portal de descoberta regional',           us: true,           them: false,          manual: false },
   { f: 'Tecnologia exclusiva para primeiras posições no Google', us: true,           them: false,          manual: false },
-  { f: 'Disponibilidade pré-configurada pelo funcionamento',    us: true,           them: false,          manual: false },
-  { f: 'Notificações de agendamento no seu WhatsApp',           us: true,           them: 'Só e-mail',    manual: false },
-  { f: 'Pronto em 5 minutos',                                   us: true,           them: false,          manual: true  },
-  { f: 'Confirmação via WhatsApp oficial (parceiro Facebook)',  us: true,           them: 'Só lembrete',  manual: false },
-  { f: 'Fila de espera automática',                             us: true,           them: false,          manual: false },
-  { f: 'Horário não confirmado libera automaticamente',         us: true,           them: false,          manual: false },
-  { f: 'Preço acessível',                                       us: 'R$79,90/mês', them: 'R$120–300+',   manual: 'Perde cadeira todo dia' },
+  { f: 'Disponibilidade pré-configurada pelo funcionamento',     us: true,           them: false,          manual: false },
+  { f: 'Notificações de agendamento no seu WhatsApp',            us: true,           them: 'Só e-mail',    manual: false },
+  { f: 'Pronto em 5 minutos',                                    us: true,           them: false,          manual: true  },
+  { f: 'Confirmação via WhatsApp oficial (parceiro Facebook)',   us: true,           them: 'Só lembrete',  manual: false },
+  { f: 'Fila de espera automática',                              us: true,           them: false,          manual: false },
+  { f: 'Horário não confirmado libera automaticamente',          us: true,           them: false,          manual: false },
+  { f: 'Preço acessível',                                        us: 'R$79,90/mês',  them: 'R$120–300+',   manual: 'Perde cadeira todo dia' },
 ]
 
-// passos: fluxo real de onboarding
 const passos = [
   {
     icon: 'M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z',
     title: 'Cria sua conta',
-    desc: 'Nome da barbearia e endereço. Com isso o sistema já monta a estrutura do seu site.',
+    desc:  'Nome da barbearia e endereço. Com isso o sistema já monta a estrutura do seu site.',
   },
   {
     icon: 'M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z',
     title: 'Confirma serviços e disponibilidade',
-    desc: 'Corte, barba, combo já estão lá. A disponibilidade dos profissionais também vem pré-configurada. Só ajusta o que quiser.',
+    desc:  'Corte, barba, combo já estão lá. A disponibilidade dos profissionais também vem pré-configurada. Só ajusta o que quiser.',
   },
   {
     icon: 'M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-6-3h.008v.008H7.5V9.75Zm0 3h.008v.008H7.5V12.75Z',
     title: 'Informa seu WhatsApp',
-    desc: 'Esse número vai receber todas as notificações de novos agendamentos — direto no seu celular, na hora que o cliente marca.',
+    desc:  'Esse número vai receber todas as notificações de novos agendamentos — direto no seu celular, na hora que o cliente marca.',
   },
   {
     icon: 'M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z',
     title: 'Site no ar, Google de olho',
-    desc: 'Tecnologia exclusiva coloca sua barbearia nas primeiras posições do Google. Clientes te encontram, você só corta o cabelo.',
+    desc:  'Tecnologia exclusiva coloca sua barbearia nas primeiras posições do Google. Clientes te encontram, você só corta o cabelo.',
   },
 ]
 
 const depoimentos = [
-  { texto: 'Em um mês já tinha 4 clientes novos que vieram pelo Google. Nunca tinha acontecido isso antes.',     nome: 'Felipe Costa',     profissao: 'Barbearia do Felipe — BH',   rating: 5 },
-  { texto: 'Ficava respondendo WhatsApp o dia todo. Agora mando o link e o cliente agenda sozinho.',             nome: 'Wellington Santos', profissao: 'Studio W Barber — RJ',       rating: 5 },
-  { texto: 'Tentei dois outros sistemas e não durei nem uma semana. Esse eu uso todo dia.',                      nome: 'Marcos Alves',      profissao: 'Old School Barber — SP',     rating: 5 },
-  { texto: 'As faltas caíram muito depois que o sistema começou a pedir confirmação. Sexta-feira sempre cheia.', nome: 'Rafael Lima',       profissao: 'Barbearia RL — Curitiba',    rating: 5 },
-  { texto: 'R$79 por mês e minha barbearia nunca ficou tão cheia. Se paga fácil.',                              nome: 'Diego Moura',       profissao: 'Moura Barbers — Fortaleza',  rating: 5 },
-  { texto: 'Minha barbearia apareceu no Google em 3 semanas. Tenho clientes novos toda semana.',                 nome: 'Júnior Neves',      profissao: 'JN Barber Shop — Recife',    rating: 5 },
+  { texto: 'Em um mês já tinha 4 clientes novos que vieram pelo Google. Nunca tinha acontecido isso antes.',     nome: 'Felipe Costa',      profissao: 'Barbearia do Felipe — BH',  rating: 5 },
+  { texto: 'Ficava respondendo WhatsApp o dia todo. Agora mando o link e o cliente agenda sozinho.',             nome: 'Wellington Santos', profissao: 'Studio W Barber — RJ',      rating: 5 },
+  { texto: 'Tentei dois outros sistemas e não durei nem uma semana. Esse eu uso todo dia.',                      nome: 'Marcos Alves',      profissao: 'Old School Barber — SP',    rating: 5 },
+  { texto: 'As faltas caíram muito depois que o sistema começou a pedir confirmação. Sexta-feira sempre cheia.', nome: 'Rafael Lima',        profissao: 'Barbearia RL — Curitiba',  rating: 5 },
+  { texto: 'R$79 por mês e minha barbearia nunca ficou tão cheia. Se paga fácil.',                              nome: 'Diego Moura',        profissao: 'Moura Barbers — Fortaleza', rating: 5 },
+  { texto: 'Minha barbearia apareceu no Google em 3 semanas. Tenho clientes novos toda semana.',                 nome: 'Júnior Neves',       profissao: 'JN Barber Shop — Recife',  rating: 5 },
 ]
 
 const mediaRating = computed(() => {
@@ -596,50 +687,31 @@ const mediaRating = computed(() => {
   return (total / depoimentos.length).toFixed(1)
 })
 
-// planos baseados nas seeds reais (planId 2-5)
-// trial não aparece como card — vira CTA "7 dias grátis"
-const mkFeatures = (agend, prof, unid, relat, integ) => [
-  { texto: `${agend} agendamentos/mês`,                     ok: true  },
-  { texto: `${prof} ${prof > 1 ? 'profissionais' : 'profissional'}`,  ok: true  },
-  { texto: `${unid} estabelecimento${unid > 1 ? 's' : ''}`,        ok: true  },
-  { texto: 'Site público + portal de descoberta',           ok: true  },
-  { texto: 'Confirmação automática via WhatsApp',           ok: true  },
-  { texto: 'Créditos WhatsApp cobrados por uso',            ok: true  },
-  { texto: 'Relatórios e métricas',                         ok: relat },
-  { texto: 'Integrações com outros sistemas',               ok: integ },
-]
+// ─── PLANOS ───────────────────────────────────────────────────────────────────
+
+function mkFeatures(agend: number, prof: number, unid: number, relat: boolean, integ: boolean) {
+  return [
+    { texto: `${agend} agendamentos/mês`,                                             ok: true  },
+    { texto: `${prof} ${prof > 1 ? 'profissionais' : 'profissional'}`,               ok: true  },
+    { texto: `${unid} estabelecimento${unid > 1 ? 's' : ''}`,                        ok: true  },
+    { texto: 'Site público + portal de descoberta',                                   ok: true  },
+    { texto: 'Confirmação automática via WhatsApp',                                   ok: true  },
+    { texto: 'Créditos WhatsApp cobrados por uso',                                    ok: true  },
+    { texto: 'Relatórios e métricas',                                                 ok: relat },
+    { texto: 'Integrações com outros sistemas',                                       ok: integ },
+  ]
+}
 
 const planos = [
+  { label: 'Profissional Solo', desc: 'Para autônomos que trabalham sozinhos.',         preco: '79,90',  destaque: true,  features: mkFeatures(500,  1, 1, true,  false) },
+  { label: 'Equipe Pequena',    desc: 'Barbearia com 2 a 3 profissionais.',             preco: '99,90',  destaque: false, features: mkFeatures(1500, 3, 1, true,  false) },
+  { label: 'Equipe Média',      desc: 'Negócio em crescimento, 4 a 6 profissionais.',  preco: '149,90', destaque: false, features: mkFeatures(3000, 6, 2, true,  true)  },
   {
-    label: 'Profissional Solo',
-    desc: 'Para autônomos que trabalham sozinhos.',
-    preco: '79,90',
-    destaque: true,
-    features: mkFeatures(500, 1, 1, true, false),
-  },
-  {
-    label: 'Equipe Pequena',
-    desc: 'Barbearia com 2 a 3 profissionais.',
-    preco: '99,90',
-    destaque: false,
-    features: mkFeatures(1500, 3, 1, true, false),
-  },
-  {
-    label: 'Equipe Média',
-    desc: 'Negócio em crescimento, 4 a 6 profissionais.',
-    preco: '149,90',
-    destaque: false,
-    features: mkFeatures(3000, 6, 2, true, true),
-  },
-  {
-    label: 'Equipe Avançada',
-    desc: '7+ profissionais. Múltiplas unidades.',
-    preco: null,
-    destaque: false,
+    label: 'Equipe Avançada', desc: '7+ profissionais. Múltiplas unidades.', preco: null, destaque: false,
     features: [
       { texto: 'Agendamentos ilimitados',             ok: true },
       { texto: 'Profissionais ilimitados',            ok: true },
-      { texto: 'Estabelecimentos ilimitados',                 ok: true },
+      { texto: 'Estabelecimentos ilimitados',         ok: true },
       { texto: 'Site público + portal de descoberta', ok: true },
       { texto: 'Confirmação automática via WhatsApp', ok: true },
       { texto: 'Créditos WhatsApp cobrados por uso',  ok: true },
@@ -649,55 +721,35 @@ const planos = [
   },
 ]
 
+function precoExibido(precoMensal: string) {
+  if (!isAnual.value) return precoMensal
+  const base = parseFloat(precoMensal.replace(',', '.'))
+  return (base * (1 - annualDiscount / 100)).toFixed(2).replace('.', ',')
+}
+function precoAnualTotal(precoMensal: string) {
+  const base = parseFloat(precoMensal.replace(',', '.'))
+  return (base * (1 - annualDiscount / 100) * 12).toFixed(2).replace('.', ',')
+}
+function economiaAnual(precoMensal: string) {
+  const base = parseFloat(precoMensal.replace(',', '.'))
+  return (base * 12 - base * (1 - annualDiscount / 100) * 12).toFixed(2).replace('.', ',')
+}
+
+// ─── FAQS ─────────────────────────────────────────────────────────────────────
+
 const faqs = [
-  {
-    q: 'Quanto tempo leva pra configurar?',
-    a: 'Só 5 minutos. Você cria a conta com nome e endereço, os serviços e a disponibilidade dos profissionais já vêm pré-preenchidos com base no funcionamento do estabelecimento, você informa o WhatsApp pra receber notificações — e pronto, site no ar, pronto pra aparecer nas primeiras posições do Google.',
-  },
-  {
-    q: 'O que vem pré-preenchido?',
-    a: 'Os serviços mais comuns de barbearia — corte, barba, combo, sobrancelha — e a disponibilidade dos profissionais, baseada no horário de funcionamento do estabelecimento. Você só confirma o que usa e ajusta o que quiser.',
-  },
-  {
-    q: 'Meu site vai aparecer nas primeiras posições do Google?',
-    a: 'Sim. Assim que você finaliza o cadastro, a nossa tecnologia exclusiva — desenvolvida com base nas melhores práticas de especialistas como Neil Patel — entra em ação pra colocar sua barbearia nas primeiras posições. Sem precisar mexer em nada. O Google costuma começar a mostrar seu site em 2 a 3 semanas.',
-  },
-  {
-    q: 'Preciso entender de tecnologia pra usar?',
-    a: 'Não. Se você usa WhatsApp e Instagram, você usa a SuaAgenda. Foi feita pra ser mais simples do que qualquer coisa que você já tentou antes.',
-  },
-  {
-    q: 'Como funciona a confirmação automática? É só um lembrete?',
-    a: 'Não é só lembrete. Quando o cliente escolhe um horário, ele fica pendente. O sistema manda um WhatsApp oficial pedindo confirmação. Respondeu SIM → horário garantido. Não respondeu até o prazo → horário volta pra agenda automaticamente.',
-  },
-  {
-    q: 'Como funciona o custo das notificações pelo WhatsApp?',
-    a: 'O WhatsApp Business API cobra por mensagem enviada — é o custo que a própria Meta impõe pra todo mundo que usa a API oficial. Por isso, cada notificação enviada pelo sistema (confirmação de horário, fila de espera) consome um crédito de agendamento, cobrado separado do plano mensal. A vantagem é que você paga só o que usa. E um horário salvo já paga vários créditos.',
-  },
-  {
-    q: 'Por que vocês são parceiros do Facebook? Isso muda alguma coisa?',
-    a: 'Muda bastante. Quem usa WhatsApp informal pode ter o número banido ou as mensagens bloqueadas. Por sermos parceiros oficiais do Facebook (que controla WhatsApp e Instagram), as mensagens saem pela API oficial — chegam de verdade, não caem em spam e o número da barbearia fica protegido.',
-  },
-  {
-    q: 'O que é a fila de espera?',
-    a: 'Quando um horário libera, o sistema chama automaticamente o próximo interessado via WhatsApp. Se não responder, chama o próximo. Você não perde a cadeira à toa.',
-  },
-  {
-    q: 'Os clientes precisam baixar algum aplicativo?',
-    a: 'Não. O cliente clica no link, abre no navegador do celular e já agenda. Sem baixar nada.',
-  },
-  {
-    q: 'E se eu quiser cancelar? Tem multa?',
-    a: 'Nenhuma multa. Você cancela quando quiser, sem burocracia. É mês a mês.',
-  },
-  {
-    q: 'Qual plano é o certo pra minha barbearia?',
-    a: 'Se você trabalha sozinho, o Profissional Solo (R$79,90/mês) já resolve tudo. Se você tem 2 ou 3 profissionais, o Equipe Pequena (R$99,90). De 4 a 6, o Equipe Média (R$149,90). 7 ou mais, a gente conversa e monta um plano. Todos começam com 7 dias grátis.',
-  },
-  {
-    q: 'Tem suporte? Falo com uma pessoa de verdade?',
-    a: 'Tem suporte pelo WhatsApp em horário comercial. Você fala com uma pessoa real, sem bot.',
-  },
+  { q: 'Quanto tempo leva pra configurar?',             a: 'Só 5 minutos. Você cria a conta com nome e endereço, os serviços e a disponibilidade dos profissionais já vêm pré-preenchidos com base no funcionamento do estabelecimento, você informa o WhatsApp pra receber notificações — e pronto, site no ar, pronto pra aparecer nas primeiras posições do Google.' },
+  { q: 'O que vem pré-preenchido?',                     a: 'Os serviços mais comuns de barbearia — corte, barba, combo, sobrancelha — e a disponibilidade dos profissionais, baseada no horário de funcionamento do estabelecimento. Você só confirma o que usa e ajusta o que quiser.' },
+  { q: 'Meu site vai aparecer nas primeiras posições do Google?', a: 'Sim. Assim que você finaliza o cadastro, a nossa tecnologia exclusiva — desenvolvida com base nas melhores práticas de especialistas como Neil Patel — entra em ação pra colocar sua barbearia nas primeiras posições. Sem precisar mexer em nada. O Google costuma começar a mostrar seu site em 2 a 3 semanas.' },
+  { q: 'Preciso entender de tecnologia pra usar?',      a: 'Não. Se você usa WhatsApp e Instagram, você usa a SuaAgenda. Foi feita pra ser mais simples do que qualquer coisa que você já tentou antes.' },
+  { q: 'Como funciona a confirmação automática? É só um lembrete?', a: 'Não é só lembrete. Quando o cliente escolhe um horário, ele fica pendente. O sistema manda um WhatsApp oficial pedindo confirmação. Respondeu SIM → horário garantido. Não respondeu até o prazo → horário volta pra agenda automaticamente.' },
+  { q: 'Como funciona o custo das notificações pelo WhatsApp?', a: 'O WhatsApp Business API cobra por mensagem enviada — é o custo que a própria Meta impõe pra todo mundo que usa a API oficial. Por isso, cada notificação enviada pelo sistema consome um crédito de agendamento, cobrado separado do plano mensal. A vantagem é que você paga só o que usa. E um horário salvo já paga vários créditos.' },
+  { q: 'Por que vocês são parceiros do Facebook? Isso muda alguma coisa?', a: 'Muda bastante. Quem usa WhatsApp informal pode ter o número banido ou as mensagens bloqueadas. Por sermos parceiros oficiais do Facebook (que controla WhatsApp e Instagram), as mensagens saem pela API oficial — chegam de verdade, não caem em spam e o número da barbearia fica protegido.' },
+  { q: 'O que é a fila de espera?',                     a: 'Quando um horário libera, o sistema chama automaticamente o próximo interessado via WhatsApp. Se não responder, chama o próximo. Você não perde a cadeira à toa.' },
+  { q: 'Os clientes precisam baixar algum aplicativo?', a: 'Não. O cliente clica no link, abre no navegador do celular e já agenda. Sem baixar nada.' },
+  { q: 'E se eu quiser cancelar? Tem multa?',           a: 'Nenhuma multa. Você cancela quando quiser, sem burocracia. É mês a mês.' },
+  { q: 'Qual plano é o certo pra minha barbearia?',     a: 'Se você trabalha sozinho, o Profissional Solo (R$79,90/mês) já resolve tudo. Se você tem 2 ou 3 profissionais, o Equipe Pequena (R$99,90). De 4 a 6, o Equipe Média (R$149,90). 7 ou mais, a gente conversa e monta um plano. Todos começam com 7 dias grátis.' },
+  { q: 'Tem suporte? Falo com uma pessoa de verdade?',  a: 'Tem suporte pelo WhatsApp em horário comercial. Você fala com uma pessoa real, sem bot.' },
 ]
 </script>
 

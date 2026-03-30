@@ -4,20 +4,40 @@
     <!-- ══════════════════════════════════════════════════════
          NAV
     ═══════════════════════════════════════════════════════ -->
-    <header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/5">
+    <header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/5 transition-all duration-300">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-6 py-4">
 
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-3 group flex-shrink-0">
-          <NuxtImg
-            provider="cloudinary"
-            src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
-            alt="SuaAgenda"
-            class="h-9 w-auto"
-            v-motion="{ initial:{opacity:0,x:-12}, enter:{opacity:1,x:0,transition:{duration:800}} }"
-          />
-          
-        </NuxtLink>
+        <!-- ── Logo: padrão ou white-label ── -->
+        <component
+          :is="hasInfluencer ? 'div' : NuxtLink"
+          :to="hasInfluencer ? undefined : '/'"
+          class="flex items-center gap-3 flex-shrink-0"
+          :class="{ 'cursor-default': hasInfluencer }"
+        >
+          <!-- WHITE LABEL: avatar do influencer -->
+          <template v-if="hasInfluencer">
+            <div class="inf-logo-avatar">
+              <img v-if="fotoUrl" :src="fotoUrl" :alt="nomeDisplay" />
+              <span v-else>{{ nomeDisplay?.slice(0,2).toUpperCase() }}</span>
+              <span class="inf-logo-dot">●</span>
+            </div>
+            <div class="inf-logo-text">
+              <span class="inf-logo-nome">{{ nomeDisplay }}</span>
+              <a href="/" class="inf-logo-by">by <span>SuaAgenda</span></a>
+            </div>
+          </template>
+
+          <!-- PADRÃO: logo normal -->
+          <template v-else>
+            <NuxtImg
+              provider="cloudinary"
+              src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
+              alt="SuaAgenda"
+              class="h-9 w-auto"
+              v-motion="{ initial:{opacity:0,x:-12}, enter:{opacity:1,x:0,transition:{duration:800}} }"
+            />
+          </template>
+        </component>
 
         <!-- ✨ BUSCA GLOBAL (Desktop) -->
         <div class="hidden md:block flex-1 max-w-md">
@@ -68,7 +88,7 @@
           </div>
 
           <a
-            href="https://wa.me/5511941649284"
+            :href="wpLink"
             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300 hover:-translate-y-px shadow-lg shadow-green-400/20"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
@@ -80,7 +100,6 @@
 
         <!-- Mobile: Busca + Burger -->
         <div class="flex items-center gap-2 md:hidden">
-          <!-- ✨ Botão de busca mobile -->
           <button
             class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
             aria-label="Buscar"
@@ -91,7 +110,6 @@
             </svg>
           </button>
 
-          <!-- Burger -->
           <button
             class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
             aria-label="Menu"
@@ -107,7 +125,7 @@
         </div>
       </div>
 
-      <!-- ✨ BUSCA MOBILE (Full width abaixo do header) -->
+      <!-- BUSCA MOBILE -->
       <Transition name="slide-down">
         <div v-if="showMobileSearch" class="md:hidden border-t border-white/5 bg-[#0f0f0f] px-6 py-4">
           <GlobalSearch placeholder="Buscar barbearias..." />
@@ -150,7 +168,7 @@
             </div>
 
             <a
-              href="https://wa.me/5511941649284"
+              :href="wpLink"
               class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-400 text-black text-[16px] font-bold mt-2"
               @click="mobileOpen = false"
             >
@@ -172,7 +190,33 @@
     <!-- ══════════════════════════════════════════════════════
          FOOTER
     ═══════════════════════════════════════════════════════ -->
-    <footer class="bg-[#0a0a0a] border-t border-white/5">
+
+    <!-- ── WHITE LABEL FOOTER: só o crédito ── -->
+    <footer v-if="hasInfluencer" class="wl-footer">
+      <a href="/" class="wl-footer-credit">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="wl-footer-icon">
+          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 4.25a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-1.5 0v-3Zm.75 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+        </svg>
+        Agendamento powered by
+        <NuxtImg
+          provider="cloudinary"
+          src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
+          alt="SuaAgenda"
+          class="wl-footer-logo"
+        />
+      </a>
+      <WhatsappButton
+        :contacts="[
+          { name: 'Vendas',  phone: '+5511941649284', availableTimes: ['10:30','14:00','16:00'] },
+          { name: 'Suporte', phone: '+5511941649284', availableTimes: ['09:00','12:00','15:00'] },
+        ]"
+        :defaultMessage="wpDefaultMessage"
+        aria-label="Falar com a gente no WhatsApp"
+      />
+    </footer>
+
+    <!-- ── FOOTER PADRÃO ── -->
+    <footer v-else class="bg-[#0a0a0a] border-t border-white/5">
 
       <!-- CTA strip -->
       <div class="bg-gradient-to-r from-green-400/10 via-green-400/5 to-transparent border-b border-green-400/10 py-10 px-6">
@@ -182,7 +226,7 @@
             <p class="text-[15px] text-gray-400">Sem técnico, sem complicação, sem fidelidade.</p>
           </div>
           <a
-            href="https://wa.me/5511941649284"
+            :href="wpLink"
             class="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300 hover:-translate-y-px shadow-lg shadow-green-400/20 whitespace-nowrap"
           >
             ✂️ Começar agora — grátis
@@ -206,10 +250,12 @@
               ✂️ Barbearia
             </span>
           </div>
+
           <p class="text-[15px] text-gray-400 leading-relaxed mb-5 max-w-sm">
             O sistema simples que ajuda a encher a agenda da barbearia.
             Sem app pra baixar, sem contrato, sem dor de cabeça.
           </p>
+
           <!-- Selos -->
           <div class="flex flex-wrap gap-2 mb-6">
             <span class="inline-flex items-center gap-1.5 text-[12px] text-gray-500 bg-white/[.04] border border-white/[.06] rounded-lg px-3 py-1.5">
@@ -228,7 +274,8 @@
               🤝 Parceiro META oficial
             </span>
           </div>
-          <!-- Redes -->
+
+          <!-- Redes sociais -->
           <div class="flex gap-3">
             <a href="https://www.facebook.com/profile.php?id=61581430582623" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
               class="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[.04] border border-white/[.06] hover:border-[#1877F2]/40 hover:bg-[#1877F2]/10 transition-all">
@@ -242,7 +289,7 @@
                 <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.055 1.963.24 2.422.402a4.922 4.922 0 0 1 1.788 1.08 4.922 4.922 0 0 1 1.08 1.788c.163.46.348 1.252.403 2.422.058 1.266.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.24 1.963-.403 2.422a4.922 4.922 0 0 1-1.08 1.788 4.922 4.922 0 0 1-1.788 1.08c-.46.163-1.252.348-2.422.403-1.266.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.963-.24-2.422-.403a4.922 4.922 0 0 1-1.788-1.08 4.922 4.922 0 0 1-1.08-1.788c-.163-.46-.348-1.252-.403-2.422C2.212 15.584 2.2 15.2 2.2 12s.012-3.584.07-4.85c.055-1.17.24-1.963.403-2.422a4.922 4.922 0 0 1 1.08-1.788 4.922 4.922 0 0 1 1.788-1.08c.46-.163 1.252-.348 2.422-.403C8.416 2.212 8.8 2.2 12 2.2zm0 1.8c-3.16 0-3.53.012-4.78.069-1.047.048-1.61.22-1.985.367a3.125 3.125 0 0 0-1.135.723 3.125 3.125 0 0 0-.723 1.135c-.147.375-.319.938-.367 1.985-.057 1.25-.069 1.62-.069 4.78s.012 3.53.069 4.78c.048 1.047.22 1.61.367 1.985.17.39.392.73.723 1.135.404.33.745.552 1.135.723.375.147.938.319 1.985.367 1.25.057 1.62.069 4.78.069s3.53-.012 4.78-.069c1.047-.048 1.61-.22 1.985-.367a3.125 3.125 0 0 0 1.135-.723 3.125 3.125 0 0 0 .723-1.135c.147-.375.319-.938.367-1.985.057-1.25.069-1.62.069-4.78s-.012-3.53-.069-4.78c-.048-1.047-.22-1.61-.367-1.985a3.125 3.125 0 0 0-.723-1.135 3.125 3.125 0 0 0-1.135-.723c-.375-.147-.938-.319-1.985-.367-1.25-.057-1.62-.069-4.78-.069zm0 3.5a6.3 6.3 0 1 1 0 12.6 6.3 6.3 0 0 1 0-12.6zm0 1.8a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm6.4-1.9a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
               </svg>
             </a>
-            <a href="https://wa.me/5511941649284" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+            <a :href="wpLink" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
               class="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[.04] border border-white/[.06] hover:border-[#25D366]/40 hover:bg-[#25D366]/10 transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" fill="#25D366" viewBox="0 0 24 24" class="w-5 h-5">
                 <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12a11.93 11.93 0 0 0 1.64 6.06L0 24l6.17-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22c-1.84 0-3.62-.49-5.18-1.4l-.37-.22-3.66.96.98-3.57-.24-.37A9.95 9.95 0 0 1 2 12C2 6.48 6.48 2 12 2c2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10Zm5.52-7.46c-.3-.15-1.78-.88-2.06-.98s-.47-.15-.67.15-.77.98-.95 1.18-.35.22-.65.07a8.2 8.2 0 0 1-2.42-1.5 9.07 9.07 0 0 1-1.67-2.09c-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52s.2-.3.3-.5.05-.37-.02-.52-.67-1.62-.92-2.22c-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.14.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.78-.73 2.03-1.43s.25-1.31.17-1.43-.27-.2-.57-.35Z"/>
@@ -256,7 +303,8 @@
           <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-5">Produto</h4>
           <ul class="space-y-3">
             <li v-for="link in footerProduto" :key="link.label">
-              <a :href="link.href" class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+              <a :href="link.href === 'https://wa.me/5511941649284' ? wpLink : link.href"
+                class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
                 <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
                 {{ link.label }}
               </a>
@@ -310,7 +358,7 @@
 
       </div>
 
-      <!-- ── Links locais SEO ── -->
+      <!-- Links locais SEO -->
       <div class="border-t border-white/[.04] px-6 py-10">
         <div class="max-w-6xl mx-auto">
           <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-6">
@@ -319,8 +367,6 @@
 
           <div class="space-y-10">
             <div v-for="city in allCities" :key="city.citySlug">
-
-              <!-- Cabeçalho da cidade -->
               <NuxtLink
                 :to="`/barbearias/${city.ufSlug}/${city.citySlug}`"
                 class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
@@ -328,16 +374,9 @@
                 {{ city.city }}
               </NuxtLink>
 
-              <!-- SP: agrupa por zone -->
               <template v-if="hasZones(city)">
-                <div
-                  v-for="(districts, zoneName) in districtsByZone(city)"
-                  :key="String(zoneName)"
-                  class="mb-6"
-                >
-                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">
-                    {{ zoneName }}
-                  </p>
+                <div v-for="(districts, zoneName) in districtsByZone(city)" :key="String(zoneName)" class="mb-6">
+                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">{{ zoneName }}</p>
                   <div class="flex flex-wrap gap-x-5 gap-y-2">
                     <NuxtLink
                       v-for="neighborhood in flatNeighborhoods(districts)"
@@ -351,7 +390,6 @@
                 </div>
               </template>
 
-              <!-- Outras cidades (Baixada Santista etc): flat -->
               <template v-else>
                 <div class="flex flex-wrap gap-x-5 gap-y-2">
                   <NuxtLink
@@ -364,15 +402,11 @@
                   </NuxtLink>
                 </div>
               </template>
-
             </div>
           </div>
 
-          <!-- Barbeiros por cidade -->
           <div class="mt-8 pt-6 border-t border-white/[.04]">
-            <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">
-              Barbeiros por cidade
-            </p>
+            <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">Barbeiros por cidade</p>
             <div class="flex flex-wrap gap-4">
               <NuxtLink
                 v-for="city in allCities"
@@ -403,18 +437,20 @@
           { name: 'Vendas',  phone: '+5511941649284', availableTimes: ['10:30','14:00','16:00'] },
           { name: 'Suporte', phone: '+5511941649284', availableTimes: ['09:00','12:00','15:00'] },
         ]"
-        defaultMessage="Olá, vim pelo site de barbearia e gostaria de atendimento"
+        :defaultMessage="wpDefaultMessage"
         aria-label="Falar com a gente no WhatsApp"
       />
-    </footer>
+    </footer><!-- end v-else footer padrão -->
+
     <CookieBanner />
   </div>
 </template>
 
 <script setup lang="ts">
-
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { NuxtLink } from '#components'
 import { allCities, type CityData, type District, type Neighborhood } from '~/data/locations'
+import { useInfluencer } from '~/composables/useInfluencer'
 
 useHead({
   link: [
@@ -436,26 +472,45 @@ useHead({
   ],
 })
 
-const mobileOpen = ref(false)
-const showMobileSearch = ref(false)  // ✨ NOVO
-const year = new Date().getFullYear()
+// ── Influencer white label ────────────────────────────────────────────────────
+const { hasInfluencer, nomeDisplay, fotoUrl, corHex, whatsappLink } = useInfluencer()
 
-// Bairros flat — cidades sem zone (Baixada Santista etc)
+/** Link do WhatsApp unificado — com ref quando tem influencer, padrão caso contrário */
+const wpLink = computed(() =>
+  hasInfluencer.value
+    ? whatsappLink.value   // já tem o ref embutido via useInfluencer
+    : 'https://wa.me/5511941649284'
+)
+
+/** Mensagem padrão do WhatsApp flutuante */
+const wpDefaultMessage = computed(() =>
+  hasInfluencer.value
+    ? `Vim pela indicação de ${nomeDisplay.value} e quero testar a SuaAgenda`
+    : 'Olá, vim pelo site de barbearia e gostaria de atendimento'
+)
+
+// Injeta CSS var de cor do influencer
+onMounted(() => {
+  if (hasInfluencer.value) {
+    document.documentElement.style.setProperty('--inf-color', corHex.value)
+  }
+})
+
+// ── Estado local ──────────────────────────────────────────────────────────────
+const mobileOpen       = ref(false)
+const showMobileSearch = ref(false)
+const year             = new Date().getFullYear()
+
+// ── Helpers de localização ────────────────────────────────────────────────────
 function allNeighborhoods(city: CityData): Neighborhood[] {
   return city.districts.flatMap((d) => d.neighborhoods)
 }
-
-// Bairros flat de um array de distritos — usado dentro de cada zona de SP
 function flatNeighborhoods(districts: District[]): Neighborhood[] {
   return districts.flatMap((d) => d.neighborhoods)
 }
-
-// SP tem district.zone definido via spZone() no index.ts
 function hasZones(city: CityData): boolean {
   return city.districts.some((d) => d.zone != null)
 }
-
-// Agrupa distritos por zone — { "Zona Leste": [...], "Zona Norte": [...] }
 function districtsByZone(city: CityData): Record<string, District[]> {
   const groups: Record<string, District[]> = {}
   for (const district of city.districts) {
@@ -466,6 +521,7 @@ function districtsByZone(city: CityData): Record<string, District[]> {
   return groups
 }
 
+// ── Nav / Footer data ─────────────────────────────────────────────────────────
 const navLinks = [
   { label: 'Como funciona', href: '#como-funciona' },
   { label: 'Benefícios',    href: '#como-funciona-passos' },
@@ -475,14 +531,14 @@ const navLinks = [
 ]
 
 const recursosLinks = [
-  { emoji: '📅', label: 'Agenda online',       href: '/recursos/agenda-online' },
-  { emoji: '👥', label: 'Controle de clientes', href: '/recursos/controle-clientes' },
-  { emoji: '🔗', label: 'Link de agendamento',  href: '/recursos/link-agendamento' },
+  { emoji: '📅', label: 'Agenda online',        href: '/recursos/agenda-online' },
+  { emoji: '👥', label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
+  { emoji: '🔗', label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
 ]
 
 const blogLinks = [
-  { emoji: '📣', label: 'Como divulgar barbearia',    href: '/blog/como-divulgar-barbearia' },
-  { emoji: '💡', label: 'Como conseguir mais clientes', href: '/blog/como-conseguir-clientes-barbearia' },
+  { emoji: '📣', label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
+  { emoji: '💡', label: 'Como conseguir mais clientes',  href: '/blog/como-conseguir-clientes-barbearia' },
 ]
 
 const footerProduto = [
@@ -493,9 +549,9 @@ const footerProduto = [
 ]
 
 const footerRecursos = [
-  { label: 'Agenda online',        href: '/recursos/agenda-online' },
-  { label: 'Controle de clientes', href: '/recursos/controle-clientes' },
-  { label: 'Link de agendamento',  href: '/recursos/link-agendamento' },
+  { label: 'Agenda online',         href: '/recursos/agenda-online' },
+  { label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
+  { label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
 ]
 
 const footerBlog = [
@@ -516,7 +572,80 @@ const footerEmpresa = [
 </script>
 
 <style>
-:root { --nav-h: 68px; }
+:root {
+  --nav-h: 68px;
+  --inf-color: #34d399;
+}
+
+/* ── Slide transitions ── */
 .slide-down-enter-active, .slide-down-leave-active { transition: opacity .2s, transform .2s; }
-.slide-down-enter-from, .slide-down-leave-to       { opacity: 0; transform: translateY(-8px); }
+.slide-down-enter-from,   .slide-down-leave-to     { opacity: 0; transform: translateY(-8px); }
+
+/* ── White label: logo avatar no header ── */
+.inf-logo-avatar {
+  position: relative;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--inf-color);
+  overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  background: #1a1a1a; color: var(--inf-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--inf-color) 15%, transparent);
+}
+.inf-logo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.inf-logo-dot {
+  position: absolute; bottom: -1px; right: -1px;
+  font-size: 9px; color: #22c55e;
+  animation: inf-pulse 1.8s infinite;
+}
+@keyframes inf-pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+.inf-logo-text {
+  display: flex; flex-direction: column; line-height: 1.25;
+}
+.inf-logo-nome {
+  font-size: 15px; font-weight: 700; color: #fff;
+  max-width: 160px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.inf-logo-by {
+  font-size: 11px; color: #555;
+  text-decoration: none;
+  transition: color .2s;
+}
+.inf-logo-by span { color: var(--inf-color); opacity: .7; }
+.inf-logo-by:hover span { opacity: 1; }
+
+/* ── White label footer minimalista ── */
+.wl-footer {
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wl-footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #444;
+  text-decoration: none;
+  transition: color .2s;
+}
+.wl-footer-credit:hover { color: #666; }
+.wl-footer-icon {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  opacity: .4;
+}
+.wl-footer-logo {
+  height: 16px;
+  width: auto;
+  opacity: .45;
+  filter: brightness(2);
+  transition: opacity .2s;
+}
+.wl-footer-credit:hover .wl-footer-logo { opacity: .7; }
 </style>
