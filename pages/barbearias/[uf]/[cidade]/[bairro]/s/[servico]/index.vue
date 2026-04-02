@@ -473,14 +473,6 @@ const serviceLabel      = serviceSlug.replace(/-/g, ' ')
 // ✅ Contador do bairro+serviço
 const serviceCount = useBarbershopCounts()
  
-// Obs: a API de counts NÃO filtra por serviço ainda — seria necessário estender.
-// Por ora, vamos mostrar o count total do bairro.
-watchEffect(() => {
-  if (seo.value || fallback.shops.value.length > 0) {
-    serviceCount.fetch({ uf: ufSlug, city: citySlug, neighborhood: neighborhoodSlug })
-  }
-})
-
 // ── SEO completo (só resolve quando bairro + serviço mapeados) ─────────────
 const { data: seo } = useLocalSeo(ufSlug, citySlug, neighborhoodSlug, serviceSlug)
 
@@ -493,6 +485,13 @@ const fallback = useFallbackSuggestions({
   limit: 6,
 })
 
+// Obs: a API de counts NÃO filtra por serviço ainda — seria necessário estender.
+// Por ora, vamos mostrar o count total do bairro.
+watchEffect(() => {
+  if (seo.value || fallback.shops.value.length > 0) {
+    serviceCount.fetch({ uf: ufSlug, city: citySlug, neighborhood: neighborhoodSlug })
+  }
+})
 // ── Lógica de exibição (mesma da página de bairro) ────────────────────────
 //
 // showFullPage: mostra a estrutura completa (hero + cards + seo) quando
@@ -505,9 +504,7 @@ const showFullPage = computed(() =>
   !!seo.value || fallback.shops.value.length > 0
 )
 
-const usePageSearchForCards = computed(() =>
-  !!seo.value && fallback.level.value === 'neighborhood'
-)
+const usePageSearchForCards = computed(() => !!seo.value)
 
 const currentService = computed(() =>
   seo.value?.availableServices.find(s => s.slug === serviceSlug),
