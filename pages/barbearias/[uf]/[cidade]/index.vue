@@ -25,13 +25,13 @@
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">✂️ {{ cityData?.uf }}</span>
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">📍 {{ totalBairros }} bairros</span>
         </div>
-        <!-- ✅ H1 com contador dinâmico da cidade -->
+        <!-- ✅ H1 com contador via SSR — Googlebot lê o número real -->
         <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
-          <template v-if="cityCount.pending.value">
-            <span class="animate-pulse">CARREGANDO...</span>
+          <template v-if="cityCount && cityCount > 0">
+            {{ cityCount.toLocaleString('pt-BR') }} BARBEARIAS EM<br><span class="text-green-400">{{ cityData?.city.toUpperCase() }}</span>
           </template>
           <template v-else>
-            {{ cityCount.count.value.toLocaleString('pt-BR') }} BARBEARIAS EM<br><span class="text-green-400">{{ cityData?.city.toUpperCase() }}</span>
+            BARBEARIAS EM<br><span class="text-green-400">{{ cityData?.city.toUpperCase() }}</span>
           </template>
         </h1>
         <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
@@ -43,7 +43,7 @@
       </div>
     </section>
 
-    <!-- ── BUSCA + CARDS ─────────────────────────────────────────── -->
+    <!-- BUSCA + CARDS -->
     <div class="bg-[#0a0a0a]">
       <PageSearchSection
         :uf="ufSlug"
@@ -58,7 +58,6 @@
         <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Bairros</span>
         <h2 class="font-black leading-none mb-10 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3vw,42px)">ESCOLHA SEU BAIRRO</h2>
 
-        <!-- Com zonas (SP) -->
         <template v-if="hasZones">
           <div v-for="(districts, zoneName) in districtsByZone" :key="String(zoneName)" class="mb-12">
             <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4 flex items-center gap-2">
@@ -74,7 +73,6 @@
           </div>
         </template>
 
-        <!-- Sem zonas (flat) -->
         <template v-else>
           <div v-for="district in cityData?.districts" :key="district.slug" class="mb-10">
             <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4 flex items-center gap-2">
@@ -92,7 +90,7 @@
       </div>
     </section>
 
-    <!-- SERVIÇOS POPULARES NESSA CIDADE -->
+    <!-- SERVIÇOS -->
     <section class="w-full py-20 px-6 md:px-16 bg-[#0f0f0f]">
       <div class="max-w-6xl mx-auto">
         <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Serviços</span>
@@ -142,7 +140,6 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { allCities, allServices, type District, type Neighborhood } from '~/data/locations'
-import { useBarbershopCounts } from '~/composables/useBarbershopCounts'
 
 definePageMeta({ layout: 'barber' })
 
@@ -154,14 +151,12 @@ const cityData     = computed(() => allCities.find(c => c.ufSlug === ufSlug && c
 const totalBairros = computed(() => cityData.value?.districts.reduce((acc, d) => acc + d.neighborhoods.length, 0) ?? 0)
 const hasZones     = computed(() => cityData.value?.districts.some(d => d.zone != null) ?? false)
 
-// ✅ Contador da cidade
-const cityCount = useBarbershopCounts()
- 
-onMounted(() => {
-  if (cityData.value) {
-    cityCount.fetch({ uf: ufSlug, city: citySlug })
-  }
-})
+// ── ✅ SSR: contador busca no servidor — H1 tem o número quando Googlebot chega ──
+const { data: cityCount } = await useAsyncData(
+  `count-city-${ufSlug}-${citySlug}`,
+  () => $fetch<number>(`/api/counts?uf=${ufSlug}&city=${citySlug}`).catch(() => 0),
+  { server: true, default: () => 0 }
+)
 
 const districtsByZone = computed(() => {
   const groups: Record<string, District[]> = {}
@@ -177,16 +172,23 @@ function flatNeighborhoods(districts: District[]): Neighborhood[] {
   return districts.flatMap(d => d.neighborhoods)
 }
 
-// SEO
+// ── SEO com dados reais no servidor ──────────────────────────────────────
 useHead(computed(() => {
   if (!cityData.value) return { title: 'Cidade não encontrada' }
-  const c = cityData.value
+  const c     = cityData.value
+  const count = cityCount.value ?? 0
+  const countStr = count > 0 ? count.toLocaleString('pt-BR') : ''
+
   return {
-    title: `${cityCount.count.value.toLocaleString('pt-BR')} Barbearias em ${c.city}, ${c.uf} | Agende Online`,
+    title: countStr
+      ? `${countStr} Barbearias em ${c.city}, ${c.uf} | Agende Online`
+      : `Barbearias em ${c.city}, ${c.uf} | Agende Online`,
     meta: [
-      { 
-        name: 'description', 
-        content: `Encontre entre ${cityCount.count.value.toLocaleString('pt-BR')} barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.` 
+      {
+        name: 'description',
+        content: countStr
+          ? `Encontre entre ${countStr} barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.`
+          : `Encontre barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.`
       },
       { name: 'robots', content: 'index, follow' },
     ],

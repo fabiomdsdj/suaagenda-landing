@@ -59,12 +59,6 @@
             </span>
           </div>
 
-          <!--
-            ✅ H1 com keyword local
-            O nome continua em destaque visual, mas embaixo tem
-            "Barbearia em {Bairro}, {Cidade}" que é a keyword que o usuário
-            pesquisa — e que agora aparece acima da dobra na página.
-          -->
           <h1 class="font-black leading-none mb-3 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
             {{ barbershop.name.toUpperCase() }}
           </h1>
@@ -136,8 +130,6 @@
     <section v-if="barbershop.latitude && barbershop.longitude || fullAddress" class="w-full py-12 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
         <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-6">Localização</span>
-
-        <!-- Tem coordenadas → mapa interativo -->
         <BarbershopMap
           v-if="barbershop.latitude && barbershop.longitude"
           :lat="Number(barbershop.latitude)"
@@ -146,8 +138,6 @@
           :address="fullAddress"
           :height="300"
         />
-
-        <!-- Sem coordenadas mas tem endereço → fallback com link Google Maps -->
         <div v-else-if="fullAddress" class="rounded-2xl border border-white/[.06] bg-[#181818] p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <p class="text-sm text-gray-400 flex items-center gap-2 mb-1">
@@ -161,12 +151,9 @@
           </div>
           <a
             :href="`https://www.google.com/maps/search/${encodeURIComponent(fullAddress ?? '')}`"
-            target="_blank"
-            rel="noopener noreferrer"
+            target="_blank" rel="noopener noreferrer"
             class="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-gray-400 hover:border-green-400/30 hover:text-green-400 transition-colors whitespace-nowrap"
-          >
-            Ver no Google Maps →
-            </a>
+          >Ver no Google Maps →</a>
         </div>
       </div>
     </section>
@@ -240,12 +227,6 @@
           </div>
         </div>
 
-        <!--
-          ✅ LINKS PARA PÁGINAS DE SERVIÇO DO BAIRRO
-          Conecta a página de estabelecimento às páginas /s/{servico} do bairro.
-          Cada link é uma keyword relevante ("Corte em Vila Madalena",
-          "Barba em Vila Madalena") apontando pra uma URL que precisa de autoridade.
-        -->
         <div v-if="serviceLinks.length" class="mt-8 pt-8 border-t border-white/[.05]">
           <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-4">
             Ver por serviço em {{ neighborhoodLabel }}
@@ -295,19 +276,13 @@
       </div>
     </section>
 
-    <!--
-      ✅ OUTRAS BARBEARIAS NO MESMO BAIRRO
-      Internal linking na folha mais profunda da árvore.
-      Distribui PageRank entre páginas irmãs e aumenta a crawlabilidade
-      das páginas de estabelecimento que o Google mais precisa descobrir.
-    -->
+    <!-- OUTRAS BARBEARIAS NO MESMO BAIRRO -->
     <section class="w-full py-16 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
         <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">No mesmo bairro</span>
         <h2 class="font-black leading-none mb-8 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,2.5vw,36px)">
           OUTRAS BARBEARIAS EM {{ neighborhoodLabel.toUpperCase() }}
         </h2>
-
         <div v-if="nearbyBarbershops.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <NuxtLink
             v-for="nb in nearbyBarbershops"
@@ -323,7 +298,6 @@
             <span class="mt-auto text-xs text-green-400/60 group-hover:text-green-400 transition-colors">Ver barbearia →</span>
           </NuxtLink>
         </div>
-
         <NuxtLink
           :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors"
@@ -333,20 +307,13 @@
       </div>
     </section>
 
-    <!--
-      ✅ CONTEÚDO TEXTUAL (anti-thin content)
-      Parágrafos únicos por barbearia baseados nos dados reais.
-      Resolve o risco de deindexação em massa por thin content em SEO programático.
-      + Sidebar com bairros próximos e links de serviço (mais internal linking).
-    -->
+    <!-- CONTEÚDO TEXTUAL -->
     <section class="w-full py-16 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
-
         <div class="lg:col-span-2 space-y-6">
           <h2 class="font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,2.5vw,36px)">
             SOBRE A {{ barbershop.name.toUpperCase() }}
           </h2>
-
           <p class="text-[15px] leading-relaxed text-gray-400">
             A {{ barbershop.name }} é uma barbearia localizada
             {{ fullAddress ? `na ${fullAddress}` : `no bairro ${neighborhoodLabel}, em ${cityLabel}` }}.
@@ -357,14 +324,12 @@
               O espaço atende clientes da região com agendamento direto pelo WhatsApp.
             </template>
           </p>
-
           <p v-if="googleRating" class="text-[15px] leading-relaxed text-gray-400">
             Com avaliação de {{ googleRating.toFixed(1) }} estrelas
             {{ barbershop.googleReviewCount ? `(${barbershop.googleReviewCount} avaliações no Google)` : 'no Google' }},
             a {{ barbershop.name }} é reconhecida pelos clientes da {{ neighborhoodLabel }}
             pela qualidade do atendimento e pelo cuidado com cada detalhe.
           </p>
-
           <p class="text-[15px] leading-relaxed text-gray-400">
             Para agendar um horário na {{ barbershop.name }}, basta clicar no botão de WhatsApp
             desta página. A barbearia atende clientes de {{ neighborhoodLabel }}
@@ -372,9 +337,7 @@
           </p>
         </div>
 
-        <!-- Sidebar -->
         <aside class="space-y-6">
-          <!-- Bairros próximos -->
           <div v-if="nearbyNeighborhoodsFromData.length" class="rounded-2xl border border-white/[.06] bg-[#181818] p-6">
             <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-4">Bairros próximos</p>
             <div class="flex flex-wrap gap-2">
@@ -386,34 +349,23 @@
               >{{ n.name }}</NuxtLink>
             </div>
           </div>
-
-          <!-- Links de navegação -->
           <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6">
             <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-4">Links úteis</p>
             <ul class="space-y-2">
               <li>
-                <NuxtLink
-                  :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
-                  class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5"
-                >
+                <NuxtLink :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`" class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5">
                   <span class="w-1 h-1 rounded-full bg-green-400/50 flex-shrink-0"/>
                   Barbearias em {{ neighborhoodLabel }}
                 </NuxtLink>
               </li>
               <li>
-                <NuxtLink
-                  :to="`/barbearias/${ufSlug}/${citySlug}`"
-                  class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5"
-                >
+                <NuxtLink :to="`/barbearias/${ufSlug}/${citySlug}`" class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5">
                   <span class="w-1 h-1 rounded-full bg-green-400/50 flex-shrink-0"/>
                   Barbearias em {{ cityLabel }}
                 </NuxtLink>
               </li>
               <li v-for="link in serviceLinks.slice(0, 4)" :key="link.href">
-                <NuxtLink
-                  :to="link.href"
-                  class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5"
-                >
+                <NuxtLink :to="link.href" class="flex items-center gap-2 text-[14px] text-gray-400 hover:text-green-400 transition-colors py-1.5">
                   <span class="w-1 h-1 rounded-full bg-green-400/50 flex-shrink-0"/>
                   {{ link.label }} em {{ neighborhoodLabel }}
                 </NuxtLink>
@@ -439,26 +391,21 @@
           :href="whatsappHref"
           target="_blank" rel="noopener noreferrer"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105"
-              @click="onWhatsappClick"
-            >💬 Falar no WhatsApp</a>
+          @click="onWhatsappClick"
+        >💬 Falar no WhatsApp</a>
       </div>
     </section>
 
   </div>
 
   <!-- 404 -->
-  <div v-else-if="!pending" class="min-h-screen flex items-center justify-center bg-[#0a0a0a] pt-20">
+  <div v-else class="min-h-screen flex items-center justify-center bg-[#0a0a0a] pt-20">
     <div class="text-center px-6">
       <p class="font-black text-green-400/20 leading-none mb-4" style="font-family:'Bebas Neue',sans-serif;font-size:120px">404</p>
       <h1 class="text-2xl font-bold text-white mb-3">Barbearia não encontrada</h1>
       <p class="text-gray-400 mb-6">Essa barbearia não está cadastrada ainda.</p>
       <NuxtLink to="/barbearias" class="text-green-400 hover:underline">Ver todas as regiões →</NuxtLink>
     </div>
-  </div>
-
-  <!-- Loading -->
-  <div v-else class="min-h-screen flex items-center justify-center bg-[#0a0a0a] pt-20">
-    <div class="w-8 h-8 border-2 border-green-400/30 border-t-green-400 rounded-full animate-spin"/>
   </div>
 </template>
 
@@ -479,33 +426,33 @@ const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const barbershopSlug   = (route.params.slug   as string).toLowerCase().trim()
 
-// ── Busca da API ──────────────────────────────────────────────────────────────
-const pending           = ref(true)
-const barbershop        = ref<Awaited<ReturnType<typeof fetchBarbershopBySlug>>>(null)
+// ── ✅ SSR: useAsyncData roda no servidor — Googlebot recebe HTML completo ──
+const { data: barbershop } = await useAsyncData(
+  `barbershop-${ufSlug}-${citySlug}-${neighborhoodSlug}-${barbershopSlug}`,
+  () => fetchBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug),
+  { server: true }
+)
+
+// ── Barbearias próximas — client-only, não bloqueia SSR ──────────────────
 const nearbyBarbershops = ref<any[]>([])
 
-const { trackBarbershopView, trackWhatsappClick, trackMapsClick, trackWazeClick, trackCopyAddress } = useAnalytics()
-
 onMounted(async () => {
-  // Principal — aguarda antes de renderizar
-  barbershop.value = await fetchBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
-  pending.value    = false
-
-  // ✅ Rastreia pageview — dispara GA4 + backend juntos
+  // ✅ Analytics só no cliente — não existe window no servidor
   if (barbershop.value?.id) {
+    const { trackBarbershopView } = useAnalytics()
     trackBarbershopView(barbershop.value.id, barbershop.value.name)
   }
 
-  // Secundário — fire-and-forget, nunca trava a página
+  // Secundário fire-and-forget
   fetchNearbyBarbershops(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
     .then(res => { nearbyBarbershops.value = res })
     .catch(() => {})
 })
 
-// ── Status de funcionamento ───────────────────────────────────────────────────
+// ── Status de funcionamento ───────────────────────────────────────────────
 const opening = computed(() => useOpeningStatus(barbershop.value?.openingHours))
 
-// ── Labels de localização ─────────────────────────────────────────────────────
+// ── Labels de localização ─────────────────────────────────────────────────
 const neighborhoodData = computed(() => getNeighborhoodData(ufSlug, citySlug, neighborhoodSlug))
 
 const ufLabel = computed(() =>
@@ -532,7 +479,7 @@ const neighborhoodLabel = computed(() => {
   return neighborhoodSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 })
 
-// ── Bairros próximos (do mesmo distrito, pra sidebar) ─────────────────────────
+// ── Bairros próximos ──────────────────────────────────────────────────────
 const nearbyNeighborhoodsFromData = computed(() => {
   if (!neighborhoodData.value) return []
   return neighborhoodData.value.district.neighborhoods
@@ -540,7 +487,7 @@ const nearbyNeighborhoodsFromData = computed(() => {
     .slice(0, 8)
 })
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────
 const googleRating = computed(() =>
   barbershop.value?.googleRating != null ? Number(barbershop.value.googleRating) : null
 )
@@ -588,23 +535,15 @@ const activeServices = computed(() =>
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
 
-// ── Tracking helpers ─────────────────────────────────────────────────────────
+// ── Tracking ─────────────────────────────────────────────────────────────
 function onWhatsappClick() {
-  if (barbershop.value?.id) trackWhatsappClick(barbershop.value.id, barbershop.value.name)
-}
-function onMapsClick() {
-  if (barbershop.value?.id) trackMapsClick(barbershop.value.id, barbershop.value.name)
-}
-
-function onWazeClick() {
-  if (barbershop.value?.id) trackWazeClick(barbershop.value.id, barbershop.value.name)
-}
-function onCopyAddress() {
-  if (barbershop.value?.id) trackCopyAddress(barbershop.value.id, barbershop.value.name)
-  navigator.clipboard?.writeText(fullAddress.value ?? '')
+  if (barbershop.value?.id) {
+    const { trackWhatsappClick } = useAnalytics()
+    trackWhatsappClick(barbershop.value.id, barbershop.value.name)
+  }
 }
 
-// ── Texto corrido de serviços ─────────────────────────────────────────────────
+// ── Serviços ─────────────────────────────────────────────────────────────
 const servicesSummary = computed(() => {
   const names = activeServices.value.map(s => s.name.toLowerCase()).slice(0, 4)
   if (!names.length) return ''
@@ -612,19 +551,10 @@ const servicesSummary = computed(() => {
   return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`
 })
 
-// ── Links pras páginas de serviço do bairro ───────────────────────────────────
-// Cruza por seoTag → slug da API → nome normalizado (nesta ordem).
-// Nunca depende de match exato de nome — varia muito entre barbearias.
 const serviceLinks = computed(() => {
   function toSlug(str: string): string {
-    return str
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
+    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   }
-
   const activeSlugs = new Set<string>(
     activeServices.value.flatMap(s => {
       const tags: string[] = []
@@ -634,17 +564,12 @@ const serviceLinks = computed(() => {
       return tags
     })
   )
-
   return allServices
     .filter(s => activeSlugs.has(s.slug))
-    .map(s => ({
-      label: s.name,
-      emoji: s.emoji,
-      href:  `/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}`,
-    }))
+    .map(s => ({ label: s.name, emoji: s.emoji, href: `/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}` }))
 })
 
-// ── Horários formatados — com flag isToday ────────────────────────────────────
+// ── Horários ──────────────────────────────────────────────────────────────
 const DAY_KEYS_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 const daysMap: Record<string, string> = {
   mon: 'Segunda', tue: 'Terça',  wed: 'Quarta',
@@ -667,7 +592,7 @@ const formattedHours = computed(() => {
   }, {} as Record<string, { label: string; hours: string; isToday: boolean }>)
 })
 
-// ── SEO ───────────────────────────────────────────────────────────────────────
+// ── SEO — roda no servidor com dados reais ────────────────────────────────
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 const ogImage = computed(() =>
@@ -675,32 +600,33 @@ const ogImage = computed(() =>
 )
 
 useHead(computed(() => {
-  if (!barbershop.value) return { title: 'Barbearia não encontrada' }
+  // ✅ 404 correto no servidor — sem dados reais não indexa
+  if (!barbershop.value) {
+    return {
+      title: `Barbearia não encontrada | SuaAgenda`,
+      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+    }
+  }
 
   const b         = barbershop.value
   const canonical = `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/${b.slug}`
 
-  // ── Meta Title ─────────────────────────────────────────────────────────────
   const streetPart    = b.street ? [b.street, b.number].filter(Boolean).join(', ') : null
   const titleLocation = streetPart
     ? `${streetPart}, ${neighborhoodLabel.value}`
     : `${neighborhoodLabel.value}, ${cityLabel.value}`
-  const metaTitle = `${b.name} — ${titleLocation} | SuaAgenda`
+  const metaTitle = `${b.name} — Barbearia em ${titleLocation} | SuaAgenda`
 
-  // ── Meta Description (≤160 chars) ─────────────────────────────────────────
   const CTA = ' Agende pelo WhatsApp.'
   let desc = fullAddress.value
-    ? `${fullAddress.value}.`
+    ? `${b.name} — ${fullAddress.value}.`
     : `${b.name} em ${neighborhoodLabel.value}, ${cityLabel.value}.`
 
   if (googleRating.value) {
-    const reviewPart  = b.googleReviewCount && b.googleReviewCount > 0
-      ? ` · ${b.googleReviewCount} avaliações`
-      : ''
+    const reviewPart  = b.googleReviewCount && b.googleReviewCount > 0 ? ` · ${b.googleReviewCount} avaliações` : ''
     const ratingChunk = ` ⭐ ${googleRating.value.toFixed(1)}${reviewPart} no Google.`
     if (desc.length + ratingChunk.length + CTA.length <= 160) desc += ratingChunk
   }
-
   desc += CTA
   if (desc.length > 160) desc = desc.substring(0, 157) + '...'
 

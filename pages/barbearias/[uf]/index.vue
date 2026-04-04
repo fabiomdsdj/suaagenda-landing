@@ -1,3 +1,4 @@
+<!-- pages/barbearias/[uf]/index.vue -->
 <template>
   <div v-if="ufData" class="text-[15px]">
 
@@ -22,13 +23,13 @@
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">✂️ {{ ufData.uf }}</span>
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">📍 {{ cities.length }} cidades</span>
         </div>
-        <!-- ✅ H1 com contador dinâmico da UF -->
+        <!-- ✅ H1 com contador via SSR -->
         <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em">
-          <template v-if="ufCount.pending.value">
-            <span class="animate-pulse">CARREGANDO...</span>
+          <template v-if="ufCount && ufCount > 0">
+            {{ ufCount.toLocaleString('pt-BR') }} BARBEARIAS EM<br><span class="text-green-400">{{ ufData.uf.toUpperCase() }}</span>
           </template>
           <template v-else>
-            {{ ufCount.count.value.toLocaleString('pt-BR') }} BARBEARIAS EM<br><span class="text-green-400">{{ ufData.uf.toUpperCase() }}</span>
+            BARBEARIAS EM<br><span class="text-green-400">{{ ufData.uf.toUpperCase() }}</span>
           </template>
         </h1>
         <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
@@ -40,7 +41,7 @@
       </div>
     </section>
 
-    <!-- ── BUSCA + CARDS ─────────────────────────────────────────── -->
+    <!-- BUSCA + CARDS -->
     <div class="bg-[#0a0a0a]">
       <PageSearchSection
         :uf="ufSlug"
@@ -113,14 +114,12 @@ const ufSlug = route.params.uf as string
 const cities = computed(() => allCities.filter(c => c.ufSlug === ufSlug))
 const ufData = computed(() => cities.value[0] ?? null)
 
-// ✅ Contador da UF
-const ufCount = useBarbershopCounts()
- 
-onMounted(() => {
-  if (ufData.value) {
-    ufCount.fetch({ uf: ufSlug })
-  }
-})
+// ── ✅ SSR: contador no servidor ──────────────────────────────────────────
+const { data: ufCount } = await useAsyncData(
+  `count-uf-${ufSlug}`,
+  () => $fetch<number>(`/api/counts?uf=${ufSlug}`).catch(() => 0),
+  { server: true, default: () => 0 }
+)
 
 function totalNeighborhoods(city: CityData): number {
   return city.districts.reduce((acc, d) => acc + d.neighborhoods.length, 0)
@@ -128,12 +127,19 @@ function totalNeighborhoods(city: CityData): number {
 
 useHead(computed(() => {
   if (!ufData.value) return { title: 'Estado não encontrado' }
+  const count    = ufCount.value ?? 0
+  const countStr = count > 0 ? count.toLocaleString('pt-BR') : ''
+
   return {
-    title: `${ufCount.count.value.toLocaleString('pt-BR')} Barbearias em ${ufData.value.uf} — Agende Online | SuaAgenda`,
+    title: countStr
+      ? `${countStr} Barbearias em ${ufData.value.uf} — Agende Online | SuaAgenda`
+      : `Barbearias em ${ufData.value.uf} — Agende Online | SuaAgenda`,
     meta: [
-      { 
-        name: 'description', 
-        content: `Encontre entre ${ufCount.count.value.toLocaleString('pt-BR')} barbearias em ${ufData.value.uf} com agendamento online. ${cities.value.length} cidades disponíveis.` 
+      {
+        name: 'description',
+        content: countStr
+          ? `Encontre entre ${countStr} barbearias em ${ufData.value.uf} com agendamento online. ${cities.value.length} cidades disponíveis.`
+          : `Encontre barbearias em ${ufData.value.uf} com agendamento online. ${cities.value.length} cidades disponíveis.`
       },
       { name: 'robots', content: 'index, follow' },
     ],
