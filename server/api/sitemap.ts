@@ -13,6 +13,7 @@ import {
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const apiBase = config.public.apiBase as string
+  const sitemapToken = config.sitemapInternalToken  
 
   // ── Rotas estáticas do locations.ts ──────────────────────────────────────
   const staticRoutes = [
@@ -44,6 +45,9 @@ export default defineEventHandler(async (event) => {
         params: { page, limit, sort: 'relevance' },
         // Timeout razoável — não travar o build por API lenta
         timeout: 15_000,
+        headers: {
+          'x-internal-token': sitemapToken,
+        },
       })
 
       for (const shop of res.data) {
@@ -60,6 +64,7 @@ export default defineEventHandler(async (event) => {
 
     console.log(`[sitemap] ${barbershopRoutes.length} barbearias incluídas`)
   } catch (err: any) {
+    console.error('🚨 [sitemap] ERRO AO BUSCAR BARBEARIAS:', err?.message, err?.statusCode, err?.data)
     // Se a API estiver fora, retorna só as rotas estáticas — não quebra o build
     console.warn('[sitemap] Falha ao buscar barbearias do banco:', err?.message ?? err)
   }
