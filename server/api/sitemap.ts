@@ -30,6 +30,8 @@ export default defineEventHandler(async (event) => {
   try {
     let page = 1
     const limit = 500
+    const myIp = await $fetch('https://api64.ipify.org?format=json')
+    console.log('[sitemap] IP do servidor Nuxt:', myIp)
 
     while (true) {
       const res = await $fetch<{
