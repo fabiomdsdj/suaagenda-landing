@@ -156,7 +156,13 @@ export default defineNuxtConfig({
   // ─────────────────────────────────────────────
 
   nitro: {
-
+    storage: {
+      redis: {
+        driver: 'redis',
+        url: process.env.REDIS_URL,
+      }
+    },
+    
     compressPublicAssets: true,
 
     minify: true,
