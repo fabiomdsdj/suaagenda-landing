@@ -1,27 +1,29 @@
 // server/api/counts.ts
-import { LRUCache } from 'lru-cache'
-
-const cache = new LRUCache<string, number>({
-  max: 500,
-  ttl: 1000 * 60 * 60, // 1h em memória
-})
-
 export default defineEventHandler(async (event) => {
   const { uf, city, neighborhood } = getQuery(event)
+  const key = `counts:${uf ?? ''}:${city ?? ''}:${neighborhood ?? ''}`
 
-  const key = `${uf ?? ''}:${city ?? ''}:${neighborhood ?? ''}`
-  const hit = cache.get(key)
-  if (hit !== undefined) return hit
+  const storage = useStorage('cache')
+
+  const hit = await storage.getItem<number>(key)
+  if (hit !== null && hit !== undefined) return hit
 
   const config = useRuntimeConfig(event)
   const apiBase = config.public.apiBase as string
+  const apiKey  = config.public.apiKey  as string
 
-  const count = await $fetch<number>(
+  const res = await $fetch<{ count: number } | number>(
     `${apiBase}/barbershops/stats/counts`,
-    { params: { uf, city, neighborhood } }
+    {
+      params: { uf, city, neighborhood },
+      headers: apiKey ? { 'x-api-key': apiKey } : {},
+    }
   ).catch(() => 0)
 
-  const val = typeof count === 'object' ? (count as any).count ?? 0 : count
-  cache.set(key, val)
+  const val = typeof res === 'object' && res !== null
+    ? (res as any).count ?? 0
+    : (res as number)
+
+  await storage.setItem(key, val, { ttl: 60 * 60 }) // 1h
   return val
 })

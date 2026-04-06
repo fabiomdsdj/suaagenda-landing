@@ -1,16 +1,12 @@
 // server/api/barbershop/[...slug].ts
-import { LRUCache } from 'lru-cache'
-
-const cache = new LRUCache<string, unknown>({
-  max: 5000,
-  ttl: 1000 * 60 * 60 * 6, // 6h — conteúdo muito estável
-})
-
 export default defineEventHandler(async (event) => {
-  const slug = getRouterParams(event).slug as string[]
-  const path = slug.join('/')
-  
-  const hit = cache.get(path)
+  const raw = getRouterParams(event).slug
+  const path = Array.isArray(raw) ? raw.join('/') : String(raw ?? '')
+
+  const storage = useStorage('cache')
+  const key = `barbershop:${path}`
+
+  const hit = await storage.getItem(key)
   if (hit) return hit
 
   const config = useRuntimeConfig(event)
@@ -21,6 +17,6 @@ export default defineEventHandler(async (event) => {
     headers: apiKey ? { 'x-api-key': apiKey } : {},
   }).catch(() => null)
 
-  if (data) cache.set(path, data)
+  if (data) await storage.setItem(key, data, { ttl: 60 * 60 * 6 }) // 6h
   return data
 })
