@@ -255,9 +255,8 @@ export function useBarbershopApi(initialParams?: SearchParams) {
     error.value   = null
 
     try {
-      const raw = await $fetch<ApiPaginatedResponse>(`${baseUrl}/barbershops`, {
-        params:  buildQuery(params.value),
-        headers: apiKey ? { 'x-api-key': apiKey } : {},
+      const raw = await $fetch<ApiPaginatedResponse>(`/api/barbershops`, { // ← proxy local
+        params: buildQuery(params.value),
       })
 
       data.value  = raw.data.map(normalizeShop)
@@ -317,41 +316,26 @@ export function useBarbershopSlug() {
 // direto — assim funciona em onMounted, event handlers e qualquer contexto
 // fora do setup do Vue sem lançar "nuxt instance unavailable".
 export async function fetchBarbershopBySlug(
-  uf: string,
-  city: string,
-  neighborhood: string,
-  slug: string,
+  uf: string, city: string, neighborhood: string, slug: string,
 ): Promise<Barbershop | null> {
-  const { baseUrl, apiKey } = getApiConfig()
   try {
     const raw = await $fetch<ApiBarbershop>(
-      `${baseUrl}/barbershops/${uf}/${city}/${neighborhood}/${slug}`,
-      { headers: apiKey ? { 'x-api-key': apiKey } : {} },
+      `/api/barbershop/${uf}/${city}/${neighborhood}/${slug}` // ← proxy local
     )
     return normalizeShop(raw)
-  } catch {
-    return null
-  }
+  } catch { return null }
 }
 
 // ─── fetchNearbyBarbershops ───────────────────────────────────────────────────
 // Retorna outras barbearias do mesmo bairro (excluindo o slug atual).
 // Usado pela seção de internal linking no [slug].vue.
 export async function fetchNearbyBarbershops(
-  uf: string,
-  city: string,
-  neighborhood: string,
-  excludeSlug: string,
-  limit = 6,
+  uf: string, city: string, neighborhood: string, excludeSlug: string, limit = 6,
 ): Promise<Barbershop[]> {
-  const { baseUrl, apiKey } = getApiConfig()
   try {
-    const raw = await $fetch<ApiPaginatedResponse>(`${baseUrl}/barbershops`, {
+    const raw = await $fetch<ApiPaginatedResponse>(`/api/barbershops`, { // ← proxy local
       params: { uf, city, neighborhood, limit, exclude: excludeSlug },
-      headers: apiKey ? { 'x-api-key': apiKey } : {},
     })
     return raw.data.map(normalizeShop)
-  } catch {
-    return []
-  }
+  } catch { return [] }
 }

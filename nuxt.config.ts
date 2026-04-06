@@ -1,19 +1,11 @@
-// nuxt.config.ts
-
 import tailwindcss from "@tailwindcss/vite"
-
 import {
   getOldNeighborhoodRoutes,
   getOldCityRoutes,
   getOldBarbeirosRoutes,
 } from "./data/locations"
 
-// ─────────────────────────────────────────────
-// Redirects 301
-// ─────────────────────────────────────────────
-
 const redirectRules: Record<string, { redirect: string }> = {}
-
 for (const { from, to } of [
   ...getOldNeighborhoodRoutes(),
   ...getOldCityRoutes(),
@@ -23,26 +15,17 @@ for (const { from, to } of [
 }
 
 export default defineNuxtConfig({
-
   compatibilityDate: "2025-07-15",
-
   devtools: { enabled: true },
-
   css: [
     "~/assets/css/main.css",
     "~/assets/css/fonts.css",
     'leaflet/dist/leaflet.css',
   ],
-
-  // ─────────────────────────────────────────────
-  // SITE
-  // ─────────────────────────────────────────────
-
   site: {
     url: "https://suaagenda.link",
     name: "SuaAgenda",
   },
-
   app: {
     baseURL: "/",
     head: {
@@ -57,25 +40,13 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "pt-BR",
       },
-      
-      
     },
   },
-
-  // ─────────────────────────────────────────────
-  // MODULES
-  // ─────────────────────────────────────────────
-
   modules: [
     "@vueuse/motion/nuxt",
     "nuxt-simple-sitemap",
     "@nuxt/image",
   ],
-
-  // ─────────────────────────────────────────────
-  // IMAGE
-  // ─────────────────────────────────────────────
-
   image: {
     cloudinary: {
       baseURL: "https://res.cloudinary.com/du872kkq0/image/upload/",
@@ -90,31 +61,20 @@ export default defineNuxtConfig({
       "2xl": 1536,
     },
   },
-
-  // ─────────────────────────────────────────────
-  // RUNTIME CONFIG
-  // ─────────────────────────────────────────────
-
   runtimeConfig: {
-    sitemapInternalToken: process.env.SITEMAP_INTERNAL_TOKEN ?? '',  // ← server only
+    sitemapInternalToken: process.env.SITEMAP_INTERNAL_TOKEN ?? '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011",
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
-      scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN  ?? '',
+      scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',
       dailyRegistrationGoal:  process.env.NUXT_PUBLIC_DAILY_REGISTRATION_GOAL  || '0',
       useLocationsApi: process.env.NUXT_PUBLIC_USE_LOCATIONS_API || 'true',
       annualDiscount: process.env.NUXT_PUBLIC_ANNUAL_DISCOUNT ?? '15',
     },
   },
-
-  // ─────────────────────────────────────────────
-  // VITE
-  // ─────────────────────────────────────────────
-
   vite: {
     plugins: [tailwindcss()],
-
     build: {
       target: "esnext",
       cssMinify: true,
@@ -122,105 +82,66 @@ export default defineNuxtConfig({
         treeshake: true,
       },
     },
-
-    esbuild: {
-      //drop: ["console", "debugger"],
-    },
-
+    esbuild: {},
     optimizeDeps: {
       include: ['leaflet'],
     },
   },
-
-  // ─────────────────────────────────────────────
-  // APP CONFIG
-  // ─────────────────────────────────────────────
-
   appConfig: {
     siteUrl: process.env.NUXT_PUBLIC_API_SITE_URL,
   },
 
-  // ─────────────────────────────────────────────
-  // SITEMAP DINÂMICO
-  // ─────────────────────────────────────────────
-
+  // ✅ FIX 1: habilitar cache do nuxt-simple-sitemap por 6h
+  // Antes estava 0 (desabilitado) — cada req. de crawler batia em /api/sitemap
   sitemap: {
     sources: ["/api/sitemap"],
-    // ✅ Cache de 1 hora — atualiza automaticamente sem rebuild
-    // Remove se quiser sempre fresh (mais lento)
-    cacheMaxAgeSeconds: 3600,
+    cacheMaxAgeSeconds: 60 * 60 * 6, // 6h
   },
-
-  // ─────────────────────────────────────────────
-  // NITRO
-  // ─────────────────────────────────────────────
 
   nitro: {
-    storage: {
-      redis: {
-        driver: 'redis',
-        url: process.env.REDIS_URL,
-      }
-    },
-    
     compressPublicAssets: true,
-
     minify: true,
-
     prerender: {
       crawlLinks: false,
-      routes: []
-    }
+      routes: [],
+    },
 
+    // ✅ FIX 2: conectar useStorage('cache') ao Redis do Upstash
+    // Antes usava driver de memória — cache perdido em cada restart/deploy
+    // REDIS_URL deve ser a connection string do Upstash: rediss://...
+    storage: {
+      cache: {
+        driver: "redis",
+        url: process.env.REDIS_URL ?? '',
+      },
+    },
   },
-
-  // ─────────────────────────────────────────────
-  // CACHE HEADERS
-  // ─────────────────────────────────────────────
 
   routeRules: {
     '/scraper':    { headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     '/scraper/**': { headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
-
-    "/fonts/**": {
-      headers: {
-        "cache-control": "public, max-age=31536000, immutable",
-      },
+    '/fonts/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' },
+    },
+    '/icons/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' },
+    },
+    '/images/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' },
     },
 
-    "/icons/**": {
-      headers: {
-        "cache-control": "public, max-age=31536000, immutable",
-      },
+    // ✅ FIX 3: ISR aumentado de 2h para 12h — reduz revalidações em 6x
+    // Conteúdo de barbearias é estável; não precisa revalidar a cada 2h
+    '/barbearias/**': {
+      isr: 60 * 60 * 12,
+      headers: { 'cache-control': 'public, max-age=43200, stale-while-revalidate=7200' },
     },
-
-    "/images/**": {
-      headers: {
-        "cache-control": "public, max-age=31536000, immutable",
-      },
+    '/barbeiros/**': {
+      isr: 60 * 60 * 12,
+      headers: { 'cache-control': 'public, max-age=43200, stale-while-revalidate=3600' },
     },
-
-    "/barbearias/**": {
-      headers: {
-        "cache-control":
-          "public, max-age=86400, stale-while-revalidate=3600",
-      },
-    },
-
-    "/barbeiros/**": {
-      headers: {
-        "cache-control":
-          "public, max-age=86400, stale-while-revalidate=3600",
-      },
-    },
-
-    // redirects SEO
     ...redirectRules,
   },
-
-  // ─────────────────────────────────────────────
-  // VUE COMPILER
-  // ─────────────────────────────────────────────
 
   vue: {
     compilerOptions: {
@@ -229,5 +150,4 @@ export default defineNuxtConfig({
       isCustomElement: () => false,
     },
   },
-
 })

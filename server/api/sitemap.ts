@@ -3,11 +3,13 @@
 // Source do nuxt-simple-sitemap — chamado em runtime pelo módulo.
 // Combina rotas estáticas (locations.ts) + barbearias dinâmicas do banco via API.
 //
-// ✅ Cache Redis de 6h — evita bombardear o banco a cada regeneração
+// ✅ Cache Redis de 6h via useStorage('cache') — agora conectado ao Upstash via nitro.storage
+// ✅ ETag baseado em hash do conteúdo — evita retornar o array quando nada mudou
+// ✅ Cache-Control header — permite que proxies e o CDN cacheiem a resposta
 // ✅ Uma só chamada ao backend via /barbershops/sitemap/slugs (sem paginação)
-// ✅ Rota dedicada no backend bypassa Redis e retorna só os campos necessários
 // ✅ Fallback: se API cair, retorna só rotas estáticas sem quebrar
 
+import { createHash } from 'node:crypto'
 import {
   getAllNeighborhoodRoutes,
   getAllServiceRoutes,
@@ -24,14 +26,28 @@ export default defineEventHandler(async (event) => {
   const sitemapToken = config.sitemapInternalToken as string
 
   // ── 1. Tenta retornar do cache Redis ────────────────────────────────────────
-  // useStorage('redis') usa o driver Redis configurado no nuxt.config nitro.storage
-  // Se não tiver configurado, cai silenciosamente pro MISS e segue normal
-  const storage = useStorage('redis')
+  // useStorage('cache') agora usa o driver Redis configurado em nitro.storage
+  // (antes usava memória Nitro — cache perdido a cada restart/deploy)
+  const storage = useStorage('cache')
 
   try {
     const cached = await storage.getItem<string[]>(CACHE_KEY)
     if (cached && Array.isArray(cached) && cached.length > 0) {
       console.log(`[sitemap] ✅ Cache HIT — ${cached.length} rotas`)
+
+      // ✅ FIX: ETag baseado no conteúdo — evita retransmissão desnecessária
+      const etag = buildEtag(cached)
+      setResponseHeaders(event, {
+        'ETag': etag,
+        'Cache-Control': 'public, max-age=21600',
+      })
+
+      const ifNoneMatch = getHeader(event, 'if-none-match')
+      if (ifNoneMatch === etag) {
+        setResponseStatus(event, 304)
+        return null
+      }
+
       return cached
     }
   } catch (err: any) {
@@ -55,7 +71,7 @@ export default defineEventHandler(async (event) => {
       throw new Error('SITEMAP_INTERNAL_TOKEN não configurado')
     }
 
-    // ✅ Rota dedicada: query direta no banco, sem paginação, sem Redis
+    // Rota dedicada: query direta no banco, sem paginação, só campos necessários
     const res = await $fetch<{
       data: Array<{
         slug:             string
@@ -96,7 +112,6 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── 5. Salva no Redis por 6h ─────────────────────────────────────────────────
-  // Próximas chamadas dentro de 6h retornam do cache sem tocar o banco
   try {
     await storage.setItem(CACHE_KEY, all, { ttl: CACHE_TTL_SEC })
     console.log(`[sitemap] ✅ Cache SET — ${all.length} rotas por 6h`)
@@ -104,5 +119,22 @@ export default defineEventHandler(async (event) => {
     console.warn('[sitemap] Falha ao salvar cache Redis:', err?.message)
   }
 
+  // ── 6. ETag + Cache-Control na resposta ──────────────────────────────────────
+  const etag = buildEtag(all)
+  setResponseHeaders(event, {
+    'ETag': etag,
+    'Cache-Control': 'public, max-age=21600',
+  })
+
   return all
 })
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function buildEtag(routes: string[]): string {
+  const hash = createHash('md5')
+    .update(routes.length + ':' + routes[0] + ':' + routes[routes.length - 1])
+    .digest('hex')
+    .slice(0, 12)
+  return `"sitemap-${hash}"`
+}

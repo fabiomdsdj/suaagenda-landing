@@ -426,33 +426,36 @@ const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const barbershopSlug   = (route.params.slug   as string).toLowerCase().trim()
 
-// ── ✅ SSR: useAsyncData roda no servidor — Googlebot recebe HTML completo ──
+// ✅ SSR com cache no cliente — evita refetch quando Nuxt hidrata a página
+// getCachedData reutiliza o payload SSR injetado no HTML, zero request extra
 const { data: barbershop } = await useAsyncData(
   `barbershop-${ufSlug}-${citySlug}-${neighborhoodSlug}-${barbershopSlug}`,
   () => fetchBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug),
-  { server: true }
+  {
+    server: true,
+    getCachedData(key, nuxtApp) {
+      // Reutiliza dado do payload SSR — não faz novo request no client
+      return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+    },
+  }
 )
 
 // ── Barbearias próximas — client-only, não bloqueia SSR ──────────────────
 const nearbyBarbershops = ref<any[]>([])
 
 onMounted(async () => {
-  // ✅ Analytics só no cliente — não existe window no servidor
   if (barbershop.value?.id) {
     const { trackBarbershopView } = useAnalytics()
     trackBarbershopView(barbershop.value.id, barbershop.value.name)
   }
 
-  // Secundário fire-and-forget
   fetchNearbyBarbershops(ufSlug, citySlug, neighborhoodSlug, barbershopSlug)
     .then(res => { nearbyBarbershops.value = res })
     .catch(() => {})
 })
 
-// ── Status de funcionamento ───────────────────────────────────────────────
 const opening = computed(() => useOpeningStatus(barbershop.value?.openingHours))
 
-// ── Labels de localização ─────────────────────────────────────────────────
 const neighborhoodData = computed(() => getNeighborhoodData(ufSlug, citySlug, neighborhoodSlug))
 
 const ufLabel = computed(() =>
@@ -479,7 +482,6 @@ const neighborhoodLabel = computed(() => {
   return neighborhoodSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 })
 
-// ── Bairros próximos ──────────────────────────────────────────────────────
 const nearbyNeighborhoodsFromData = computed(() => {
   if (!neighborhoodData.value) return []
   return neighborhoodData.value.district.neighborhoods
@@ -487,7 +489,6 @@ const nearbyNeighborhoodsFromData = computed(() => {
     .slice(0, 8)
 })
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 const googleRating = computed(() =>
   barbershop.value?.googleRating != null ? Number(barbershop.value.googleRating) : null
 )
@@ -535,7 +536,6 @@ const activeServices = computed(() =>
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
 
-// ── Tracking ─────────────────────────────────────────────────────────────
 function onWhatsappClick() {
   if (barbershop.value?.id) {
     const { trackWhatsappClick } = useAnalytics()
@@ -543,7 +543,6 @@ function onWhatsappClick() {
   }
 }
 
-// ── Serviços ─────────────────────────────────────────────────────────────
 const servicesSummary = computed(() => {
   const names = activeServices.value.map(s => s.name.toLowerCase()).slice(0, 4)
   if (!names.length) return ''
@@ -569,7 +568,6 @@ const serviceLinks = computed(() => {
     .map(s => ({ label: s.name, emoji: s.emoji, href: `/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}` }))
 })
 
-// ── Horários ──────────────────────────────────────────────────────────────
 const DAY_KEYS_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 const daysMap: Record<string, string> = {
   mon: 'Segunda', tue: 'Terça',  wed: 'Quarta',
@@ -592,7 +590,6 @@ const formattedHours = computed(() => {
   }, {} as Record<string, { label: string; hours: string; isToday: boolean }>)
 })
 
-// ── SEO — roda no servidor com dados reais ────────────────────────────────
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 const ogImage = computed(() =>
@@ -600,7 +597,6 @@ const ogImage = computed(() =>
 )
 
 useHead(computed(() => {
-  // ✅ 404 correto no servidor — sem dados reais não indexa
   if (!barbershop.value) {
     return {
       title: `Barbearia não encontrada | SuaAgenda`,
