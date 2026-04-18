@@ -1,3 +1,67 @@
+<!--
+  // ============================================================
+  // PATCH: pages/barbearia/index.vue
+  // Apenas as linhas que mudam — aplique com busca+substituição
+  // ============================================================
+
+  // ── 1. Constante plan1 (linha ~430 do <script setup>) ──────
+  // ANTES:
+  const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+
+  // DEPOIS:
+  // Botões de "Criar agenda grátis" continuam indo direto pro planId=1 (Free não tem ciclo)
+  const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+  // CTA de planos pagos vai para choose-plan com segment=barber
+  const choosePlan = "/choose-plan?segment=barber"
+
+
+  // ── 2. Hero CTA — botão "Criar agenda grátis agora" ────────
+  // ANTES (template):
+  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  //
+  // DEPOIS: mantém planId=1 (Free, sem ciclo)
+  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+
+
+  // ── 3. Card de planos — botão do plano ─────────────────────
+  // ANTES (template, dentro do v-for de planos):
+  /*
+    <a :href="plano.preco === null
+        ? 'https://wa.me/5511941649284'
+        : `https://admin.suaagenda.link/admin/auth/register?planId=${plano.planId}`"
+      ...>
+  */
+
+  // DEPOIS:
+  // Plano Free (isFree) → direto no register
+  // Planos pagos        → choose-plan para escolher ciclo
+  // Sob consulta        → WhatsApp
+  /*
+    <a :href="plano.preco === null
+        ? 'https://wa.me/5511941649284'
+        : plano.isFree
+          ? `https://admin.suaagenda.link/admin/auth/register?planId=${plano.planId}`
+          : `/choose-plan?segment=barber&planId=${plano.planId}`"
+      ...>
+  */
+
+
+  // ── 4. CTA final — "Criar agenda grátis agora" ─────────────
+  // ANTES:
+  // <a :href="plan1" ...>✂️ Criar agenda grátis agora</a>
+  //
+  // DEPOIS: mantém plan1 (Free)
+  // <a :href="plan1" ...>✂️ Criar agenda grátis agora</a>
+
+
+  // ── 5. Seção de plano Gratuito — "Criar conta" ─────────────
+  // ANTES:
+  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  //
+  // DEPOIS: igual, pois é o plano Free
+  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+-->
+<!--landing - pages/barbearia/index.vue-->
 <template>
   <div class="text-[15px]">
 
@@ -15,39 +79,42 @@
       <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 65% 60% at 60% 50%,rgba(52,211,153,.10) 0%,transparent 70%)"></div>
       <div class="z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
 
-        <div class="flex flex-wrap gap-3 mb-6">
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-green-400 bg-green-400/10 border border-green-400/30">
-            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            Pronto em 5 minutos — sem precisar de técnico
-          </div>
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-blue-400 bg-blue-400/10 border border-blue-400/30">
-            ✓ {{ metaBadge.label }}
-          </div>
-        </div>
-
         <h1
           v-motion="{ initial:{opacity:0,y:40}, enter:{opacity:1,y:0,transition:{duration:1000}} }"
           class="font-black leading-none mb-6 text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,8vw,96px);letter-spacing:.03em"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)"
         >
-          AGENDA <span class="text-green-400">CHEIA.</span><br>
-          VIDA MAIS <span class="text-red-400">FÁCIL.</span>
+          Sistema de agendamento para <span class="text-green-400">barbearia grátis</span><br>
+          coloque sua barbearia no <span class="text-green-400">Google</span>
         </h1>
 
         <p
           v-motion="{ initial:{opacity:0,y:20}, enter:{opacity:1,y:0,transition:{duration:900,delay:500}} }"
           class="text-md md:text-xl text-gray-400 max-w-lg leading-relaxed mb-10"
         >
-          Sua barbearia nas primeiras posições do Google, confirmação automática via WhatsApp —
-          tudo pronto em menos de 5 minutos, sem complicação.
+          Crie sua página de barbearia, apareça no Google e receba agendamentos online —
+          tudo grátis para começar e pronto em menos de 5 minutos.
         </p>
 
         <div
           v-motion="{ initial:{opacity:0,scale:.9}, enter:{opacity:1,scale:1,transition:{duration:700,delay:900}} }"
           class="flex flex-wrap gap-4 justify-center md:justify-start mb-10"
         >
-          <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5">🔥 Testar 7 dias grátis</a>
-          <a href="#como-funciona" class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5">Ver como funciona →</a>
+          <CtaButton
+            href="https://admin.suaagenda.link/admin/auth/register?planId=1"
+            label="Criar agenda grátis agora"
+            emoji="✂️"
+            size="xl"
+          />
+          <!-- botão outline -->
+          <CtaButton
+            href="#como-funciona"
+            label="Ver como funciona"
+            arrow
+            variant="ghost"
+            size="xl"
+            :external="false"
+          />
         </div>
 
         <div class="flex gap-8 pt-6 border-t border-green-400/10">
@@ -60,6 +127,44 @@
 
       <div class="w-full md:w-1/2 flex justify-center md:justify-end items-end">
         <NuxtImg provider="cloudinary" src="v1758666030/barber-hero-stroked_zuhxar.png" alt="Barbeiro atendendo cliente" class="block max-w-full h-auto object-contain max-h-[560px] -rotate-3"/>
+      </div>
+    </section>
+
+    <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
+      <div class="max-w-4xl mx-auto text-center">
+        
+        <h2 
+          class="text-4xl md:text-5xl font-black text-white mb-6"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)"
+        >
+          Plano grátis para barbearia — comece sem <span class="text-green-400">pagar nada</span>
+        </h2>
+
+        <p class="text-lg text-gray-400 mb-10">
+          Crie sua barbearia online, apareça no Google e receba agendamentos automaticamente.
+          Sem cartão de crédito. Sem mensalidade.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+          <div class="bg-[#181818] p-6 rounded-xl border border-green-400/20">
+            <p class="text-green-400 font-bold mb-4">Incluído no plano grátis:</p>
+            <ul class="space-y-2 text-gray-300">
+              <li>✓ Página da barbearia no Google</li>
+              <li>✓ Link de agendamento online</li>
+              <li>✓ Até 20 agendamentos por mês</li>
+              <li>✓ Cadastro rápido em 2 minutos</li>
+            </ul>
+          </div>
+
+          <div class="bg-[#181818] p-6 rounded-xl border border-red-400/20">
+            <p class="text-red-400 font-bold mb-4">Não incluso:</p>
+            <ul class="space-y-2 text-gray-500">
+              <li>✗ Confirmação automática via WhatsApp</li>
+              <li>✗ Notificações automáticas</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -336,75 +441,38 @@
       <div class="max-w-6xl mx-auto">
         <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">Preço</span>
         <h2 class="fade-on-scroll mt-3 mb-4 font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)">PLANO DO SEU <span class="text-green-400">TAMANHO.</span></h2>
-        <p class="fade-on-scroll mb-4 mx-auto max-w-lg text-xl leading-relaxed text-gray-400">Sem taxa de setup. Sem letra miúda. Cancela quando quiser.</p>
-        <p class="fade-on-scroll mb-10 mx-auto max-w-lg text-sm leading-relaxed text-gray-500">💬 Notificações via WhatsApp são cobradas por uso (créditos avulsos) — você compra separado e paga só o que usar.</p>
+        <p class="fade-on-scroll mb-4 mx-auto max-w-lg text-xl leading-relaxed text-gray-400">Sem taxa de setup. Sem letra miúda. Cancele quando quiser.</p>
 
-        <div class="fade-on-scroll flex items-center justify-center gap-4 mb-14">
-          <span class="text-sm font-semibold" :class="!isAnual ? 'text-white' : 'text-gray-500'">Mensal</span>
-          <button
-            @click="isAnual = !isAnual"
-            class="relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none"
-            :class="isAnual ? 'bg-green-400' : 'bg-white/10 border border-white/20'"
-            aria-label="Alternar plano anual"
-          >
-            <span
-              class="absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-300"
-              :class="isAnual ? 'translate-x-7' : 'translate-x-0'"
-            ></span>
-          </button>
-          <span class="text-sm font-semibold flex items-center gap-2" :class="isAnual ? 'text-white' : 'text-gray-500'">
-            Anual
-            <span class="inline-block text-[11px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full bg-green-400/20 text-green-400 border border-green-400/30">
-              {{ discountLabel }}
-            </span>
-          </span>
+        <PlanSelector />
+      </div>
+    </section>
+
+    <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a]">
+      <div class="max-w-4xl mx-auto">
+
+        <h2 
+          class="text-4xl md:text-5xl font-black text-white mb-6"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)"
+        >
+          Como conseguir <span class="text-green-400">mais clientes</span> para sua barbearia
+        </h2>
+
+        <p class="text-lg text-gray-400 mb-8">
+          A forma mais rápida de conseguir novos clientes é aparecer no Google quando alguém busca por 
+          "barbearia perto de mim".
+        </p>
+
+        <div class="space-y-6 text-gray-300">
+          <p><strong class="text-white">1. Tenha uma página no Google</strong><br>
+          Sua barbearia precisa aparecer quando alguém procura na sua região.</p>
+
+          <p><strong class="text-white">2. Use agendamento online</strong><br>
+          O cliente escolhe o horário sozinho, sem precisar te chamar no WhatsApp.</p>
+
+          <p><strong class="text-white">3. Evite horários vazios</strong><br>
+          Com confirmação automática, você reduz faltas e mantém a agenda cheia.</p>
         </div>
 
-        <div class="fade-on-scroll grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-          <div
-            v-for="(plano, i) in planos"
-            :key="i"
-            class="relative rounded-2xl bg-[#181818] p-8 text-left flex flex-col transition-all duration-200 hover:-translate-y-1"
-            :class="plano.destaque ? 'border-2 border-green-400 shadow-lg shadow-green-400/10' : 'border border-white/[.08] hover:border-green-400/30'"
-          >
-            <div v-if="plano.destaque" class="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span class="inline-block text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-green-400 text-black whitespace-nowrap">Mais popular</span>
-            </div>
-            <p class="text-xs font-bold tracking-widest uppercase mb-3" :class="plano.destaque ? 'text-green-400' : 'text-gray-500'">{{ plano.label }}</p>
-            <p class="text-sm text-gray-500 leading-relaxed mb-5 min-h-[40px]">{{ plano.desc }}</p>
-            <div class="mb-6">
-              <div v-if="plano.preco" class="flex flex-col items-start gap-1">
-                <div v-if="isAnual" class="flex items-start gap-1 opacity-40 line-through">
-                  <span class="text-sm font-bold mt-1 text-gray-400">R$</span>
-                  <span class="font-black leading-none text-gray-400" style="font-family:'Bebas Neue',sans-serif;font-size:32px">{{ plano.preco }}</span>
-                  <span class="text-sm font-bold mt-2 text-gray-500">/mês</span>
-                </div>
-                <div class="flex items-start gap-1">
-                  <span class="text-base font-bold mt-1" :class="plano.destaque ? 'text-green-400' : 'text-gray-400'">R$</span>
-                  <span class="font-black leading-none text-white transition-all duration-300" style="font-family:'Bebas Neue',sans-serif;font-size:52px">{{ precoExibido(plano.preco) }}</span>
-                  <span class="text-sm font-bold mt-3 text-gray-500">/mês</span>
-                </div>
-                <p v-if="isAnual" class="text-xs text-green-400 font-semibold">
-                  cobrado R$ {{ precoAnualTotal(plano.preco) }}/ano · economia de R$ {{ economiaAnual(plano.preco) }}
-                </p>
-              </div>
-              <div v-else class="flex items-center" style="height:52px">
-                <span class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:28px">Sob consulta</span>
-              </div>
-            </div>
-            <ul class="list-none p-0 m-0 mb-7 flex-1">
-              <li v-for="f in plano.features" :key="f.texto" class="flex items-start gap-2.5 py-2 border-b border-white/[.05] last:border-0 text-[14px] leading-relaxed" :class="f.ok ? 'text-gray-300' : 'text-gray-600'">
-                <span class="flex-shrink-0 mt-0.5 font-bold text-sm" :class="f.ok ? 'text-green-400' : 'text-gray-700'">{{ f.ok ? '✓' : '✗' }}</span>
-                {{ f.texto }}
-              </li>
-            </ul>
-            <a href="https://wa.me/5511941649284"
-              class="inline-flex items-center justify-center w-full gap-2 text-sm font-bold px-4 py-3 rounded-xl transition hover:-translate-y-0.5"
-              :class="plano.destaque ? 'bg-green-400 text-black hover:bg-green-300' : 'border border-green-400/30 text-green-400 hover:border-green-400 hover:bg-green-400/10'"
-            >{{ plano.preco ? '✂️ Começar agora' : '💬 Falar com a gente' }}</a>
-          </div>
-        </div>
-        <p class="fade-on-scroll text-xs text-gray-600">🔒 Trial de 7 dias sem cartão de crédito. Cancela quando quiser.</p>
       </div>
     </section>
 
@@ -433,13 +501,19 @@
     <section class="relative w-full py-32 px-6 md:px-16 bg-[#0a0a0a] text-center overflow-hidden">
       <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(circle 350px at 50% 50%,rgba(52,211,153,.07),transparent)"></div>
       <div class="relative max-w-2xl mx-auto">
-        <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Começa agora</span>
+        <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Começe agora</span>
         <h2 class="fade-on-scroll font-black leading-none text-white mb-6" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,88px)">CHEGA DE <span class="text-red-400">PERDER</span><br>CLIENTE.</h2>
         <p class="fade-on-scroll mb-10 text-xl leading-relaxed text-gray-400">Em 5 minutos sua barbearia tem página, link de agendamento e tecnologia pra aparecer nas primeiras posições do Google.</p>
         <div class="fade-on-scroll flex justify-center mb-6">
           <div class="relative inline-block">
             <span class="absolute inset-0 rounded-2xl bg-green-400 opacity-20 animate-pulse pointer-events-none"></span>
-            <a href="https://wa.me/5511941649284" class="relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105">✂️ Testar grátis por 7 dias</a>
+            <CtaButton
+              :href="plan1"
+              label="Criar agenda grátis agora"
+              emoji="✂️"
+              size="xl"
+              class="relative"
+            />
           </div>
         </div>
         <div class="fade-on-scroll flex items-center justify-center flex-wrap gap-6 text-sm text-gray-500">
@@ -468,26 +542,95 @@ import 'swiper/css/pagination'
 definePageMeta({ layout: 'barber' })
 
 useHead({
-  title: 'SuaAgenda para Barbearias — Agenda cheia em 5 minutos',
+  title: 'Sistema para barbearia grátis com agendamento online | SuaAgenda',
+  
   meta: [
-    { name: 'description',        content: 'Sua barbearia nas primeiras posições do Google e confirmação automática via WhatsApp — tudo pronto em 5 minutos.' },
-    { property: 'og:title',       content: 'SuaAgenda para Barbearias — Agenda cheia em 5 minutos' },
-    { property: 'og:description', content: 'Sua barbearia nas primeiras posições do Google e confirmação automática via WhatsApp — tudo pronto em 5 minutos.' },
-    { property: 'og:image',       content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg' },
-    { property: 'og:url',         content: 'https://suaagenda.link/barbearia' },
-    { property: 'og:type',        content: 'website' },
-    { property: 'fb:app_id',      content: '1288931335787890' },
-    { property: 'og:image:alt',   content: 'SuaAgenda — Sua barbearia no Google' },
-    { name: 'twitter:card',       content: 'summary_large_image' },
+    {
+      name: 'description',
+      content: 'Sistema de agendamento para barbearia grátis. Crie sua página no Google, receba clientes online e organize sua agenda em minutos. Sem mensalidade para começar.'
+    },
+
+    // SEO extra
+    {
+      name: 'keywords',
+      content: 'sistema para barbearia, agendamento barbearia gratis, agenda online barbearia, app para barbeiro, barbearia no google'
+    },
+
+    // Open Graph (Facebook / WhatsApp)
+    {
+      property: 'og:title',
+      content: 'Sistema grátis para barbearia com agendamento online'
+    },
+    {
+      property: 'og:description',
+      content: 'Crie sua barbearia online, apareça no Google e receba agendamentos automaticamente. Comece grátis.'
+    },
+    {
+      property: 'og:image',
+      content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
+    },
+    {
+      property: 'og:url',
+      content: 'https://suaagenda.link/barbearia'
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:image:alt',
+      content: 'Sistema de agendamento para barbearia grátis'
+    },
+
+    // Facebook
+    {
+      property: 'fb:app_id',
+      content: '1288931335787890'
+    },
+
+    // Twitter
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: 'Sistema grátis para barbearia'
+    },
+    {
+      name: 'twitter:description',
+      content: 'Agendamento online para barbearia com página no Google. Comece grátis.'
+    },
+    {
+      name: 'twitter:image',
+      content: 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
+    },
   ],
+
   link: [
-    { rel: 'canonical',  href: 'https://suaagenda.link/barbearia' },
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap' },
+    {
+      rel: 'canonical',
+      href: 'https://suaagenda.link/barbearia'
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.googleapis.com'
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.gstatic.com',
+      crossorigin: ''
+    },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap'
+    },
   ],
 })
 useBarberJsonLd()
+
+const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1&segment=barber"
+const choosePlan = "/choose-plan?segment=barber"
 
 // ─── CONTADOR BRASIL ──────────────────────────────────────────────────────────
 const { count: totalCount, pending: totalCountPending, fetch: fetchCount } = useBarbershopCounts()
@@ -687,60 +830,12 @@ const mediaRating = computed(() => {
   return (total / depoimentos.length).toFixed(1)
 })
 
-// ─── PLANOS ───────────────────────────────────────────────────────────────────
-
-function mkFeatures(agend: number, prof: number, unid: number, relat: boolean, integ: boolean) {
-  return [
-    { texto: `${agend} agendamentos/mês`,                                             ok: true  },
-    { texto: `${prof} ${prof > 1 ? 'profissionais' : 'profissional'}`,               ok: true  },
-    { texto: `${unid} estabelecimento${unid > 1 ? 's' : ''}`,                        ok: true  },
-    { texto: 'Site público + portal de descoberta',                                   ok: true  },
-    { texto: 'Confirmação automática via WhatsApp',                                   ok: true  },
-    { texto: 'Créditos WhatsApp cobrados por uso',                                    ok: true  },
-    { texto: 'Relatórios e métricas',                                                 ok: relat },
-    { texto: 'Integrações com outros sistemas',                                       ok: integ },
-  ]
-}
-
-const planos = [
-  { label: 'Profissional Solo', desc: 'Para autônomos que trabalham sozinhos.',         preco: '79,90',  destaque: true,  features: mkFeatures(500,  1, 1, true,  false) },
-  { label: 'Equipe Pequena',    desc: 'Barbearia com 2 a 3 profissionais.',             preco: '99,90',  destaque: false, features: mkFeatures(1500, 3, 1, true,  false) },
-  { label: 'Equipe Média',      desc: 'Negócio em crescimento, 4 a 6 profissionais.',  preco: '149,90', destaque: false, features: mkFeatures(3000, 6, 2, true,  true)  },
-  {
-    label: 'Equipe Avançada', desc: '7+ profissionais. Múltiplas unidades.', preco: null, destaque: false,
-    features: [
-      { texto: 'Agendamentos ilimitados',             ok: true },
-      { texto: 'Profissionais ilimitados',            ok: true },
-      { texto: 'Estabelecimentos ilimitados',         ok: true },
-      { texto: 'Site público + portal de descoberta', ok: true },
-      { texto: 'Confirmação automática via WhatsApp', ok: true },
-      { texto: 'Créditos WhatsApp cobrados por uso',  ok: true },
-      { texto: 'Relatórios e métricas',               ok: true },
-      { texto: 'Integrações com outros sistemas',     ok: true },
-    ],
-  },
-]
-
-function precoExibido(precoMensal: string) {
-  if (!isAnual.value) return precoMensal
-  const base = parseFloat(precoMensal.replace(',', '.'))
-  return (base * (1 - annualDiscount / 100)).toFixed(2).replace('.', ',')
-}
-function precoAnualTotal(precoMensal: string) {
-  const base = parseFloat(precoMensal.replace(',', '.'))
-  return (base * (1 - annualDiscount / 100) * 12).toFixed(2).replace('.', ',')
-}
-function economiaAnual(precoMensal: string) {
-  const base = parseFloat(precoMensal.replace(',', '.'))
-  return (base * 12 - base * (1 - annualDiscount / 100) * 12).toFixed(2).replace('.', ',')
-}
-
 // ─── FAQS ─────────────────────────────────────────────────────────────────────
 
 const faqs = [
   { q: 'Quanto tempo leva pra configurar?',             a: 'Só 5 minutos. Você cria a conta com nome e endereço, os serviços e a disponibilidade dos profissionais já vêm pré-preenchidos com base no funcionamento do estabelecimento, você informa o WhatsApp pra receber notificações — e pronto, site no ar, pronto pra aparecer nas primeiras posições do Google.' },
   { q: 'O que vem pré-preenchido?',                     a: 'Os serviços mais comuns de barbearia — corte, barba, combo, sobrancelha — e a disponibilidade dos profissionais, baseada no horário de funcionamento do estabelecimento. Você só confirma o que usa e ajusta o que quiser.' },
-  { q: 'Meu site vai aparecer nas primeiras posições do Google?', a: 'Sim. Assim que você finaliza o cadastro, a nossa tecnologia exclusiva — desenvolvida com base nas melhores práticas de especialistas como Neil Patel — entra em ação pra colocar sua barbearia nas primeiras posições. Sem precisar mexer em nada. O Google costuma começar a mostrar seu site em 2 a 3 semanas.' },
+  { q: 'Meu site vai aparecer nas primeiras posições do Google?', a: 'Sim. Assim que você finaliza o cadastro, a nossa tecnologia exclusiva — desenvolvida com base nas melhores práticas de especialistas entra em ação pra colocar sua barbearia nas primeiras posições. Sem precisar mexer em nada. O Google costuma começar a mostrar seu site em 2 a 3 semanas.' },
   { q: 'Preciso entender de tecnologia pra usar?',      a: 'Não. Se você usa WhatsApp e Instagram, você usa a SuaAgenda. Foi feita pra ser mais simples do que qualquer coisa que você já tentou antes.' },
   { q: 'Como funciona a confirmação automática? É só um lembrete?', a: 'Não é só lembrete. Quando o cliente escolhe um horário, ele fica pendente. O sistema manda um WhatsApp oficial pedindo confirmação. Respondeu SIM → horário garantido. Não respondeu até o prazo → horário volta pra agenda automaticamente.' },
   { q: 'Como funciona o custo das notificações pelo WhatsApp?', a: 'O WhatsApp Business API cobra por mensagem enviada — é o custo que a própria Meta impõe pra todo mundo que usa a API oficial. Por isso, cada notificação enviada pelo sistema consome um crédito de agendamento, cobrado separado do plano mensal. A vantagem é que você paga só o que usa. E um horário salvo já paga vários créditos.' },

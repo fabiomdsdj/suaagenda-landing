@@ -22,7 +22,7 @@ export function useBarbershopCounts(params: CountParams = {}) {
       if (p.neighborhood) query.neighborhood = p.neighborhood
 
       // Passa pelo proxy local → cache Redis em vez de bater direto na API
-      const val = await $fetch<number>('/api/counts', { params: query })
+      const val = await $fetch<number>('/api/count', { params: query })
       count.value = typeof val === 'number' ? val : (val as any)?.count ?? 0
     } catch (err: any) {
       error.value = err?.data?.error ?? err?.message ?? 'Erro ao buscar contadores'

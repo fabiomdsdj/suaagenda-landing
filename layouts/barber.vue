@@ -87,15 +87,11 @@
             </div>
           </div>
 
-          <a
-            :href="wpLink"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300 hover:-translate-y-px shadow-lg shadow-green-400/20"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
-            </svg>
-            Testar grátis
-          </a>
+          <CtaButton
+            href="/choose-plan?segment=barber"
+            label="Ver planos"
+            :external="false"
+          />
         </nav>
 
         <!-- Mobile: Busca + Burger -->
@@ -226,7 +222,7 @@
             <p class="text-[15px] text-gray-400">Sem técnico, sem complicação, sem fidelidade.</p>
           </div>
           <a
-            :href="wpLink"
+            :href="plan1"
             class="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300 hover:-translate-y-px shadow-lg shadow-green-400/20 whitespace-nowrap"
           >
             ✂️ Começar agora — grátis
@@ -474,7 +470,7 @@ useHead({
 
 // ── Influencer white label ────────────────────────────────────────────────────
 const { hasInfluencer, nomeDisplay, fotoUrl, corHex, whatsappLink } = useInfluencer()
-
+const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
 /** Link do WhatsApp unificado — com ref quando tem influencer, padrão caso contrário */
 const wpLink = computed(() =>
   hasInfluencer.value
@@ -545,7 +541,7 @@ const footerProduto = [
   { label: 'Como funciona', href: '#como-funciona' },
   { label: 'Preço',         href: '#preco' },
   { label: 'Depoimentos',   href: '#depoimentos' },
-  { label: 'Testar grátis', href: 'https://wa.me/5511941649284' },
+  { label: 'Criar barbearia grátis agora', href: 'https://admin.suaagenda.link/admin/auth/register?planId=1' },
 ]
 
 const footerRecursos = [

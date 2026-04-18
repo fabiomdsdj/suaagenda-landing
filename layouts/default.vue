@@ -1,347 +1,647 @@
 <template>
-  <div class="font-[Poppins] min-h-screen text-slate-800">
+  <div class="bg-[#0a0a0a] text-white min-h-screen overflow-x-hidden" style="font-family:'DM Sans',sans-serif">
 
-    <!-- HEADER -->
-    <header class="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 bg-white z-50">
-      <!-- Logo -->
-      <NuxtLink to="/" class="flex items-center">
-        <NuxtImg
-          provider="cloudinary"
-          src="v1758665895/logo-sua-agenda-site_u87ec1.jpg" 
-          alt="Sua agenda" 
-          
-          v-motion="{
-              initial: { scale: 0.4, opacity: 0 },
-              enter: { scale: 1, opacity: 1, transition: { duration: 1200, delay: 100 } }
-            }"
-        />
-      </NuxtLink>
+    <!-- ══════════════════════════════════════════════════════
+         NAV
+    ═══════════════════════════════════════════════════════ -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/5 transition-all duration-300">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-6 py-4">
 
-      <!-- Links desktop -->
-      <nav class="hidden md:flex gap-6 items-center"
-          v-motion="{ initial: { scale: 0.4, opacity: 0 }, enter: { scale: 1, opacity: 1, transition: { duration: 1200, delay: 100 } } }"
-      >
-        <template v-for="link in links" :key="link.label">
-
-          <!-- Submenu container -->
-          <div 
-            v-if="link.submenu" 
-            class="relative"
-            @mouseenter="submenuOpen[link.label] = true"
-            @mouseleave="submenuOpen[link.label] = false"
-          >
-            <!-- Botão do menu -->
-            <button class="flex items-center gap-1 font-medium text-md hover:text-green-600 transition">
-              {{ link.label }}
-            </button>
-
-            <!-- Submenu card -->
-            <transition name="fade">
-              <div 
-                v-show="submenuOpen[link.label]"
-                class="absolute top-full left-0 mt-2 bg-white shadow-lg border rounded w-64 z-20 p-4"
-                style="pointer-events: auto;"
-              >
-                <ul>
-                  <li v-for="s in link.submenu" :key="s.slug" class="py-1 hover:bg-gray-100 px-2 rounded">
-                    <NuxtLink 
-                      :to="`/${s.slug}`" 
-                      class="text-gray-800 hover:text-green-600"
-                      @mouseenter="submenuOpen[link.label] = true" 
-                      @mouseleave="submenuOpen[link.label] = true"
-                    >
-                      {{ s.name }}
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </div>
-            </transition>
-          </div>
-
-          <!-- Link normal -->
-          <NuxtLink 
-            v-else-if="link.to" 
-            :to="link.to" 
-            class="text-md font-medium hover:text-green-400 transition"
-          >
-            {{ link.label }}
-          </NuxtLink>
-
-        </template>
-
-        <!-- Botão Entrar -->
-        <NuxtLink 
-          href="/" 
-          class="px-4 py-2 bg-green-400 text-white text-sm font-semibold rounded-lg shadow hover:bg-green-700 transition"
+        <!-- ── Logo: padrão ou white-label ── -->
+        <component
+          :is="hasInfluencer ? 'div' : NuxtLink"
+          :to="hasInfluencer ? undefined : '/'"
+          class="flex items-center gap-3 flex-shrink-0"
+          :class="{ 'cursor-default': hasInfluencer }"
         >
-          Minha agenda
-        </NuxtLink>
-      </nav>
-
-
-
-      <!-- Botão hambúrguer -->
-      <button class="md:hidden text-gray-950 z-50" aria-label="Abrir menu de navegação" @click="menuOpen = !menuOpen">
-        <svg v-if="!menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-
-      <!-- Menu mobile sobreposto -->
-      <transition name="fade">
-        <div v-if="menuOpen" class="fixed inset-0 bg-white flex flex-col items-center justify-center gap-6 z-40">
-
-          <template v-for="link in links" :key="link.label">
-            <!-- Submenu -->
-            <div v-if="link.submenu" class="flex flex-col items-center gap-2">
-              <button 
-                @click="submenuOpen[link.label] = !submenuOpen[link.label]" 
-                class="text-gray-700 font-medium text-lg"
-              >
-                {{ link.label }} ▼
-              </button>
-
-              <ul v-if="submenuOpen[link.label]" class="flex flex-col gap-2 mt-2">
-                <li v-for="s in link.submenu" :key="s.slug">
-                  <NuxtLink 
-                    :to="`/${s.slug}`" 
-                    class="text-gray-700 hover:text-green-600"
-                    @click="menuOpen = false"
-                  >
-                    {{ s.name }}
-                  </NuxtLink>
-                </li>
-              </ul>
+          <!-- WHITE LABEL: avatar do influencer -->
+          <template v-if="hasInfluencer">
+            <div class="inf-logo-avatar">
+              <img v-if="fotoUrl" :src="fotoUrl" :alt="nomeDisplay" />
+              <span v-else>{{ nomeDisplay?.slice(0,2).toUpperCase() }}</span>
+              <span class="inf-logo-dot">●</span>
             </div>
-
-            <!-- Link normal -->
-            <NuxtLink 
-              v-else-if="link.to" 
-              :to="link.to" 
-              class="text-gray-700 hover:text-green-600 text-md font-medium"
-              @click="menuOpen = false"
-            >
-              {{ link.label }}
-            </NuxtLink>
-
-            <a 
-              v-else-if="link.external" 
-              :href="link.href" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="text-gray-700 hover:text-green-600 text-md font-medium"
-            >
-              {{ link.label }}
-            </a>
+            <div class="inf-logo-text">
+              <span class="inf-logo-nome">{{ nomeDisplay }}</span>
+              <a href="/" class="inf-logo-by">by <span>SuaAgenda</span></a>
+            </div>
           </template>
 
-          <!-- Botão fixo -->
+          <!-- PADRÃO: logo normal -->
+          <template v-else>
+            <NuxtImg
+              provider="cloudinary"
+              src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
+              alt="SuaAgenda"
+              class="h-9 w-auto"
+              v-motion="{ initial:{opacity:0,x:-12}, enter:{opacity:1,x:0,transition:{duration:800}} }"
+            />
+          </template>
+        </component>
+
+        <!-- ✨ BUSCA GLOBAL (Desktop) -->
+        <div class="hidden md:block flex-1 max-w-md">
+          <GlobalSearch placeholder="Buscar barbearias..." />
+        </div>
+
+        <!-- Desktop links -->
+        <nav class="hidden md:flex items-center gap-7">
           <a
-            href="/"
-            class="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-green-700 transition"
-            @click="menuOpen = false"
+            v-for="link in navLinks" :key="link.label"
+            :href="link.href"
+            class="text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200 relative group"
           >
-            Minha agenda
+            {{ link.label }}
+            <span class="absolute -bottom-0.5 left-0 w-0 h-px bg-green-400 group-hover:w-full transition-all duration-300"></span>
           </a>
 
-        </div>
-      </transition>
+          <!-- Dropdown Recursos -->
+          <div class="relative group/recursos">
+            <button class="text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1">
+              Recursos
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-3 h-3 transition-transform group-hover/recursos:rotate-180">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+              </svg>
+            </button>
+            <div class="absolute top-full right-0 pt-3 opacity-0 pointer-events-none group-hover/recursos:opacity-100 group-hover/recursos:pointer-events-auto transition-all duration-200">
+              <div class="w-56 rounded-xl border border-white/[.08] bg-[#181818] shadow-xl p-2">
+                <NuxtLink
+                  v-for="r in recursosLinks" :key="r.href"
+                  :to="r.href"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-gray-400 hover:text-white hover:bg-white/[.04] transition-colors"
+                >
+                  <span class="text-base">{{ r.emoji }}</span>
+                  {{ r.label }}
+                </NuxtLink>
+                <div class="border-t border-white/[.06] mt-2 pt-2">
+                  <NuxtLink
+                    v-for="b in blogLinks" :key="b.href"
+                    :to="b.href"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-gray-400 hover:text-white hover:bg-white/[.04] transition-colors"
+                  >
+                    <span class="text-base">{{ b.emoji }}</span>
+                    {{ b.label }}
+                  </NuxtLink>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <CtaButton
+            href="/choose-plan?segment=barber"
+            label="Ver planos"
+            :external="false"
+          />
+        </nav>
+
+        <!-- Mobile: Busca + Burger -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
+            aria-label="Buscar"
+            @click="showMobileSearch = !showMobileSearch"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z"/>
+            </svg>
+          </button>
+
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
+            aria-label="Menu"
+            @click="mobileOpen = !mobileOpen"
+          >
+            <svg v-if="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- BUSCA MOBILE -->
+      <Transition name="slide-down">
+        <div v-if="showMobileSearch" class="md:hidden border-t border-white/5 bg-[#0f0f0f] px-6 py-4">
+          <GlobalSearch placeholder="Buscar barbearias..." />
+        </div>
+      </Transition>
+
+      <!-- Mobile drawer -->
+      <Transition name="slide-down">
+        <div v-if="mobileOpen" class="md:hidden border-t border-white/5 bg-[#0f0f0f]">
+          <div class="flex flex-col px-6 py-6 gap-1">
+            <a
+              v-for="link in navLinks" :key="link.label"
+              :href="link.href"
+              class="text-[17px] font-medium text-gray-300 hover:text-green-400 transition-colors py-2"
+              @click="mobileOpen = false"
+            >{{ link.label }}</a>
+
+            <div class="pt-3 pb-1">
+              <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">Recursos</p>
+              <NuxtLink
+                v-for="r in recursosLinks" :key="r.href"
+                :to="r.href"
+                class="flex items-center gap-2 text-[16px] text-gray-300 hover:text-green-400 transition-colors py-2"
+                @click="mobileOpen = false"
+              >
+                <span>{{ r.emoji }}</span>{{ r.label }}
+              </NuxtLink>
+            </div>
+
+            <div class="pt-1 pb-3">
+              <p class="text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">Blog</p>
+              <NuxtLink
+                v-for="b in blogLinks" :key="b.href"
+                :to="b.href"
+                class="flex items-center gap-2 text-[16px] text-gray-300 hover:text-green-400 transition-colors py-2"
+                @click="mobileOpen = false"
+              >
+                <span>{{ b.emoji }}</span>{{ b.label }}
+              </NuxtLink>
+            </div>
+
+            <a
+              :href="wpLink"
+              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-400 text-black text-[16px] font-bold mt-2"
+              @click="mobileOpen = false"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
+              </svg>
+              Testar 7 dias grátis
+            </a>
+          </div>
+        </div>
+      </Transition>
     </header>
 
-    <!-- CONTEÚDO DA PÁGINA -->
+    <!-- CONTEÚDO -->
     <main>
       <slot />
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-gray-950 text-slate-300 py-16 px-6">
-      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <!-- ══════════════════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════════════════ -->
 
-        <!-- Logo e descrição -->
-        <div>
-          <h2 
-            class="text-2xl font-bold text-green-400 mb-4 fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" 
-            data-delay="0"
-          >
-            Sua agenda
-          </h2>
-          <p 
-            class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" 
-            data-delay="200"
-          >
-            Organize seus agendamentos, conquiste novas clientes e valorize ainda mais o seu salão.  
-            Nosso sistema foi feito para <span class="font-semibold text-green-400">simplificar sua rotina e aumentar seus lucros</span>.  
-            Mais praticidade, mais visibilidade e mais tempo para cuidar do que você ama: realçar a beleza das suas clientes.
-          </p>
-        </div>
-
-
-        <!-- Links úteis -->
-        <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="400">
-          <div
-            v-for="nicho in nichos"
-            :key="nicho.slug"
-          >
-            <h2 class="font-bold text-xl">{{ nicho.name }}</h2>
-            <ul class="ml-4">
-              <li v-for="servico in servicos" :key="servico.slug">
-                <NuxtLink :to="`/servicos/${servico.slug}/${nicho.slug}`">
-                  {{ servico.name }} para {{ nicho.name }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-         <!-- Links úteis -->
-         <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="400">
-          <ul class="space-y-2 text-slate-300">
-            <li><NuxtLink to="/privacidade" class="hover:text-green-400 transition">Política de privacidade</NuxtLink></li>
-            <li><NuxtLink to="/termos" class="hover:text-green-400 transition">Termos de serviço</NuxtLink></li>
-          </ul>
-        </div>
-
-        <!-- Redes sociais -->
-        <div class="fade-on-scroll opacity-0 translate-y-10 transition-all duration-700" data-delay="800">
-          <h3 class="text-xl font-semibold mb-4">Estamos nas redes</h3>
-          <div class="flex gap-4">
-
-            <!-- Facebook -->
-            <a href="https://www.facebook.com/profile.php?id=61581430582623" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-400 transition flex items-center gap-2" aria-label="Facebook da Sua Agenda">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#1877F2" viewBox="0 0 24 24" class="w-12 h-12">
-                <path d="M22 12a10 10 0 1 0-11.6 9.86v-6.99h-2.5V12h2.5v-1.7c0-2.48 1.48-3.85 3.75-3.85 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.87h-2.34v6.99A10 10 0 0 0 22 12"/>
-              </svg>
-            </a>
-
-            <!-- Instagram -->
-            <a href="https://www.instagram.com/sistemasuaagenda/" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-400 transition flex items-center gap-2" aria-label="Instagram da Sua Agenda">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#E1306C" viewBox="0 0 24 24" class="w-12 h-12">
-                <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.055 1.963.24 2.422.402a4.922 4.922 0 0 1 1.788 1.08 4.922 4.922 0 0 1 1.08 1.788c.163.46.348 1.252.403 2.422.058 1.266.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.24 1.963-.403 2.422a4.922 4.922 0 0 1-1.08 1.788 4.922 4.922 0 0 1-1.788 1.08c-.46.163-1.252.348-2.422.403-1.266.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.963-.24-2.422-.403a4.922 4.922 0 0 1-1.788-1.08 4.922 4.922 0 0 1-1.08-1.788c-.163-.46-.348-1.252-.403-2.422C2.212 15.584 2.2 15.2 2.2 12s.012-3.584.07-4.85c.055-1.17.24-1.963.403-2.422a4.922 4.922 0 0 1 1.08-1.788 4.922 4.922 0 0 1 1.788-1.08c.46-.163 1.252-.348 2.422-.403C8.416 2.212 8.8 2.2 12 2.2zm0 1.8c-3.16 0-3.53.012-4.78.069-1.047.048-1.61.22-1.985.367a3.125 3.125 0 0 0-1.135.723 3.125 3.125 0 0 0-.723 1.135c-.147.375-.319.938-.367 1.985-.057 1.25-.069 1.62-.069 4.78s.012 3.53.069 4.78c.048 1.047.22 1.61.367 1.985.17.39.392.73.723 1.135.404.33.745.552 1.135.723.375.147.938.319 1.985.367 1.25.057 1.62.069 4.78.069s3.53-.012 4.78-.069c1.047-.048 1.61-.22 1.985-.367a3.125 3.125 0 0 0 1.135-.723 3.125 3.125 0 0 0 .723-1.135c.147-.375.319-.938.367-1.985.057-1.25.069-1.62.069-4.78s-.012-3.53-.069-4.78c-.048-1.047-.22-1.61-.367-1.985a3.125 3.125 0 0 0-.723-1.135 3.125 3.125 0 0 0-1.135-.723c-.375-.147-.938-.319-1.985-.367-1.25-.057-1.62-.069-4.78-.069zm0 3.5a6.3 6.3 0 1 1 0 12.6 6.3 6.3 0 0 1 0-12.6zm0 1.8a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm6.4-1.9a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Direitos -->
-      <div class="mt-10 text-center text-slate-400 text-sm">
-        &copy; 2025 Sua agenda. Todos os direitos reservados.
-      </div>
-      <!-- Botão Flutuante de WhatsApp -->
-      <WhatsappButton 
-        :contacts="siteInfo.contacts"
-        defaultMessage="Olá, vim pelo site e gostaria de atendimento"
+    <!-- ── WHITE LABEL FOOTER: só o crédito ── -->
+    <footer v-if="hasInfluencer" class="wl-footer">
+      <a href="/" class="wl-footer-credit">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="wl-footer-icon">
+          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 4.25a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-1.5 0v-3Zm.75 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+        </svg>
+        Agendamento powered by
+        <NuxtImg
+          provider="cloudinary"
+          src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
+          alt="SuaAgenda"
+          class="wl-footer-logo"
+        />
+      </a>
+      <WhatsappButton
+        :contacts="[
+          { name: 'Vendas',  phone: '+5511941649284', availableTimes: ['10:30','14:00','16:00'] },
+          { name: 'Suporte', phone: '+5511941649284', availableTimes: ['09:00','12:00','15:00'] },
+        ]"
+        :defaultMessage="wpDefaultMessage"
         aria-label="Falar com a gente no WhatsApp"
       />
     </footer>
 
+    <!-- ── FOOTER PADRÃO ── -->
+    <footer v-else class="bg-[#0a0a0a] border-t border-white/5">
+
+      <!-- CTA strip -->
+      <div class="bg-gradient-to-r from-green-400/10 via-green-400/5 to-transparent border-b border-green-400/10 py-10 px-6">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <p class="text-xl font-bold text-white mb-1">Sua barbearia no Google em menos de 5 minutos.</p>
+            <p class="text-[15px] text-gray-400">Sem técnico, sem complicação, sem fidelidade.</p>
+          </div>
+          <a
+            :href="plan1"
+            class="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300 hover:-translate-y-px shadow-lg shadow-green-400/20 whitespace-nowrap"
+          >
+            ✂️ Começar agora — grátis
+          </a>
+        </div>
+      </div>
+
+      <!-- Grid principal -->
+      <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10 px-6 py-16">
+
+        <!-- Marca (2 cols) -->
+        <div class="sm:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <NuxtImg
+              provider="cloudinary"
+              src="v1758665895/logo-sua-agenda-site-dark_w1nb5c.png"
+              alt="SuaAgenda"
+              class="h-8 w-auto"
+            />
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold tracking-widest uppercase bg-green-400/10 text-green-400 border border-green-400/20">
+              ✂️ Barbearia
+            </span>
+          </div>
+
+          <p class="text-[15px] text-gray-400 leading-relaxed mb-5 max-w-sm">
+            O sistema simples que ajuda a encher a agenda da barbearia.
+            Sem app pra baixar, sem contrato, sem dor de cabeça.
+          </p>
+
+          <!-- Selos -->
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="inline-flex items-center gap-1.5 text-[12px] text-gray-500 bg-white/[.04] border border-white/[.06] rounded-lg px-3 py-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-green-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/>
+              </svg>
+              Sem fidelidade
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[12px] text-gray-500 bg-white/[.04] border border-white/[.06] rounded-lg px-3 py-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-green-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
+              </svg>
+              No ar em 5 min
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[12px] text-gray-500 bg-white/[.04] border border-white/[.06] rounded-lg px-3 py-1.5">
+              🤝 Parceiro META oficial
+            </span>
+          </div>
+
+          <!-- Redes sociais -->
+          <div class="flex gap-3">
+            <a href="https://www.facebook.com/profile.php?id=61581430582623" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+              class="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[.04] border border-white/[.06] hover:border-[#1877F2]/40 hover:bg-[#1877F2]/10 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#1877F2" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M22 12a10 10 0 1 0-11.6 9.86v-6.99h-2.5V12h2.5v-1.7c0-2.48 1.48-3.85 3.75-3.85 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.87h-2.34v6.99A10 10 0 0 0 22 12"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/sistemasuaagenda/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+              class="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[.04] border border-white/[.06] hover:border-[#E1306C]/40 hover:bg-[#E1306C]/10 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#E1306C" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.055 1.963.24 2.422.402a4.922 4.922 0 0 1 1.788 1.08 4.922 4.922 0 0 1 1.08 1.788c.163.46.348 1.252.403 2.422.058 1.266.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.24 1.963-.403 2.422a4.922 4.922 0 0 1-1.08 1.788 4.922 4.922 0 0 1-1.788 1.08c-.46.163-1.252.348-2.422.403-1.266.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.963-.24-2.422-.403a4.922 4.922 0 0 1-1.788-1.08 4.922 4.922 0 0 1-1.08-1.788c-.163-.46-.348-1.252-.403-2.422C2.212 15.584 2.2 15.2 2.2 12s.012-3.584.07-4.85c.055-1.17.24-1.963.403-2.422a4.922 4.922 0 0 1 1.08-1.788 4.922 4.922 0 0 1 1.788-1.08c.46-.163 1.252-.348 2.422-.403C8.416 2.212 8.8 2.2 12 2.2zm0 1.8c-3.16 0-3.53.012-4.78.069-1.047.048-1.61.22-1.985.367a3.125 3.125 0 0 0-1.135.723 3.125 3.125 0 0 0-.723 1.135c-.147.375-.319.938-.367 1.985-.057 1.25-.069 1.62-.069 4.78s.012 3.53.069 4.78c.048 1.047.22 1.61.367 1.985.17.39.392.73.723 1.135.404.33.745.552 1.135.723.375.147.938.319 1.985.367 1.25.057 1.62.069 4.78.069s3.53-.012 4.78-.069c1.047-.048 1.61-.22 1.985-.367a3.125 3.125 0 0 0 1.135-.723 3.125 3.125 0 0 0 .723-1.135c.147-.375.319-.938.367-1.985.057-1.25.069-1.62.069-4.78s-.012-3.53-.069-4.78c-.048-1.047-.22-1.61-.367-1.985a3.125 3.125 0 0 0-.723-1.135 3.125 3.125 0 0 0-1.135-.723c-.375-.147-.938-.319-1.985-.367-1.25-.057-1.62-.069-4.78-.069zm0 3.5a6.3 6.3 0 1 1 0 12.6 6.3 6.3 0 0 1 0-12.6zm0 1.8a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm6.4-1.9a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
+              </svg>
+            </a>
+            <a :href="wpLink" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+              class="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[.04] border border-white/[.06] hover:border-[#25D366]/40 hover:bg-[#25D366]/10 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#25D366" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12a11.93 11.93 0 0 0 1.64 6.06L0 24l6.17-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22c-1.84 0-3.62-.49-5.18-1.4l-.37-.22-3.66.96.98-3.57-.24-.37A9.95 9.95 0 0 1 2 12C2 6.48 6.48 2 12 2c2.67 0 5.18 1.04 7.07 2.93A9.94 9.94 0 0 1 22 12c0 5.52-4.48 10-10 10Zm5.52-7.46c-.3-.15-1.78-.88-2.06-.98s-.47-.15-.67.15-.77.98-.95 1.18-.35.22-.65.07a8.2 8.2 0 0 1-2.42-1.5 9.07 9.07 0 0 1-1.67-2.09c-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52s.2-.3.3-.5.05-.37-.02-.52-.67-1.62-.92-2.22c-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.14.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.78-.73 2.03-1.43s.25-1.31.17-1.43-.27-.2-.57-.35Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Produto -->
+        <div>
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-5">Produto</h4>
+          <ul class="space-y-3">
+            <li v-for="link in footerProduto" :key="link.label">
+              <a :href="link.href === 'https://wa.me/5511941649284' ? wpLink : link.href"
+                class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
+                {{ link.label }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Recursos -->
+        <div>
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-5">Recursos</h4>
+          <ul class="space-y-3">
+            <li v-for="link in footerRecursos" :key="link.href">
+              <NuxtLink :to="link.href" class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-4 mt-7">Blog</h4>
+          <ul class="space-y-3">
+            <li v-for="link in footerBlog" :key="link.href">
+              <NuxtLink :to="link.href" class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Empresa + Diretório -->
+        <div>
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-5">Empresa</h4>
+          <ul class="space-y-3 mb-7">
+            <li v-for="link in footerEmpresa" :key="link.label">
+              <NuxtLink :to="link.to" class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-4">Diretório</h4>
+          <ul class="space-y-3">
+            <li v-for="link in footerDiretorio" :key="link.href">
+              <NuxtLink :to="link.href" class="text-[14px] text-gray-400 hover:text-green-400 transition-colors flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-green-400/40 flex-shrink-0"></span>
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Links locais SEO -->
+      <div class="border-t border-white/[.04] px-6 py-10">
+        <div class="max-w-6xl mx-auto">
+          <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-6">
+            Barbearias por bairro
+          </p>
+
+          <div class="space-y-10">
+            <div v-for="city in allCities" :key="city.citySlug">
+              <NuxtLink
+                :to="`/barbearias/${city.ufSlug}/${city.citySlug}`"
+                class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
+              >
+                {{ city.city }}
+              </NuxtLink>
+
+              <template v-if="hasZones(city)">
+                <div v-for="(districts, zoneName) in districtsByZone(city)" :key="String(zoneName)" class="mb-6">
+                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">{{ zoneName }}</p>
+                  <div class="flex flex-wrap gap-x-5 gap-y-2">
+                    <NuxtLink
+                      v-for="neighborhood in flatNeighborhoods(districts)"
+                      :key="neighborhood.slug"
+                      :to="`/barbearias/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
+                      class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                    >
+                      {{ neighborhood.name }}
+                    </NuxtLink>
+                  </div>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="flex flex-wrap gap-x-5 gap-y-2">
+                  <NuxtLink
+                    v-for="neighborhood in allNeighborhoods(city)"
+                    :key="neighborhood.slug"
+                    :to="`/barbearias/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
+                    class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                  >
+                    {{ neighborhood.name }}
+                  </NuxtLink>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-white/[.04]">
+            <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">Barbeiros por cidade</p>
+            <div class="flex flex-wrap gap-4">
+              <NuxtLink
+                v-for="city in allCities"
+                :key="city.citySlug"
+                :to="`/barbeiros/${city.ufSlug}/${city.citySlug}`"
+                class="text-[13px] text-gray-600 hover:text-green-400 transition-colors"
+              >
+                Barbeiros em {{ city.city }}
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-white/5 px-6 py-5">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-gray-600">
+          <p>© {{ year }} SuaAgenda · Feito pra barbeiro, por quem entende de barbearia.</p>
+          <div class="flex gap-5">
+            <NuxtLink to="/privacidade" class="hover:text-gray-400 transition-colors">Privacidade</NuxtLink>
+            <NuxtLink to="/termos" class="hover:text-gray-400 transition-colors">Termos</NuxtLink>
+          </div>
+        </div>
+      </div>
+
+      <WhatsappButton
+        :contacts="[
+          { name: 'Vendas',  phone: '+5511941649284', availableTimes: ['10:30','14:00','16:00'] },
+          { name: 'Suporte', phone: '+5511941649284', availableTimes: ['09:00','12:00','15:00'] },
+        ]"
+        :defaultMessage="wpDefaultMessage"
+        aria-label="Falar com a gente no WhatsApp"
+      />
+    </footer><!-- end v-else footer padrão -->
+
+    <CookieBanner />
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import locals from "~/data/local";
-import servicos from "~/data/servicos";
-import nichos from "~/data/nichos";
-
-const themeColor = ref('#ff6467') // valor inicial
-
-// Simula pegar de uma API
-onMounted(async () => {
-  const data = await $fetch('/api/config') // exemplo de API
-  themeColor.value = data.themeColor || '#ff6467'
-})
-
-// Aqui estão os contatos, futuramente você pode buscar da API
-const siteInfo = ref({
-  contacts: [
-    { 
-      name: 'Vendas', 
-      phone: '+5511941649284',
-      availableTimes: ['10:30', '14:00', '16:00']
-    },
-    { 
-      name: 'Suporte', 
-      phone: '+5511941649284',
-      availableTimes: ['09:00', '12:00', '15:00']
-    }
-  ]
-})
-
-const fadeIn = (el) => {
-  if (!process.client) return
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('opacity-100', 'translate-y-0')
-        entry.target.classList.remove('opacity-0', 'translate-y-10')
-      }
-    })
-  })
-  observer.observe(el)
-}
-
-onMounted(() => {
-  if (!process.client) return
-  document.querySelectorAll('.fade-on-scroll').forEach(el => {
-    el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700')
-    fadeIn(el)
-  })
-})
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { NuxtLink } from '#components'
+import { allCities, type CityData, type District, type Neighborhood } from '~/data/locations'
+import { useInfluencer } from '~/composables/useInfluencer'
 
 useHead({
-  meta: [
-    { name: 'theme-color', content: themeColor.value }
-  ],  
   link: [
-    // Favicon básico
-    { rel: 'icon', type: 'image/png', sizes: '16x16', href: 'https://i.ibb.co/N6TTmpQx/favicon-16x16.png' },
-    { rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180', href: 'https://i.ibb.co/wN3LnJ1S/apple-touch-icon.png' },
-    { rel: 'icon', type: 'image/png', sizes: '48x48', href: 'https://i.ibb.co/xxxxxx/favicon-48x48.png' },
-    { rel: 'icon', type: 'image/png', sizes: '192x192', href: 'https://i.ibb.co/Qjbynbsc/android-chrome-192x192.png' },
-    { rel: 'icon', type: 'image/png', sizes: '512x512', href: 'https://i.ibb.co/dwRwhNzV/android-chrome-512x512.png' },
-
-
-    //{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    //{ rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    //{
-    //  rel: 'stylesheet',
-    //  href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap',
-    //},
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap' },
   ],
-  
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'SuaAgenda',
+        alternateName: 'Sua Agenda',
+        url: 'https://suaagenda.link',
+      }),
+    },
+  ],
 })
 
-const menuOpen = ref(false) // mobile
-const submenuOpen = reactive({}) // objeto vazio que vai guardar cada submenu
+// ── Influencer white label ────────────────────────────────────────────────────
+const { hasInfluencer, nomeDisplay, fotoUrl, corHex, whatsappLink } = useInfluencer()
+const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+/** Link do WhatsApp unificado — com ref quando tem influencer, padrão caso contrário */
+const wpLink = computed(() =>
+  hasInfluencer.value
+    ? whatsappLink.value   // já tem o ref embutido via useInfluencer
+    : 'https://wa.me/5511941649284'
+)
 
+/** Mensagem padrão do WhatsApp flutuante */
+const wpDefaultMessage = computed(() =>
+  hasInfluencer.value
+    ? `Vim pela indicação de ${nomeDisplay.value} e quero testar a SuaAgenda`
+    : 'Olá, vim pelo site de barbearia e gostaria de atendimento'
+)
 
-const links = [
-  
-  { label: "O que oferecemos", submenu: servicos },
-  { label: "Quem ajudamos", submenu: nichos }, // <- aqui troquei de "to" para "submenu"
-  { label: "Preços", to: "/precos" },
-  { label: "Portal", to: "/precos" }
+// Injeta CSS var de cor do influencer
+onMounted(() => {
+  if (hasInfluencer.value) {
+    document.documentElement.style.setProperty('--inf-color', corHex.value)
+  }
+})
+
+// ── Estado local ──────────────────────────────────────────────────────────────
+const mobileOpen       = ref(false)
+const showMobileSearch = ref(false)
+const year             = new Date().getFullYear()
+
+// ── Helpers de localização ────────────────────────────────────────────────────
+function allNeighborhoods(city: CityData): Neighborhood[] {
+  return city.districts.flatMap((d) => d.neighborhoods)
+}
+function flatNeighborhoods(districts: District[]): Neighborhood[] {
+  return districts.flatMap((d) => d.neighborhoods)
+}
+function hasZones(city: CityData): boolean {
+  return city.districts.some((d) => d.zone != null)
+}
+function districtsByZone(city: CityData): Record<string, District[]> {
+  const groups: Record<string, District[]> = {}
+  for (const district of city.districts) {
+    const zone = district.zone ?? 'Outras regiões'
+    if (!groups[zone]) groups[zone] = []
+    groups[zone].push(district)
+  }
+  return groups
+}
+
+// ── Nav / Footer data ─────────────────────────────────────────────────────────
+const navLinks = [
+  { label: 'Como funciona', href: '#como-funciona' },
+  { label: 'Benefícios',    href: '#como-funciona-passos' },
+  { label: 'Depoimentos',   href: '#depoimentos' },
+  { label: 'Preço',         href: '#preco' },
+  { label: 'Dúvidas',       href: '#faq' },
 ]
 
-// Inicializa todas as chaves do submenu
-links.forEach(link => {
-  if (link.submenu) submenuOpen[link.label] = false
-})
+const recursosLinks = [
+  { emoji: '📅', label: 'Agenda online',        href: '/recursos/agenda-online' },
+  { emoji: '👥', label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
+  { emoji: '🔗', label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
+]
 
+const blogLinks = [
+  { emoji: '📣', label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
+  { emoji: '💡', label: 'Como conseguir mais clientes',  href: '/blog/como-conseguir-clientes-barbearia' },
+]
+
+const footerProduto = [
+  { label: 'Como funciona', href: '#como-funciona' },
+  { label: 'Preço',         href: '#preco' },
+  { label: 'Depoimentos',   href: '#depoimentos' },
+  { label: 'Criar barbearia grátis agora', href: 'https://admin.suaagenda.link/admin/auth/register?planId=1' },
+]
+
+const footerRecursos = [
+  { label: 'Agenda online',         href: '/recursos/agenda-online' },
+  { label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
+  { label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
+]
+
+const footerBlog = [
+  { label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
+  { label: 'Como conseguir mais clientes', href: '/blog/como-conseguir-clientes-barbearia' },
+]
+
+const footerDiretorio = [
+  { label: 'Barbearias por bairro', href: '/barbearias' },
+  { label: 'Barbeiros por cidade',  href: '/barbeiros' },
+]
+
+const footerEmpresa = [
+  { label: 'Planos',                  to: '/precos' },
+  { label: 'Política de privacidade', to: '/privacidade' },
+  { label: 'Termos de serviço',       to: '/termos' },
+]
 </script>
 
 <style>
-  .fade-enter-active, .fade-leave-active { transition: opacity 0.3s }
-  .fade-enter-from, .fade-leave-to { opacity: 0 }
+:root {
+  --nav-h: 68px;
+  --inf-color: #34d399;
+}
 
-  .opacity-0 { opacity: 0; }
-    .opacity-100 { opacity: 1; }
-    .translate-y-10 { transform: translateY(2.5rem); }
-    .translate-y-0 { transform: translateY(0); }
+/* ── Slide transitions ── */
+.slide-down-enter-active, .slide-down-leave-active { transition: opacity .2s, transform .2s; }
+.slide-down-enter-from,   .slide-down-leave-to     { opacity: 0; transform: translateY(-8px); }
 
+/* ── White label: logo avatar no header ── */
+.inf-logo-avatar {
+  position: relative;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--inf-color);
+  overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  background: #1a1a1a; color: var(--inf-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--inf-color) 15%, transparent);
+}
+.inf-logo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.inf-logo-dot {
+  position: absolute; bottom: -1px; right: -1px;
+  font-size: 9px; color: #22c55e;
+  animation: inf-pulse 1.8s infinite;
+}
+@keyframes inf-pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+.inf-logo-text {
+  display: flex; flex-direction: column; line-height: 1.25;
+}
+.inf-logo-nome {
+  font-size: 15px; font-weight: 700; color: #fff;
+  max-width: 160px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.inf-logo-by {
+  font-size: 11px; color: #555;
+  text-decoration: none;
+  transition: color .2s;
+}
+.inf-logo-by span { color: var(--inf-color); opacity: .7; }
+.inf-logo-by:hover span { opacity: 1; }
+
+/* ── White label footer minimalista ── */
+.wl-footer {
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wl-footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #444;
+  text-decoration: none;
+  transition: color .2s;
+}
+.wl-footer-credit:hover { color: #666; }
+.wl-footer-icon {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  opacity: .4;
+}
+.wl-footer-logo {
+  height: 16px;
+  width: auto;
+  opacity: .45;
+  filter: brightness(2);
+  transition: opacity .2s;
+}
+.wl-footer-credit:hover .wl-footer-logo { opacity: .7; }
 </style>
