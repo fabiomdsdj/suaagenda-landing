@@ -1,7 +1,7 @@
 // server/api/barbershops.ts
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const key = `barbershops:${JSON.stringify(query)}`
+  const key = `barbershops-${JSON.stringify(query)}`
 
   const storage = useStorage('cache')
 

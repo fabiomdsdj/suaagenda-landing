@@ -1,14 +1,14 @@
-// server/api/counts.ts
 export default defineEventHandler(async (event) => {
   const { uf, city, neighborhood } = getQuery(event)
-  const key = `counts:${uf ?? ''}:${city ?? ''}:${neighborhood ?? ''}`
-
+  
+  // chave com - em vez de : — funciona no filesystem em dev
+  const key = `counts-${uf ?? ''}-${city ?? ''}-${neighborhood ?? ''}`
   const storage = useStorage('cache')
-
+  
   const hit = await storage.getItem<number>(key)
   if (hit !== null && hit !== undefined) return hit
 
-  const config = useRuntimeConfig(event)
+  const config  = useRuntimeConfig(event)
   const apiBase = config.public.apiBase as string
   const apiKey  = config.public.apiKey  as string
 
@@ -24,6 +24,6 @@ export default defineEventHandler(async (event) => {
     ? (res as any).count ?? 0
     : (res as number)
 
-  await storage.setItem(key, val, { ttl: 60 * 60 }) // 1h
+  await storage.setItem(key, val, { ttl: 60 * 60 })
   return val
 })

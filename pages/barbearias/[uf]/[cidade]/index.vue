@@ -154,8 +154,12 @@ const hasZones     = computed(() => cityData.value?.districts.some(d => d.zone !
 // ── ✅ SSR: contador busca no servidor — H1 tem o número quando Googlebot chega ──
 const { data: cityCount } = await useAsyncData(
   `count-city-${ufSlug}-${citySlug}`,
-  () => $fetch<number>(`/api/counts?uf=${ufSlug}&city=${citySlug}`).catch(() => 0),
-  { server: true, default: () => 0 }
+  () => $fetch<number>(`/api/count?uf=${ufSlug}&city=${citySlug}`).catch(() => 0),
+    { 
+      server: true,
+      lazy: false,
+      default: () => 0,
+    }
 )
 
 const districtsByZone = computed(() => {

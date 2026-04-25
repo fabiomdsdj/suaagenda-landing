@@ -117,8 +117,12 @@ const ufData = computed(() => cities.value[0] ?? null)
 // ── ✅ SSR: contador no servidor ──────────────────────────────────────────
 const { data: ufCount } = await useAsyncData(
   `count-uf-${ufSlug}`,
-  () => $fetch<number>(`/api/counts?uf=${ufSlug}`).catch(() => 0),
-  { server: true, default: () => 0 }
+  () => $fetch<number>(`/api/count?uf=${ufSlug}`).catch(() => 0),
+    { 
+      server: true,
+      lazy: false,
+      default: () => 0,
+    }
 )
 
 function totalNeighborhoods(city: CityData): number {

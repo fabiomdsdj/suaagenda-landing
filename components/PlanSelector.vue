@@ -1,121 +1,142 @@
 <!--
   components/PlanSelector.vue
-  ─────────────────────────────────────────────────────────────────────────────
-  Componente reutilizável de seleção de plano.
+  Planos carregados da rota pública /plans/public — sem auth necessária.
 
   Props:
-    - segment     : String  — 'barber' | 'salon' | etc. (para personalizar label)
-    - redirectBase: String  — URL base do admin (default: https://admin.suaagenda.link)
+    - segment           : String  — 'barber' | 'salon' | etc.
+    - redirectBase      : String  — URL base do admin
+    - redirect          : Boolean — false = só emite, não navega
+    - trialDays         : Number
+    - annualDiscount    : Number (default 20)
+    - quarterlyDiscount : Number (default 10)
+    - apiBase           : String  — URL base da API (ex: https://api.suaagenda.link)
 
   Emits:
     - select(payload) → { planId, billingCycle, priceMonthly, priceTotal }
 
-  Uso standalone (landing):
-    <PlanSelector segment="barber" />
+  Uso na landing:
+    <PlanSelector segment="barber" api-base="https://api.suaagenda.link" />
 
-  Uso incorporado (sem redirect, captura o emit):
+  Uso incorporado (sem redirect):
     <PlanSelector segment="barber" :redirect="false" @select="onSelect" />
 -->
 <template>
   <div class="ps-root">
 
-    <!-- ── Billing cycle toggle ────────────────────────────────────────────── -->
-    <div class="ps-toggle-wrap mb-4">
-      <button
-        v-for="c in cycles"
-        :key="c.value"
-        type="button"
-        class="ps-toggle-btn"
-        :class="{ 'ps-toggle-btn--active': billingCycle === c.value }"
-        @click="billingCycle = c.value"
-      >
-        {{ c.label }}
-        <span v-if="c.badge" class="ps-toggle-badge">{{ c.badge }}</span>
-      </button>
+    <!-- ── Loading ─────────────────────────────────────────────────────────── -->
+    <div v-if="loading" class="ps-loading">
+      <div class="ps-spinner" />
     </div>
-    <p v-if="billingCycle !== 'monthly'" class="ps-toggle-hint mb-4">
-      {{ billingCycle === 'quarterly' ? 'Cobrado a cada 3 meses' : 'Cobrado anualmente' }} · cancele quando quiser
-    </p>
 
-    <!-- ── Cards ──────────────────────────────────────────────────────────── -->
-    <div class="ps-grid">
-      <div
-        v-for="(plano, i) in planosOrdenados"
-        :key="plano.planId"
-        class="ps-card"
-        :class="{
-          'ps-card--featured': plano.destaque,
-          'ps-card--selected': selectedPlanId === plano.planId,
-          'ps-card--free': plano.isFree,
-        }"
-        @click="selectPlan(plano)"
-      >
-        <!-- badge destaque -->
-        <div v-if="plano.destaque" class="ps-badge">⭐ Mais popular</div>
+    <!-- ── Error ───────────────────────────────────────────────────────────── -->
+    <div v-else-if="error" class="ps-error">
+      <p>{{ error }}</p>
+      <button class="ps-retry-btn" @click="fetchPlans">Tentar novamente</button>
+    </div>
 
-        <!-- cabeçalho -->
-        <div class="ps-card-head">
-          <p class="ps-card-label">{{ plano.label }}</p>
-          <p class="ps-card-desc">{{ plano.desc }}</p>
-        </div>
+    <template v-else>
 
-        <!-- preço -->
-        <div class="ps-price-wrap">
-          <template v-if="plano.isFree">
-            <div class="ps-price">
-              <span class="ps-price-num">R$ 0</span>
-              <span class="ps-price-period">/mês</span>
-            </div>
-            <p class="ps-price-note">Para sempre grátis</p>
-          </template>
-          <template v-else-if="plano.preco">
-            <div class="ps-price-striked" v-if="billingCycle !== 'monthly'">
-              <span>R$ {{ plano.preco }}</span>/mês
-            </div>
-            <div class="ps-price">
-              <span class="ps-price-currency">R$</span>
-              <span class="ps-price-num">{{ displayPrice(plano.preco) }}</span>
-              <span class="ps-price-period">/mês</span>
-            </div>
-            <p class="ps-price-note" v-if="billingCycle !== 'monthly'">
-              cobrado R$ {{ totalCharged(plano.preco) }}
-              {{ billingCycle === 'quarterly' ? '/trimestre' : '/ano' }}
-              · economia R$ {{ savings(plano.preco) }}
-            </p>
-            <p class="ps-trial-chip" v-if="!plano.isFree">
-              🎁 {{ trialDays }} dias grátis · sem cartão
-            </p>
-          </template>
-          <template v-else>
-            <div class="ps-price">
-              <span class="ps-price-num" style="font-size:1.5rem">Sob consulta</span>
-            </div>
-          </template>
-        </div>
-
-        <!-- features -->
-        <ul class="ps-features">
-          <li
-            v-for="f in plano.features"
-            :key="f.texto"
-            :class="f.ok ? 'ps-feat--ok' : 'ps-feat--off'"
-          >
-            <span class="ps-feat-icon">{{ f.ok ? '✓' : '✗' }}</span>
-            {{ f.texto }}
-          </li>
-        </ul>
-
-        <!-- CTA -->
+      <!-- ── Billing cycle toggle ───────────────────────────────────────────── -->
+      <div class="ps-toggle-wrap mb-4">
         <button
+          v-for="c in cycles"
+          :key="c.value"
           type="button"
-          class="ps-cta"
-          :class="plano.destaque ? 'ps-cta--primary' : 'ps-cta--outline'"
-          @click.stop="handleCta(plano)"
+          class="ps-toggle-btn"
+          :class="{ 'ps-toggle-btn--active': billingCycle === c.value }"
+          @click="billingCycle = c.value"
         >
-          {{ ctaLabel(plano) }}
+          {{ c.label }}
+          <span v-if="c.badge" class="ps-toggle-badge">{{ c.badge }}</span>
         </button>
       </div>
-    </div>
+      <p v-if="billingCycle !== 'monthly'" class="ps-toggle-hint mb-4">
+        {{ billingCycle === 'quarterly' ? 'Cobrado a cada 3 meses' : 'Cobrado anualmente' }} · cancele quando quiser
+      </p>
+
+      <!-- ── Cards ─────────────────────────────────────────────────────────── -->
+      <div class="ps-grid">
+        <div
+          v-for="plano in planosExibidos"
+          :key="plano.id"
+          class="ps-card"
+          :class="{
+            'ps-card--featured': plano.isPopular,
+            'ps-card--selected': selectedPlanId === plano.id,
+            'ps-card--free':     isFree(plano),
+          }"
+          @click="selectPlan(plano)"
+        >
+          <!-- badge destaque -->
+          <div v-if="plano.isPopular" class="ps-badge">⭐ Mais popular</div>
+
+          <!-- cabeçalho -->
+          <div class="ps-card-head">
+            <p class="ps-card-label">{{ plano.name }}</p>
+            <p class="ps-card-desc">{{ plano.description }}</p>
+          </div>
+
+          <!-- preço -->
+          <div class="ps-price-wrap">
+            <template v-if="isFree(plano)">
+              <div class="ps-price">
+                <span class="ps-price-num">R$ 0</span>
+                <span class="ps-price-period">/mês</span>
+              </div>
+              <p class="ps-price-note">Para sempre grátis</p>
+            </template>
+
+            <template v-else-if="isEnterprise(plano)">
+              <div class="ps-price">
+                <span class="ps-price-num" style="font-size:1.5rem">Sob consulta</span>
+              </div>
+            </template>
+
+            <template v-else>
+              <div v-if="billingCycle !== 'monthly'" class="ps-price-striked">
+                <span>R$ {{ fmt(Number(plano.price)) }}</span>/mês
+              </div>
+              <div class="ps-price">
+                <span class="ps-price-currency">R$</span>
+                <span class="ps-price-num">{{ displayPrice(plano.price) }}</span>
+                <span class="ps-price-period">/mês</span>
+              </div>
+              <p v-if="billingCycle !== 'monthly'" class="ps-price-note">
+                cobrado R$ {{ totalCharged(plano.price) }}
+                {{ billingCycle === 'quarterly' ? '/trimestre' : '/ano' }}
+                · economia R$ {{ savings(plano.price) }}
+              </p>
+              <p class="ps-trial-chip">
+                🎁 {{ trialDays }} dias grátis · sem cartão
+              </p>
+            </template>
+          </div>
+
+          <!-- features vindas do backend -->
+          <ul class="ps-features">
+            <li
+              v-for="f in plano.parsedFeatures"
+              :key="f.key"
+              :class="f.ok ? 'ps-feat--ok' : 'ps-feat--off'"
+            >
+              <span class="ps-feat-icon">{{ f.ok ? '✓' : '✗' }}</span>
+              {{ f.texto }}
+            </li>
+          </ul>
+
+          <!-- CTA -->
+          <button
+            type="button"
+            class="ps-cta"
+            :class="plano.isPopular ? 'ps-cta--primary' : 'ps-cta--outline'"
+            @click.stop="handleCta(plano)"
+          >
+            {{ ctaLabel(plano) }}
+          </button>
+        </div>
+      </div>
+
+    </template>
 
     <p class="ps-footnote">
       🔒 Pagamento seguro · Cancele quando quiser · Sem multa de saída
@@ -124,26 +145,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-// ── props ──────────────────────────────────────────────────────────────────
+// ── Props ───────────────────────────────────────────────────────────────────
 const props = withDefaults(defineProps<{
-  segment?:      string
-  redirectBase?: string
-  redirect?:     boolean   // false = só emite, não navega
-  trialDays?:    number
-  annualDiscount?:    number
-  quarterlyDiscount?: number
+  segment?:            string
+  redirectBase?:       string
+  redirect?:           boolean
+  trialDays?:          number
+  annualDiscount?:     number
+  quarterlyDiscount?:  number
+  apiBase?:            string
 }>(), {
-  segment:      'barber',
-  redirectBase: 'https://admin.suaagenda.link',
-  redirect:     true,
-  trialDays:    7,
-  annualDiscount:    20,
-  quarterlyDiscount: 10,
+  segment:             'barber',
+  redirectBase:        'https://admin.suaagenda.link',
+  redirect:            true,
+  trialDays:           7,
+  annualDiscount:      20,
+  quarterlyDiscount:   10,
+  apiBase:             '',
 })
 
-// ── emits ──────────────────────────────────────────────────────────────────
+// ── Emits ───────────────────────────────────────────────────────────────────
 const emit = defineEmits<{
   (e: 'select', payload: {
     planId:       number
@@ -153,165 +176,167 @@ const emit = defineEmits<{
   }): void
 }>()
 
-// ── state ──────────────────────────────────────────────────────────────────
+// ── State ───────────────────────────────────────────────────────────────────
 type BillingCycle = 'monthly' | 'quarterly' | 'annual'
-const billingCycle    = ref<BillingCycle>('annual')
-const selectedPlanId  = ref<number | null>(null)
+const billingCycle   = ref<BillingCycle>('annual')
+const selectedPlanId = ref<number | null>(null)
+const rawPlans       = ref<any[]>([])
+const loading        = ref(true)
+const error          = ref('')
 
-// ── cycles ─────────────────────────────────────────────────────────────────
+// ── Cycles ──────────────────────────────────────────────────────────────────
 const cycles = computed(() => [
-  { value: 'monthly',   label: 'Mensal',     badge: '' },
-  { value: 'quarterly', label: 'Trimestral', badge: `-${props.quarterlyDiscount}%` },
-  { value: 'annual',    label: 'Anual',      badge: `-${props.annualDiscount}%` },
+  { value: 'monthly'   as BillingCycle, label: 'Mensal',     badge: '' },
+  { value: 'quarterly' as BillingCycle, label: 'Trimestral', badge: `-${props.quarterlyDiscount}%` },
+  { value: 'annual'    as BillingCycle, label: 'Anual',      badge: `-${props.annualDiscount}%` },
 ])
 
-// ── helpers de preço ───────────────────────────────────────────────────────
+// ── Preço ───────────────────────────────────────────────────────────────────
 const discountFactor = computed(() => {
   if (billingCycle.value === 'annual')    return 1 - props.annualDiscount    / 100
   if (billingCycle.value === 'quarterly') return 1 - props.quarterlyDiscount / 100
   return 1
 })
+const periodMonths = computed(() =>
+  ({ monthly: 1, quarterly: 3, annual: 12 }[billingCycle.value])
+)
 
-const periodMonths = computed(() => ({
-  monthly: 1, quarterly: 3, annual: 12
-}[billingCycle.value]))
-
-function toNum(preco: string) {
-  return parseFloat(preco.replace(',', '.'))
-}
-function fmt(n: number) {
-  return n.toFixed(2).replace('.', ',')
-}
-
-function displayPrice(preco: string) {
-  return fmt(toNum(preco) * discountFactor.value)
+function fmt(n: number)                    { return n.toFixed(2).replace('.', ',') }
+function displayPrice(p: number | string)  { return fmt(Number(p) * discountFactor.value) }
+function totalCharged(p: number | string)  { return fmt(Number(p) * discountFactor.value * periodMonths.value) }
+function savings(p: number | string) {
+  const base = Number(p)
+  return fmt((base - base * discountFactor.value) * periodMonths.value)
 }
 
-function totalCharged(preco: string) {
-  return fmt(toNum(preco) * discountFactor.value * periodMonths.value)
+// ── Classificadores ─────────────────────────────────────────────────────────
+// Plano Free  → id=1, price=0, isTrial=false (gratuito para sempre)
+// Enterprise  → id=5, price=0, isTrial=true  (sob consulta)
+function isFree(plan: any)       { return Number(plan.price) === 0 && !plan.isTrial }
+function isEnterprise(plan: any) { return Number(plan.price) === 0 && !!plan.isTrial }
+
+// ── Feature labels (keys reais da tabela `features`) ────────────────────────
+const FEATURE_LABELS: Record<string, (v: string | number) => string> = {
+  appointments_per_month: v => v === 'Ilimitado' ? 'Agendamentos ilimitados'    : `${v} agendamentos/mês`,
+  max_employees:          v => v === 'Ilimitado' ? 'Profissionais ilimitados'   : `${v} profissional${v == '1' ? '' : 'is'}`,
+  max_users:              v => v === 'Ilimitado' ? 'Usuários ilimitados'        : `${v} usuário${v == '1' ? '' : 's'}`,
+  max_clients:            v => v === 'Ilimitado' ? 'Clientes ilimitados'        : `${v} clientes`,
+  max_services:           v => v === 'Ilimitado' ? 'Serviços ilimitados'        : `${v} serviços`,
+  max_units:              v => v === 'Ilimitado' ? 'Unidades ilimitadas'        : `${v} unidade${v == '1' ? '' : 's'}`,
+  site:                   _ => 'Site público',
+  notificacao_email:      _ => 'Notificação por e-mail',
+  lembretes_automaticos:  _ => 'Lembretes automáticos anti-furo',
+  whatsapp_enabled:       _ => 'Notificação via WhatsApp',
+  integrations:           v => v === 'Ilimitado' ? 'Integrações ilimitadas'
+                                : (v == '0' || v === 'false') ? 'Sem integrações'
+                                : `${v} integração${v == '1' ? '' : 'ões'}`,
+  relatorios:             _ => 'Relatórios e métricas',
+  site_customization:     _ => 'Personalização do site',
 }
 
-function savings(preco: string) {
-  const base     = toNum(preco)
-  const discounted = base * discountFactor.value
-  return fmt((base - discounted) * periodMonths.value)
+function isFeatureOn(value: string | number): boolean {
+  const v = String(value).toLowerCase().trim()
+  if (v === 'false' || v === '0') return false
+  if (v === 'true'  || v === 'ilimitado') return true
+  return Number(value) > 0
 }
 
-// ── features builder ───────────────────────────────────────────────────────
-function mkFeatures(
-  agend: string | number, profs: string | number, users: string | number,
-  clients: string | number, site: boolean, emailNotif: boolean,
-  lembretes: boolean, whatsapp: boolean, integrations: string | number,
-  relatorios: boolean, units: string | number
-) {
-  return [
-    { texto: `${agend} agendamentos/mês`,                                                                          ok: true       },
-    { texto: `${profs} profissional${profs === 1 ? '' : 'is'}`,                                                    ok: true       },
-    { texto: `${users} usuário${users === 1 ? '' : 's'}`,                                                          ok: true       },
-    { texto: clients === 'true' || clients === true ? 'Clientes ilimitados' : `${clients} clientes`,               ok: true       },
-    { texto: 'Site público',                                                                                        ok: site       },
-    { texto: 'Notificação por e-mail',                                                                              ok: emailNotif },
-    { texto: 'Lembretes automáticos anti-furo',                                                                     ok: lembretes  },
-    { texto: 'Notificação via WhatsApp',                                                                            ok: whatsapp   },
-    { texto: integrations === 'Ilimitado' ? 'Integrações ilimitadas'
-             : (integrations === 0 || integrations === '0') ? 'Sem integrações'
-             : `${integrations} integração${integrations === 1 || integrations === '1' ? '' : 'ões'}`,             ok: Number(integrations) > 0 || integrations === 'Ilimitado' },
-    { texto: 'Relatórios e métricas',                                                                               ok: relatorios },
-    { texto: units === 'Ilimitado' ? 'Unidades ilimitadas' : `${units} unidade${units === 1 || units === '1' ? '' : 's'}`, ok: true },
-  ]
+// O backend já formata features[] como array de strings (ex: "Até 20 agendamentos/mês").
+// MAS também retorna planFeatures[] com os objetos brutos.
+// Usamos planFeatures quando disponível (mais controle), senão caímos no features[].
+function parsePlanFeatures(plan: any): { key: string; texto: string; ok: boolean }[] {
+  // Prioridade 1: planFeatures com Feature.key (mais rico)
+  if (plan.planFeatures?.length) {
+    return plan.planFeatures
+      .map((pf: any) => {
+        const key     = pf.Feature?.key ?? String(pf.featureId)
+        const value   = pf.value
+        const labelFn = FEATURE_LABELS[key]
+        const texto   = labelFn
+          ? labelFn(value)
+          : `${pf.Feature?.label ?? key}: ${value}`
+        return { key, texto, ok: isFeatureOn(value) }
+      })
+      .sort((a: any, b: any) => Number(b.ok) - Number(a.ok))
+  }
+
+  // Fallback: features[] já formatado pelo backend (strings simples)
+  if (plan.features?.length) {
+    return plan.features.map((texto: string, i: number) => ({
+      key:   String(i),
+      texto,
+      ok:    true,
+    }))
+  }
+
+  return []
 }
 
-// ── planos ─────────────────────────────────────────────────────────────────
-const planos = [
-  {
-    planId:   1,
-    label:    'Gratuito',
-    desc:     'Comece sem pagar nada. Para sempre.',
-    preco:    '0',
-    destaque: false,
-    isFree:   true,
-    features: mkFeatures(20, 1, 1, 10, true, false, false, false, 0, false, 1),
-  },
-  {
-    planId:   2,
-    label:    'Profissional Solo',
-    desc:     'Para autônomos que trabalham sozinhos.',
-    preco:    '79,90',
-    destaque: true,
-    isFree:   false,
-    features: mkFeatures(200, 1, 2, 'true', true, true, false, true, 1, false, 1),
-  },
-  {
-    planId:   3,
-    label:    'Equipe Pequena',
-    desc:     'Barbearia com 2 a 3 profissionais.',
-    preco:    '99,90',
-    destaque: false,
-    isFree:   false,
-    features: mkFeatures(500, 3, 5, 'true', true, true, false, true, 2, false, 1),
-  },
-  {
-    planId:   4,
-    label:    'Equipe Média',
-    desc:     'Negócio em crescimento, 4 a 6 profissionais.',
-    preco:    '149,90',
-    destaque: false,
-    isFree:   false,
-    features: mkFeatures(1000, 6, 10, 'true', true, true, true, true, 5, true, 2),
-  },
-  {
-    planId:   5,
-    label:    'Equipe Avançada',
-    desc:     '7+ profissionais. Múltiplas unidades.',
-    preco:    null,
-    destaque: false,
-    isFree:   false,
-    features: mkFeatures('Ilimitado', 'Ilimitado', 'Ilimitado', 'Ilimitado', true, true, true, true, 'Ilimitado', true, 'Ilimitado'),
-  },
-]
-
-const planosOrdenados = computed(() =>
-  planos.map(p => ({
+// ── Planos processados ───────────────────────────────────────────────────────
+const planosExibidos = computed(() =>
+  rawPlans.value.map(p => ({
     ...p,
-    features: [...p.features].sort((a, b) => Number(b.ok) - Number(a.ok)),
+    parsedFeatures: parsePlanFeatures(p),
   }))
 )
 
-// ── actions ────────────────────────────────────────────────────────────────
-function selectPlan(plano: typeof planos[0]) {
-  selectedPlanId.value = plano.planId
+// ── Fetch — rota pública, sem JWT ────────────────────────────────────────────
+// ── Fetch ──────────────────────────────────────────────────────────────────
+const config = useRuntimeConfig() // 👈 pega a config do nuxt.config.ts
+
+async function fetchPlans() {
+  loading.value = true
+  error.value   = ''
+  try {
+    // 👇 usa a baseURL da config em vez da prop apiBase
+    const res = await fetch(`${config.public.apiBase}/plans/public`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json()
+    const list: any[] = Array.isArray(json) ? json : (json.data ?? [])
+    rawPlans.value = list.sort((a: any, b: any) => {
+      if (isEnterprise(a)) return 1
+      if (isEnterprise(b)) return -1
+      return Number(a.price) - Number(b.price)
+    })
+  } catch (e: any) {
+    error.value = 'Não foi possível carregar os planos. Tente novamente.'
+    console.error('[PlanSelector] fetch error:', e)
+  } finally {
+    loading.value = false
+  }
 }
 
-function ctaLabel(plano: typeof planos[0]) {
-  if (plano.isFree)         return '🎁 Começar grátis'
-  if (plano.preco === null) return '💬 Falar com a gente'
+onMounted(fetchPlans)
+
+// ── Actions ──────────────────────────────────────────────────────────────────
+function selectPlan(plano: any) { selectedPlanId.value = plano.id }
+
+function ctaLabel(plano: any) {
+  if (isFree(plano))       return '🎁 Começar grátis'
+  if (isEnterprise(plano)) return '💬 Falar com a gente'
   return `✂️ Começar ${props.trialDays} dias grátis`
 }
 
-function buildUrl(plano: typeof planos[0]): string {
-  if (plano.preco === null) return 'https://wa.me/5511941649284'
-
+function buildUrl(plano: any): string {
   const params = new URLSearchParams({
-    planId:       String(plano.planId),
+    planId:       String(plano.id),
     billingCycle: billingCycle.value,
   })
   return `${props.redirectBase}/admin/auth/register?${params.toString()}`
 }
 
-function handleCta(plano: typeof planos[0]) {
-  selectedPlanId.value = plano.planId
+function handleCta(plano: any) {
+  selectedPlanId.value = plano.id
 
-  const payload = {
-    planId:       plano.planId,
+  emit('select', {
+    planId:       plano.id,
     billingCycle: billingCycle.value,
-    priceMonthly: plano.preco ? displayPrice(plano.preco) : '0',
-    priceTotal:   plano.preco ? totalCharged(plano.preco) : '0',
-  }
-
-  emit('select', payload)
+    priceMonthly: !isFree(plano) && !isEnterprise(plano) ? displayPrice(plano.price) : '0',
+    priceTotal:   !isFree(plano) && !isEnterprise(plano) ? totalCharged(plano.price)  : '0',
+  })
 
   if (props.redirect) {
-    if (plano.preco === null) {
+    if (isEnterprise(plano)) {
       window.open('https://wa.me/5511941649284', '_blank')
     } else {
       window.location.href = buildUrl(plano)
@@ -329,6 +354,43 @@ function handleCta(plano: typeof planos[0]) {
   gap: 1.5rem;
   width: 100%;
 }
+
+/* ── loading / error ───────────────────────────────────────────────────── */
+.ps-loading {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 0;
+}
+.ps-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgba(52,211,153,0.2);
+  border-top-color: #34d399;
+  border-radius: 50%;
+  animation: ps-spin 0.7s linear infinite;
+}
+@keyframes ps-spin { to { transform: rotate(360deg); } }
+
+.ps-error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.875rem;
+}
+.ps-retry-btn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid rgba(52,211,153,0.3);
+  border-radius: 8px;
+  background: transparent;
+  color: #34d399;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.ps-retry-btn:hover { background: rgba(52,211,153,0.08); }
 
 /* ── toggle ────────────────────────────────────────────────────────────── */
 .ps-toggle-wrap {
@@ -356,7 +418,6 @@ function handleCta(plano: typeof planos[0]) {
   font-family: inherit;
   white-space: nowrap;
 }
-
 .ps-toggle-btn--active {
   background: #34d399;
   color: #000;
@@ -372,12 +433,10 @@ function handleCta(plano: typeof planos[0]) {
   color: inherit;
   letter-spacing: 0.3px;
 }
-
 .ps-toggle-btn--active .ps-toggle-badge {
   background: rgba(0,0,0,0.2);
   color: #000;
 }
-
 .ps-toggle-btn:not(.ps-toggle-btn--active) .ps-toggle-badge {
   background: rgba(52,211,153,0.15);
   color: #34d399;
@@ -397,7 +456,6 @@ function handleCta(plano: typeof planos[0]) {
   gap: 12px;
   width: 100%;
 }
-
 @media (max-width: 1100px) { .ps-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 768px)  { .ps-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .ps-grid { grid-template-columns: 1fr; } }
@@ -415,17 +473,14 @@ function handleCta(plano: typeof planos[0]) {
   cursor: pointer;
   transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
-
 .ps-card:hover {
   border-color: rgba(52,211,153,0.3);
   transform: translateY(-2px);
 }
-
 .ps-card--featured {
   border-color: #34d399;
   box-shadow: 0 0 0 1px #34d399, 0 8px 32px rgba(52,211,153,0.12);
 }
-
 .ps-card--selected {
   border-color: #34d399;
   background: rgba(52,211,153,0.04);
@@ -474,20 +529,17 @@ function handleCta(plano: typeof planos[0]) {
   color: rgba(255,255,255,0.28);
   text-decoration: line-through;
 }
-
 .ps-price {
   display: flex;
   align-items: baseline;
   gap: 2px;
 }
-
 .ps-price-currency {
   font-size: 0.9rem;
   font-weight: 700;
   color: rgba(255,255,255,0.5);
   margin-right: 2px;
 }
-
 .ps-price-num {
   font-size: 2.2rem;
   font-weight: 900;
@@ -495,19 +547,16 @@ function handleCta(plano: typeof planos[0]) {
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-
 .ps-price-period {
   font-size: 0.78rem;
   color: rgba(255,255,255,0.35);
   margin-left: 2px;
 }
-
 .ps-price-note {
   font-size: 0.7rem;
   color: #34d399;
   font-weight: 600;
 }
-
 .ps-trial-chip {
   display: inline-block;
   margin-top: 4px;
@@ -530,7 +579,6 @@ function handleCta(plano: typeof planos[0]) {
   gap: 0;
   flex: 1;
 }
-
 .ps-features li {
   display: flex;
   align-items: flex-start;
@@ -542,16 +590,10 @@ function handleCta(plano: typeof planos[0]) {
   color: rgba(255,255,255,0.5);
 }
 .ps-features li:last-child { border-bottom: none; }
-
-.ps-feat--ok { color: rgba(255,255,255,0.75); }
+.ps-feat--ok  { color: rgba(255,255,255,0.75); }
 .ps-feat--off { color: rgba(255,255,255,0.2); }
-
-.ps-feat-icon {
-  flex-shrink: 0;
-  font-size: 0.7rem;
-  margin-top: 1px;
-}
-.ps-feat--ok .ps-feat-icon  { color: #34d399; }
+.ps-feat-icon { flex-shrink: 0; font-size: 0.7rem; margin-top: 1px; }
+.ps-feat--ok  .ps-feat-icon { color: #34d399; }
 .ps-feat--off .ps-feat-icon { color: rgba(255,255,255,0.15); }
 
 /* ── CTA ───────────────────────────────────────────────────────────────── */
@@ -566,18 +608,12 @@ function handleCta(plano: typeof planos[0]) {
   font-family: inherit;
   border: none;
 }
-
 .ps-cta:hover { transform: translateY(-1px); }
-
-.ps-cta--primary {
-  background: #34d399;
-  color: #000;
-}
+.ps-cta--primary { background: #34d399; color: #000; }
 .ps-cta--primary:hover {
   background: #6ee7b7;
   box-shadow: 0 4px 20px rgba(52,211,153,0.3);
 }
-
 .ps-cta--outline {
   background: transparent;
   border: 1px solid rgba(52,211,153,0.25);

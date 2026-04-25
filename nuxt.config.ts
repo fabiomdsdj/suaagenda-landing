@@ -110,10 +110,14 @@ export default defineNuxtConfig({
     // Antes usava driver de memória — cache perdido em cada restart/deploy
     // REDIS_URL deve ser a connection string do Upstash: rediss://...
     storage: {
-      cache: {
-        driver: "redis",
-        url: process.env.REDIS_URL ?? '',
-      },
+      cache: process.env.REDIS_URL && process.env.NODE_ENV === 'production'
+        ? {
+            driver: 'redis',
+            url: process.env.REDIS_URL,
+          }
+        : {
+            driver: 'memory',
+          },
     },
   },
 

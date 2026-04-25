@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const path = Array.isArray(raw) ? raw.join('/') : String(raw ?? '')
 
   const storage = useStorage('cache')
-  const key = `barbershop:${path}`
+  const key = `barbershop-${path}`
 
   const hit = await storage.getItem(key)
   if (hit) return hit
