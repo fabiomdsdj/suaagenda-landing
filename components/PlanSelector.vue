@@ -161,7 +161,7 @@ const props = withDefaults(defineProps<{
   redirectBase:        'https://admin.suaagenda.link',
   redirect:            true,
   trialDays:           7,
-  annualDiscount:      20,
+  annualDiscount:      15,
   quarterlyDiscount:   10,
   apiBase:             '',
 })

@@ -39,10 +39,10 @@
           </template>
         </component>
 
-        <!-- ✨ BUSCA GLOBAL (Desktop) -->
+        <!-- ✨ BUSCA GLOBAL (Desktop) 
         <div class="hidden md:block flex-1 max-w-md">
           <GlobalSearch placeholder="Buscar barbearias..." />
-        </div>
+        </div -->
 
         <!-- Desktop links -->
         <nav class="hidden md:flex items-center gap-7">

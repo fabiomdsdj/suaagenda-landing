@@ -71,6 +71,7 @@ export default defineNuxtConfig({
       dailyRegistrationGoal:  process.env.NUXT_PUBLIC_DAILY_REGISTRATION_GOAL  || '0',
       useLocationsApi: process.env.NUXT_PUBLIC_USE_LOCATIONS_API || 'true',
       annualDiscount: process.env.NUXT_PUBLIC_ANNUAL_DISCOUNT ?? '15',
+      quarterlyDiscount: process.env.NUXT_PUBLIC_QUARTERLY_DISCOUNT ?? '10',
     },
   },
   vite: {
