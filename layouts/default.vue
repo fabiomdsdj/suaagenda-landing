@@ -96,7 +96,7 @@
 
         <!-- Mobile: Busca + Burger -->
         <div class="flex items-center gap-2 md:hidden">
-          <button
+          <!--button
             class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
             aria-label="Buscar"
             @click="showMobileSearch = !showMobileSearch"
@@ -104,7 +104,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z"/>
             </svg>
-          </button>
+          </button-->
 
           <button
             class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
@@ -121,12 +121,12 @@
         </div>
       </div>
 
-      <!-- BUSCA MOBILE -->
+      <!-- BUSCA MOBILE 
       <Transition name="slide-down">
         <div v-if="showMobileSearch" class="md:hidden border-t border-white/5 bg-[#0f0f0f] px-6 py-4">
           <GlobalSearch placeholder="Buscar barbearias..." />
         </div>
-      </Transition>
+      </Transition -->
 
       <!-- Mobile drawer -->
       <Transition name="slide-down">
@@ -163,16 +163,11 @@
               </NuxtLink>
             </div>
 
-            <a
-              :href="wpLink"
-              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-400 text-black text-[16px] font-bold mt-2"
-              @click="mobileOpen = false"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
-              </svg>
-              Testar 7 dias grátis
-            </a>
+            <CtaButton
+              href="/choose-plan?segment=barber"
+              label="Ver planos"
+              :external="false"
+            />
           </div>
         </div>
       </Transition>
@@ -522,7 +517,7 @@ const navLinks = [
   { label: 'Como funciona', href: '#como-funciona' },
   { label: 'Benefícios',    href: '#como-funciona-passos' },
   { label: 'Depoimentos',   href: '#depoimentos' },
-  { label: 'Preço',         href: '#preco' },
+  //{ label: 'Preço',         href: '#preco' },
   { label: 'Dúvidas',       href: '#faq' },
 ]
 
