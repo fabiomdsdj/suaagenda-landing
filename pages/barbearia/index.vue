@@ -101,8 +101,8 @@
           class="flex flex-wrap gap-4 justify-center md:justify-start mb-10"
         >
           <CtaButton
-            href="https://admin.suaagenda.link/admin/auth/register?planId=1"
-            label="Criar agenda grátis agora"
+            :href="choosePlan"
+            label="Ver planos agora"
             emoji="✂️"
             size="xl"
           />
@@ -509,7 +509,7 @@
             <span class="absolute inset-0 rounded-2xl bg-green-400 opacity-20 animate-pulse pointer-events-none"></span>
             <CtaButton
               :href="plan1"
-              label="Criar agenda grátis agora"
+              label="Ver planos agora"
               emoji="✂️"
               size="xl"
               class="relative"
@@ -523,7 +523,6 @@
         </div>
       </div>
     </section>
-
   </div>
 </template>
 
@@ -542,7 +541,7 @@ import 'swiper/css/pagination'
 definePageMeta({ layout: 'barber' })
 
 useHead({
-  title: 'Sistema para barbearia grátis com agendamento online | SuaAgenda',
+  title: 'Sistema para barbearia grátis com agendamento online',
   
   meta: [
     {

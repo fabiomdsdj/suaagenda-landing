@@ -1,11 +1,11 @@
-// server/api/barbershop/[...slug].ts
 export default defineEventHandler(async (event) => {
-  const raw = getRouterParams(event).slug
-  const path = Array.isArray(raw) ? raw.join('/') : String(raw ?? '')
+  const { uf, city, neighborhood, slug } = getRouterParams(event)
+  const path = `${uf}/${city}/${neighborhood}/${slug}`
+  
+  console.log('🟢 Proxy Nuxt atingido:', { uf, city, neighborhood, slug, path })
 
   const storage = useStorage('cache')
   const key = `barbershop-${path}`
-
   const hit = await storage.getItem(key)
   if (hit) return hit
 
@@ -17,6 +17,6 @@ export default defineEventHandler(async (event) => {
     headers: apiKey ? { 'x-api-key': apiKey } : {},
   }).catch(() => null)
 
-  if (data) await storage.setItem(key, data, { ttl: 60 * 60 * 6 }) // 6h
+  if (data) await storage.setItem(key, data, { ttl: 60 * 60 * 6 })
   return data
 })
