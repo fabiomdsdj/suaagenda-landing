@@ -11,6 +11,8 @@ import altoTiete from "../alto-tiete"
 import regiaoAtibaia from "../regiao-atibaia"
 
 import rioDeJaneiroRJ from "../rio-de-janeiro-rj"
+import minasGeraisMG from "../minas-gerais-mg"
+import paranaPR from "../parana-pr"
 
 export interface Neighborhood {
   name: string
@@ -110,6 +112,8 @@ const rawSources: CityData[] = [
   ...addUF(baixadaSantista),
   ...addUF(regiaoAtibaia),
   ...rioDeJaneiroRJ,
+  ...minasGeraisMG,
+  ...paranaPR,
 ]
 
 // ✅ Sort por citySlug (ASCII puro) — 100% determinístico entre Node e browser.
@@ -279,4 +283,14 @@ export function getAllNeighborhoodRoutesFrom(cities: CityData[]): string[] {
     }
   }
   return routes
+}
+
+// Versão nova — aceita UFs injetadas (do banco) além das hardcoded
+export function getAllUFRoutesFrom(activeUFSlugs?: string[]): string[] {
+  const fromHardcoded = new Set(allCities.map(c => c.ufSlug))
+  const merged = activeUFSlugs
+    ? new Set([...fromHardcoded, ...activeUFSlugs])
+    : fromHardcoded
+
+  return [...merged].sort().map(uf => `/barbearias/${uf}`)
 }

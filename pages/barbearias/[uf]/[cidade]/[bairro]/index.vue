@@ -93,6 +93,11 @@
             <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5">
               ✂️ Sou barbeiro — quero aparecer aqui
             </a>
+            <CtaButton
+              :href="choosePlan"
+              label="Sou barbeiro e quero aparecer aqui"
+              size="xl"
+            />
             <NuxtLink to="/barbearia#como-funciona" class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5">
               Ver como funciona →
             </NuxtLink>
@@ -514,6 +519,8 @@ const ufSlug           = (route.params.uf     as string).toLowerCase().trim()
 const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const neighborhoodLabel = neighborhoodSlug.replace(/-/g, ' ')
+
+const choosePlan = "/choose-plan?segment=barber"
 
 // ✅ Contador do bairro
 const neighborhoodCount = useBarbershopCounts()

@@ -289,8 +289,8 @@
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20 mb-8">
             💈 {{ totalCidades }} cidades · {{ totalBairros }} bairros
           </div>
-                    <!-- ✅ H1 com contador dinâmico nacional -->
-                    <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);letter-spacing:.03em">
+          <!-- H1 com contador dinâmico nacional -->
+          <h1 class="font-black leading-none mb-6 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);letter-spacing:.03em">
             <template v-if="nationalCount.pending.value">
               <span class="animate-pulse">CARREGANDO...</span>
             </template>
@@ -374,15 +374,31 @@
         </div>
       </section>
 
+      <!-- ESTADOS -->
       <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
         <div class="max-w-6xl mx-auto">
           <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Estados</span>
           <h2 class="font-black leading-none mb-10 text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3vw,42px)">ESCOLHA SEU ESTADO</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            <NuxtLink v-for="uf in ufs" :key="uf.ufSlug" :to="`/barbearias/${uf.ufSlug}`" class="group flex items-center justify-between p-5 rounded-2xl border border-white/[.06] bg-[#181818] hover:border-green-400/30 hover:bg-green-400/[.03] transition-all duration-200">
+
+          <!-- Loading skeleton -->
+          <div v-if="pendingUFs" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div v-for="i in 8" :key="i" class="h-[72px] rounded-2xl bg-[#181818] animate-pulse border border-white/[.04]"/>
+          </div>
+
+          <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <NuxtLink
+              v-for="uf in ufs"
+              :key="uf.ufSlug"
+              :to="`/barbearias/${uf.ufSlug}`"
+              class="group flex items-center justify-between p-5 rounded-2xl border border-white/[.06] bg-[#181818] hover:border-green-400/30 hover:bg-green-400/[.03] transition-all duration-200"
+            >
               <div>
                 <p class="font-bold text-white group-hover:text-green-400 transition-colors text-lg">{{ uf.uf }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">{{ uf.totalCidades }} cidades · {{ uf.totalBairros }} bairros</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  <template v-if="uf.totalCidades > 0">{{ uf.totalCidades }} cidades · {{ uf.totalBairros }} bairros</template>
+                  <template v-else-if="uf.count">{{ uf.count.toLocaleString('pt-BR') }} barbearias</template>
+                  <template v-else>Ver barbearias</template>
+                </p>
               </div>
               <span class="text-gray-600 group-hover:text-green-400 transition-colors">→</span>
             </NuxtLink>
@@ -455,12 +471,20 @@ definePageMeta({ layout: 'barber' })
 const router = useRouter()
 const route  = useRoute()
 
-// ✅ Contador nacional
+// ── Contador nacional ──────────────────────────────────────────────────────────
 const nationalCount = useBarbershopCounts()
 
 onMounted(() => {
   nationalCount.fetch()
 })
+
+// ── UFs do banco (merge com hardcoded) ────────────────────────────────────────
+const { data: availableUFsData, pending: pendingUFs } = await useAsyncData(
+  'available-ufs-index',
+  () => $fetch<{ data: { uf: string; ufSlug: string; count: number }[] }>('/api/available-ufs')
+    .catch(() => ({ data: [] as { uf: string; ufSlug: string; count: number }[] })),
+  { server: true, lazy: true, default: () => ({ data: [] as { uf: string; ufSlug: string; count: number }[] }) }
+)
 
 // ── Query params (fonte da verdade) ──────────────────────────────────────────
 const currentQ            = computed(() => (route.query.q            as string) || '')
@@ -837,15 +861,48 @@ onMounted(() => document.addEventListener('mousedown', onClickOutside))
 onUnmounted(() => document.removeEventListener('mousedown', onClickOutside))
 
 // ── Discovery data ─────────────────────────────────────────────────────────────
+
+// UFs: merge hardcoded + banco
 const ufs = computed(() => {
-  const map = new Map<string, { uf: string; ufSlug: string; totalCidades: number; totalBairros: number }>()
+  // Base hardcoded — tem estrutura completa (totalCidades, totalBairros)
+  const map = new Map<string, {
+    uf: string
+    ufSlug: string
+    totalCidades: number
+    totalBairros: number
+    count?: number
+  }>()
+
   for (const city of allCities) {
     const bairros = city.districts.reduce((a, d) => a + d.neighborhoods.length, 0)
     const ex = map.get(city.ufSlug)
-    if (!ex) map.set(city.ufSlug, { uf: city.uf, ufSlug: city.ufSlug, totalCidades: 1, totalBairros: bairros })
-    else { ex.totalCidades++; ex.totalBairros += bairros }
+    if (!ex) {
+      map.set(city.ufSlug, { uf: city.uf, ufSlug: city.ufSlug, totalCidades: 1, totalBairros: bairros })
+    } else {
+      ex.totalCidades++
+      ex.totalBairros += bairros
+    }
   }
-  // ✅ Sort por ufSlug (ASCII) — determinístico em qualquer ambiente
+
+  // Merge banco — adiciona UFs que não estão no hardcoded e enriquece count
+  for (const row of (availableUFsData.value?.data ?? [])) {
+    if (!row.ufSlug) continue
+    const existing = map.get(row.ufSlug)
+    if (!existing) {
+      // UF nova vinda só do banco
+      map.set(row.ufSlug, {
+        uf:           row.uf ?? row.ufSlug.toUpperCase(),
+        ufSlug:       row.ufSlug,
+        totalCidades: 0,
+        totalBairros: 0,
+        count:        row.count,
+      })
+    } else {
+      // Enriquece o count do hardcoded com dado real do banco
+      existing.count = row.count
+    }
+  }
+
   return Array.from(map.values()).sort((a, b) => (a.ufSlug < b.ufSlug ? -1 : 1))
 })
 
@@ -856,7 +913,6 @@ const featuredCities = computed(() =>
       totalDistritos: c.districts.length,
       totalBairros: c.districts.reduce((a, d) => a + d.neighborhoods.length, 0),
     }))
-    // ✅ Desempata por citySlug — garante ordem idêntica server/client quando totalBairros for igual
     .sort((a, b) => b.totalBairros - a.totalBairros || (a.citySlug < b.citySlug ? -1 : 1))
     .slice(0, 6)
 )

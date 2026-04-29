@@ -3,6 +3,7 @@ import {
   getOldNeighborhoodRoutes,
   getOldCityRoutes,
   getOldBarbeirosRoutes,
+  getAllUFRoutesFrom,
 } from "./data/locations"
 
 const redirectRules: Record<string, { redirect: string }> = {}
@@ -13,6 +14,29 @@ for (const { from, to } of [
 ]) {
   redirectRules[from] = { redirect: to }
 }
+
+// UFs do banco — buscadas em build time pra montar as routeRules
+async function fetchActiveUFSlugs(): Promise<string[]> {
+  const apiBase = process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3011'
+  const apiKey  = process.env.NUXT_PUBLIC_API_KEY || ''
+  try {
+    const res = await fetch(`${apiBase}/locations/available-ufs`, {
+      headers: apiKey ? { 'x-api-key': apiKey } : {},
+      signal: AbortSignal.timeout(5000),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json() as { data: { ufSlug: string }[] }
+    return json.data.map(u => u.ufSlug)
+  } catch (e) {
+    console.warn('[nuxt.config] available-ufs falhou, usando só hardcoded:', e)
+    return []
+  }
+}
+
+const activeUFSlugs = await fetchActiveUFSlugs()
+const ufRoutes      = getAllUFRoutesFrom(activeUFSlugs)
+
+console.log(`[nuxt.config] UF routes geradas: ${ufRoutes.join(', ')}`)
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -145,6 +169,16 @@ export default defineNuxtConfig({
       isr: 60 * 60 * 12,
       headers: { 'cache-control': 'public, max-age=43200, stale-while-revalidate=3600' },
     },
+    // ✅ UFs do banco viram ISR automaticamente no próximo build
+    ...Object.fromEntries(
+      ufRoutes.map(route => [
+        route,
+        {
+          isr: 60 * 60 * 12,
+          headers: { 'cache-control': 'public, max-age=43200, stale-while-revalidate=7200' },
+        },
+      ])
+    ),
     ...redirectRules,
   },
 
