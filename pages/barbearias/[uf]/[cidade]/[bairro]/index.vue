@@ -669,48 +669,68 @@ watch(
 const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
 
 useHead(computed(() => {
-  if (!seo.value && fallback.shops.value.length > 0) {
+  // SEO completo → sempre indexa
+  if (seo.value) {
+    const count = neighborhoodCount.count.value
+    const titleWithCount = count > 0
+      ? `${count.toLocaleString('pt-BR')} Barbearias em ${seo.value.neighborhoodName} — ${seo.value.cityName}`
+      : seo.value.metaTitle
+
+    return {
+      title: titleWithCount,
+      meta: [
+        { name: 'description',        content: seo.value.metaDescription },
+        { property: 'og:title',       content: titleWithCount },
+        { property: 'og:description', content: seo.value.metaDescription },
+        { property: 'og:url',         content: seo.value.canonicalUrl },
+        { property: 'og:type',        content: 'website' },
+        { property: 'og:image',       content: OG_FALLBACK },
+        { property: 'fb:app_id',      content: '1288931335787890' },
+        { name: 'twitter:card',       content: 'summary_large_image' },
+        // ✅ sem noindex aqui
+      ],
+      link:   [{ rel: 'canonical', href: seo.value.canonicalUrl }],
+      script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(seo.value.jsonLd) }],
+    }
+  }
+
+  // Sem SEO mas com shops encontrados → indexa com noindex:false
+  // (fallback.shops pode estar vazio no SSR mas cheio no client — não pune)
+  if (fallback.shops.value.length > 0) {
     const count = neighborhoodCount.count.value
     return {
       title: count > 0
         ? `${count.toLocaleString('pt-BR')} Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`
         : `Barbearias perto de ${neighborhoodLabel} — ${fallback.cityLabel}`,
       meta: [
-        { 
-          name: 'description', 
-          content: `Encontre ${count > 0 ? `entre ${count}` : ''} barbearias próximas de ${neighborhoodLabel} em ${fallback.cityLabel} com agendamento online pelo WhatsApp.` 
+        {
+          name: 'description',
+          content: `Encontre barbearias próximas de ${neighborhoodLabel} em ${fallback.cityLabel} com agendamento online pelo WhatsApp.`,
         },
-        { name: 'robots', content: 'noindex, follow' },
+        { name: 'robots', content: 'noindex, follow' }, // sem seo = sem valor SEO real
       ],
     }
   }
-  if (!seo.value) {
+
+  // ⚠️  Estado ainda carregando (SSR ou hydration) — NÃO serve noindex
+  // Serve um título genérico sem meta robots (default do browser = index)
+  if (fallback.pending.value) {
     return {
       title: `Barbearias perto de ${neighborhoodLabel}`,
-      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+      meta: [
+        {
+          name: 'description',
+          content: `Encontre barbearias próximas de ${neighborhoodLabel} com agendamento online.`,
+        },
+        // ✅ sem noindex — deixa o Googlebot tentar renderizar
+      ],
     }
   }
-  
-  const count = neighborhoodCount.count.value
-  const titleWithCount = count > 0
-    ? `${count.toLocaleString('pt-BR')} Barbearias em ${seo.value.neighborhoodName} — ${seo.value.cityName}`
-    : seo.value.metaTitle
-    
+
+  // Certeza total que não tem nada (pending=false, shops=0, seo=null)
   return {
-    title: titleWithCount,
-    meta: [
-      { name: 'description',        content: seo.value.metaDescription },
-      { property: 'og:title',       content: titleWithCount },
-      { property: 'og:description', content: seo.value.metaDescription },
-      { property: 'og:url',         content: seo.value.canonicalUrl },
-      { property: 'og:type',        content: 'website' },
-      { property: 'og:image',       content: OG_FALLBACK },
-      { property: 'fb:app_id',      content: '1288931335787890' },
-      { name: 'twitter:card',       content: 'summary_large_image' },
-      { name: 'robots',             content: 'index, follow' },
-    ],
-    link:   [{ rel: 'canonical', href: seo.value.canonicalUrl }],
-    script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(seo.value.jsonLd) }],
+    title: `Barbearias perto de ${neighborhoodLabel}`,
+    meta: [{ name: 'robots', content: 'noindex, nofollow' }],
   }
 }))
 

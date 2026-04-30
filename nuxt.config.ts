@@ -20,7 +20,7 @@ async function fetchActiveUFSlugs(): Promise<string[]> {
   const apiBase = process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3011'
   const apiKey  = process.env.NUXT_PUBLIC_API_KEY || ''
   try {
-    const res = await fetch(`${apiBase}/locations/available-ufs`, {
+    const res = await fetch(`${apiBase}/geoLocations/available-ufs`, {
       headers: apiKey ? { 'x-api-key': apiKey } : {},
       signal: AbortSignal.timeout(5000),
     })

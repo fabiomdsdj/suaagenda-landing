@@ -28,20 +28,29 @@
 
         <div class="flex-1">
           <div class="flex flex-wrap gap-3 mb-6">
-            <span v-if="barbershop.featured" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-yellow-400 bg-yellow-400/10 border border-yellow-400/20">⭐ DESTAQUE</span>
+            <span
+              v-if="barbershop.featured"
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-yellow-400 bg-yellow-400/10 border border-yellow-400/20"
+            >⭐ DESTAQUE</span>
+
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">
               📍 {{ neighborhoodLabel }}, {{ cityLabel }}
             </span>
-            <span v-if="googleRating" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">
+
+            <span
+              v-if="googleRating"
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20"
+            >
               ⭐ {{ googleRating.toFixed(1) }} ({{ barbershop.googleReviewCount }} avaliações)
             </span>
+
             <span
               v-if="opening.status !== 'closed' || opening.sublabel"
               class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border"
               :class="{
                 'text-green-400 bg-green-400/10 border-green-400/20': opening.status === 'open',
                 'text-amber-400 bg-amber-400/10 border-amber-400/20': opening.status === 'closing_soon',
-                'text-red-400   bg-red-400/10   border-red-400/20':   opening.status === 'closed',
+                'text-red-400   bg-red-400/10   border-red-400/20':   opening.status === 'closed' && !!opening.sublabel,
                 'text-gray-500  bg-white/[.04]  border-white/[.06]':  opening.status === 'closed' && !opening.sublabel,
               }"
             >
@@ -50,7 +59,7 @@
                 :class="{
                   'bg-green-400 animate-pulse': opening.status === 'open',
                   'bg-amber-400 animate-pulse': opening.status === 'closing_soon',
-                  'bg-red-400':                 opening.status === 'closed',
+                  'bg-red-400':                 opening.status === 'closed' && !!opening.sublabel,
                   'bg-gray-500':                opening.status === 'closed' && !opening.sublabel,
                 }"
               />
@@ -86,6 +95,7 @@
               class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5"
               @click="onWhatsappClick"
             >💬 Agendar pelo WhatsApp</a>
+
             <NuxtLink
               :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
               class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
@@ -116,7 +126,7 @@
           </div>
           <div class="flex-shrink-0 flex flex-col sm:items-end gap-1">
             <a
-              :href="`https://wa.me/5511941649284?text=${encodeURIComponent(`Olá! Sou proprietário da ${barbershop.name} e quero reivindicar ou editar minha página no Portal SuaAgenda. 😊`)}`"
+              :href="`https://wa.me/5511941649284?text=${claimMessage}`"
               target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-green-400/10 border border-green-400/30 text-green-400 text-sm font-bold hover:bg-green-400 hover:text-black transition-all whitespace-nowrap"
             >✏️ Sou o dono — quero editar</a>
@@ -237,9 +247,7 @@
               :key="link.href"
               :to="link.href"
               class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/[.06] bg-[#181818] hover:border-green-400/30 hover:text-green-400 text-sm text-gray-500 transition-all"
-            >
-              {{ link.emoji }} {{ link.label }} em {{ neighborhoodLabel }}
-            </NuxtLink>
+            >{{ link.emoji }} {{ link.label }} em {{ neighborhoodLabel }}</NuxtLink>
           </div>
         </div>
       </div>
@@ -256,7 +264,7 @@
               :class="{
                 'bg-green-400 animate-pulse': opening.status === 'open',
                 'bg-amber-400 animate-pulse': opening.status === 'closing_soon',
-                'bg-red-400':                 opening.status === 'closed',
+                'bg-red-400':                 opening.status === 'closed' && !!opening.sublabel,
                 'bg-gray-500':                opening.status === 'closed' && !opening.sublabel,
               }"
             />
@@ -301,9 +309,7 @@
         <NuxtLink
           :to="`/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}`"
           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors"
-        >
-          Ver todas as barbearias em {{ neighborhoodLabel }} →
-        </NuxtLink>
+        >Ver todas as barbearias em {{ neighborhoodLabel }} →</NuxtLink>
       </div>
     </section>
 
@@ -349,6 +355,7 @@
               >{{ n.name }}</NuxtLink>
             </div>
           </div>
+
           <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6">
             <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-4">Links úteis</p>
             <ul class="space-y-2">
@@ -410,12 +417,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchBarbershopBySlug, fetchNearbyBarbershops } from '~/composables/useBarbershopApi'
 import { getNeighborhoodData, allCities, allServices } from '~/data/locations'
 import { useOpeningStatus } from '~/composables/useOpeningStatus'
 import { useAnalytics } from '~/composables/useAnalytics'
+
+// ─── Constantes ──────────────────────────────────────────────────────────────
+
+const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
+
+const DAY_KEYS_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
+const DAYS_MAP: Record<string, string> = {
+  mon: 'Segunda', tue: 'Terça',  wed: 'Quarta',
+  thu: 'Quinta',  fri: 'Sexta',  sat: 'Sábado', sun: 'Domingo',
+}
+const JS_DAY_TO_KEY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+
+// ─── Setup ───────────────────────────────────────────────────────────────────
 
 definePageMeta({ layout: 'barber' })
 
@@ -426,21 +446,22 @@ const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const barbershopSlug   = (route.params.slug   as string).toLowerCase().trim()
 
-// ✅ SSR com cache no cliente — evita refetch quando Nuxt hidrata a página
-// getCachedData reutiliza o payload SSR injetado no HTML, zero request extra
+// ─── Dados principais — SSR com cache no cliente ──────────────────────────────
+// getCachedData reutiliza o payload SSR injetado no HTML, zero request extra no client.
+
 const { data: barbershop } = await useAsyncData(
   `barbershop-${ufSlug}-${citySlug}-${neighborhoodSlug}-${barbershopSlug}`,
   () => fetchBarbershopBySlug(ufSlug, citySlug, neighborhoodSlug, barbershopSlug),
   {
     server: true,
     getCachedData(key, nuxtApp) {
-      // Reutiliza dado do payload SSR — não faz novo request no client
       return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
     },
-  }
+  },
 )
 
-// ── Barbearias próximas — client-only, não bloqueia SSR ──────────────────
+// ─── Barbearias próximas — client-only, não bloqueia SSR ─────────────────────
+
 const nearbyBarbershops = ref<any[]>([])
 
 onMounted(async () => {
@@ -454,19 +475,19 @@ onMounted(async () => {
     .catch(() => {})
 })
 
-const opening = computed(() => useOpeningStatus(barbershop.value?.openingHours))
+// ─── Dados estáticos de localização ──────────────────────────────────────────
 
 const neighborhoodData = computed(() => getNeighborhoodData(ufSlug, citySlug, neighborhoodSlug))
 
 const ufLabel = computed(() =>
-  neighborhoodData.value?.city.uf ?? barbershop.value?.state ?? ufSlug.toUpperCase()
+  neighborhoodData.value?.city.uf ?? barbershop.value?.state ?? ufSlug.toUpperCase(),
 )
 
 const cityLabel = computed(() =>
   neighborhoodData.value?.city.city
   ?? barbershop.value?.city
   ?? allCities.find(c => c.citySlug === citySlug)?.city
-  ?? citySlug
+  ?? citySlug,
 )
 
 const neighborhoodLabel = computed(() => {
@@ -489,12 +510,16 @@ const nearbyNeighborhoodsFromData = computed(() => {
     .slice(0, 8)
 })
 
+// ─── Dados da barbearia ───────────────────────────────────────────────────────
+
+const opening = computed(() => useOpeningStatus(barbershop.value?.openingHours))
+
 const googleRating = computed(() =>
-  barbershop.value?.googleRating != null ? Number(barbershop.value.googleRating) : null
+  barbershop.value?.googleRating != null ? Number(barbershop.value.googleRating) : null,
 )
 
 const coverSrc = computed(() =>
-  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? null
+  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? null,
 )
 
 const fullAddress = computed(() => {
@@ -505,9 +530,7 @@ const fullAddress = computed(() => {
 })
 
 const whatsappNumber = computed(() => {
-  const b = barbershop.value
-  if (!b) return null
-  const raw = (b.whatsapp || b.phone || '').replace(/\D/g, '')
+  const raw = (barbershop.value?.whatsapp || barbershop.value?.phone || '').replace(/\D/g, '')
   if (!raw) return null
   return raw.startsWith('55') ? raw : `55${raw}`
 })
@@ -517,6 +540,10 @@ const whatsappHref = computed(() => {
   const msg = encodeURIComponent(`Olá! Vim pelo Portal SuaAgenda e gostaria de agendar um horário na ${barbershop.value?.name}. 😊`)
   return `https://wa.me/${whatsappNumber.value}?text=${msg}`
 })
+
+const claimMessage = computed(() =>
+  encodeURIComponent(`Olá! Sou proprietário da ${barbershop.value?.name} e quero reivindicar ou editar minha página no Portal SuaAgenda. 😊`),
+)
 
 const showLightbox  = ref(false)
 const lightboxIndex = ref(0)
@@ -530,11 +557,62 @@ const allPhotos = computed(() => {
   return []
 })
 
+const ogImage = computed(() =>
+  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? OG_FALLBACK,
+)
+
 const activeServices = computed(() =>
   (barbershop.value?.services ?? [])
-    .filter(s => Boolean(s.isActive))
-    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+    .filter((s: any) => Boolean(s.isActive))
+    .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
 )
+
+const servicesSummary = computed(() => {
+  const names = activeServices.value.map((s: any) => s.name.toLowerCase()).slice(0, 4)
+  if (!names.length) return ''
+  if (names.length === 1) return names[0]
+  return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`
+})
+
+const serviceLinks = computed(() => {
+  const toSlug = (str: string) =>
+    str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+  const activeSlugs = new Set<string>(
+    activeServices.value.flatMap((s: any) => {
+      const tags: string[] = []
+      if (s.seoTag) tags.push(s.seoTag)
+      if (s.slug)   tags.push(s.slug)
+      if (s.name)   tags.push(toSlug(s.name))
+      return tags
+    }),
+  )
+
+  return allServices
+    .filter(s => activeSlugs.has(s.slug))
+    .map(s => ({
+      label: s.name,
+      emoji: s.emoji,
+      href:  `/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}`,
+    }))
+})
+
+const formattedHours = computed(() => {
+  const hours = barbershop.value?.openingHours
+  if (!hours) return {}
+  const todayKey = JS_DAY_TO_KEY[new Date().getDay()]
+  return DAY_KEYS_ORDER.reduce((acc, key) => {
+    const val = hours[key] ?? null
+    acc[key] = {
+      label:   DAYS_MAP[key] ?? key,
+      hours:   val ? `${val.open} – ${val.close}` : 'Fechado',
+      isToday: key === todayKey,
+    }
+    return acc
+  }, {} as Record<string, { label: string; hours: string; isToday: boolean }>)
+})
+
+// ─── Analytics ───────────────────────────────────────────────────────────────
 
 function onWhatsappClick() {
   if (barbershop.value?.id) {
@@ -543,84 +621,52 @@ function onWhatsappClick() {
   }
 }
 
-const servicesSummary = computed(() => {
-  const names = activeServices.value.map(s => s.name.toLowerCase()).slice(0, 4)
-  if (!names.length) return ''
-  if (names.length === 1) return names[0]
-  return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`
-})
-
-const serviceLinks = computed(() => {
-  function toSlug(str: string): string {
-    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-  }
-  const activeSlugs = new Set<string>(
-    activeServices.value.flatMap(s => {
-      const tags: string[] = []
-      if (s.seoTag) tags.push(s.seoTag)
-      if (s.slug)   tags.push(s.slug)
-      if (s.name)   tags.push(toSlug(s.name))
-      return tags
-    })
-  )
-  return allServices
-    .filter(s => activeSlugs.has(s.slug))
-    .map(s => ({ label: s.name, emoji: s.emoji, href: `/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/s/${s.slug}` }))
-})
-
-const DAY_KEYS_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
-const daysMap: Record<string, string> = {
-  mon: 'Segunda', tue: 'Terça',  wed: 'Quarta',
-  thu: 'Quinta',  fri: 'Sexta',  sat: 'Sábado', sun: 'Domingo',
-}
-const jsDayToKey = ['sun','mon','tue','wed','thu','fri','sat'] as const
-
-const formattedHours = computed(() => {
-  const hours = barbershop.value?.openingHours
-  if (!hours) return {}
-  const todayKey = jsDayToKey[new Date().getDay()]
-  return DAY_KEYS_ORDER.reduce((acc, key) => {
-    const val = hours[key] ?? null
-    acc[key] = {
-      label:   daysMap[key] ?? key,
-      hours:   val ? `${val.open} – ${val.close}` : 'Fechado',
-      isToday: key === todayKey,
-    }
-    return acc
-  }, {} as Record<string, { label: string; hours: string; isToday: boolean }>)
-})
-
-const OG_FALLBACK = 'https://res.cloudinary.com/du872kkq0/image/upload/v1758737301/barber-og_rgvr3h.jpg'
-
-const ogImage = computed(() =>
-  barbershop.value?.coverImageUrl ?? barbershop.value?.photos?.[0] ?? OG_FALLBACK
-)
+// ─── Head / SEO ───────────────────────────────────────────────────────────────
+//
+// IMPORTANTE: computed() dentro de useHead cria um scope reativo do Vue.
+// Dentro desse scope, computeds como neighborhoodLabel, cityLabel, etc.
+// são acessados DIRETAMENTE (sem .value) — o Vue rastreia a dependência
+// corretamente e o valor é a string resolvida, não o ref.
+//
+// Fora do scope (ex: buildJsonLd chamado como função normal), os computeds
+// precisam de .value. Por isso passamos os valores já resolvidos como
+// argumento, evitando acesso a refs de fora do contexto reativo.
 
 useHead(computed(() => {
   if (!barbershop.value) {
     return {
-      title: `Barbearia não encontrada | SuaAgenda`,
-      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+      title: 'Barbearia não encontrada | SuaAgenda',
+      meta:  [{ name: 'robots', content: 'noindex, nofollow' }],
     }
   }
 
-  const b         = barbershop.value
-  const canonical = `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/${b.slug}`
+  const b  = barbershop.value
 
-  const streetPart    = b.street ? [b.street, b.number].filter(Boolean).join(', ') : null
+  // Valores resolvidos — usados tanto no head quanto no buildJsonLd
+  const resolvedNeighborhood = neighborhoodLabel.value
+  const resolvedCity         = cityLabel.value
+  const resolvedUf           = ufLabel.value
+  const resolvedAddress      = fullAddress.value
+  const resolvedWhatsapp     = whatsappNumber.value
+  const resolvedOgImage      = ogImage.value
+  const resolvedRating       = googleRating.value
+
+  const canonical    = `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}/${neighborhoodSlug}/${b.slug}`
+  const streetPart   = b.street ? [b.street, b.number].filter(Boolean).join(', ') : null
   const titleLocation = streetPart
-    ? `${streetPart}, ${neighborhoodLabel.value}`
-    : `${neighborhoodLabel.value}, ${cityLabel.value}`
+    ? `${streetPart}, ${resolvedNeighborhood}`
+    : `${resolvedNeighborhood}, ${resolvedCity}`
   const metaTitle = `${b.name} — Barbearia em ${titleLocation} | SuaAgenda`
 
+  // Meta description — máx 160 chars
   const CTA = ' Agende pelo WhatsApp.'
-  let desc = fullAddress.value
-    ? `${b.name} — ${fullAddress.value}.`
-    : `${b.name} em ${neighborhoodLabel.value}, ${cityLabel.value}.`
+  let desc = resolvedAddress
+    ? `${b.name} — ${resolvedAddress}.`
+    : `${b.name} em ${resolvedNeighborhood}, ${resolvedCity}.`
 
-  if (googleRating.value) {
-    const reviewPart  = b.googleReviewCount && b.googleReviewCount > 0 ? ` · ${b.googleReviewCount} avaliações` : ''
-    const ratingChunk = ` ⭐ ${googleRating.value.toFixed(1)}${reviewPart} no Google.`
+  if (resolvedRating) {
+    const reviewPart  = b.googleReviewCount > 0 ? ` · ${b.googleReviewCount} avaliações` : ''
+    const ratingChunk = ` ⭐ ${resolvedRating.toFixed(1)}${reviewPart} no Google.`
     if (desc.length + ratingChunk.length + CTA.length <= 160) desc += ratingChunk
   }
   desc += CTA
@@ -630,28 +676,52 @@ useHead(computed(() => {
     title: metaTitle,
     meta: [
       { name: 'description',       content: desc },
-      { property: 'og:title',      content: `${b.name} — ${neighborhoodLabel.value}` },
+      { property: 'og:title',      content: `${b.name} — ${resolvedNeighborhood}` },
       { property: 'og:type',       content: 'business.business' },
       { property: 'og:url',        content: canonical },
-      { property: 'og:image',      content: ogImage.value },
+      { property: 'og:image',      content: resolvedOgImage },
       { name: 'twitter:card',      content: 'summary_large_image' },
-      { name: 'twitter:image',     content: ogImage.value },
+      { name: 'twitter:image',     content: resolvedOgImage },
       { name: 'robots',            content: 'index, follow' },
     ],
-    link: [{ rel: 'canonical', href: canonical }],
-    script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(buildJsonLd(b, canonical)) }],
+    link:   [{ rel: 'canonical', href: canonical }],
+    script: [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(buildJsonLd(b, canonical, {
+        address:      resolvedAddress,
+        city:         resolvedCity,
+        uf:           resolvedUf,
+        neighborhood: resolvedNeighborhood,
+        whatsapp:     resolvedWhatsapp,
+        ogImage:      resolvedOgImage,
+        rating:       resolvedRating,
+      })),
+    }],
   }
 }))
 
-function buildJsonLd(b: any, canonical: string) {
+// ─── JSON-LD ─────────────────────────────────────────────────────────────────
+// Recebe todos os valores já resolvidos para não depender de refs/computeds externos.
+
+interface JsonLdContext {
+  address:      string | null
+  city:         string
+  uf:           string
+  neighborhood: string
+  whatsapp:     string | null
+  ogImage:      string
+  rating:       number | null
+}
+
+function buildJsonLd(b: any, canonical: string, ctx: JsonLdContext) {
   const services = (b.services ?? []).filter((s: any) => Boolean(s.isActive))
   const prices   = services.map((s: any) => Number(s.price)).filter((p: number) => p > 0)
   const priceMin = prices.length ? Math.min(...prices) : null
 
   const daySchemaMap: Record<string, string> = {
-    mon: 'https://schema.org/Monday', tue: 'https://schema.org/Tuesday',
+    mon: 'https://schema.org/Monday',    tue: 'https://schema.org/Tuesday',
     wed: 'https://schema.org/Wednesday', thu: 'https://schema.org/Thursday',
-    fri: 'https://schema.org/Friday', sat: 'https://schema.org/Saturday',
+    fri: 'https://schema.org/Friday',    sat: 'https://schema.org/Saturday',
     sun: 'https://schema.org/Sunday',
   }
 
@@ -674,11 +744,11 @@ function buildJsonLd(b: any, canonical: string) {
           '@type': 'Offer',
           itemOffered: {
             '@type': 'Service',
-            name: s.name,
+            name:    s.name,
             ...(s.description ? { description: s.description }     : {}),
             ...(s.durationMin ? { duration: `PT${s.durationMin}M` } : {}),
           },
-          price: Number(s.price).toFixed(2),
+          price:         Number(s.price).toFixed(2),
           priceCurrency: 'BRL',
         })),
       }
@@ -686,8 +756,16 @@ function buildJsonLd(b: any, canonical: string) {
 
   const images = (b.photos ?? []).length > 0
     ? (b.photos as string[])
-    : (b.coverImageUrl ? [b.coverImageUrl] : [ogImage.value])
+    : (b.coverImageUrl ? [b.coverImageUrl] : [ctx.ogImage])
+
   const sameAs = b.googlePlaceId ? [`https://maps.google.com/?cid=${b.googlePlaceId}`] : undefined
+
+  const priceRange = priceMin
+    ? priceMin <= 50  ? 'R$'
+    : priceMin <= 100 ? 'R$$'
+    : priceMin <= 200 ? 'R$$$'
+    : 'R$$$$'
+    : undefined
 
   return {
     '@context': 'https://schema.org',
@@ -697,27 +775,37 @@ function buildJsonLd(b: any, canonical: string) {
     url:        canonical,
     address: {
       '@type':         'PostalAddress',
-      streetAddress:   fullAddress.value,
-      addressLocality: cityLabel.value,
-      addressRegion:   ufLabel.value,
+      streetAddress:   ctx.address,
+      addressLocality: ctx.city,
+      addressRegion:   ctx.uf,
       postalCode:      b.zipCode ?? undefined,
       addressCountry:  'BR',
     },
-    ...(b.latitude && b.longitude ? { geo: { '@type': 'GeoCoordinates', latitude: Number(b.latitude), longitude: Number(b.longitude) } } : {}),
-    telephone: whatsappNumber.value ?? undefined,
-    ...(b.email   ? { email: b.email }   : {}),
-    ...(b.website ? { sameAs: [b.website, ...(sameAs ?? [])] } : (sameAs ? { sameAs } : {})),
-    ...(priceMin  ? { priceRange: priceMin <= 50 ? 'R$' : priceMin <= 100 ? 'R$$' : priceMin <= 200 ? 'R$$$' : 'R$$$$' } : {}),
-    ...(googleRating.value ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: googleRating.value, reviewCount: b.googleReviewCount ?? 0, bestRating: 5, worstRating: 1 } } : {}),
+    ...(b.latitude && b.longitude
+      ? { geo: { '@type': 'GeoCoordinates', latitude: Number(b.latitude), longitude: Number(b.longitude) } }
+      : {}),
+    telephone: ctx.whatsapp ?? undefined,
+    ...(b.email   ? { email: b.email }                                         : {}),
+    ...(b.website ? { sameAs: [b.website, ...(sameAs ?? [])] }                 : sameAs ? { sameAs } : {}),
+    ...(priceRange ? { priceRange }                                             : {}),
+    ...(ctx.rating
+      ? { aggregateRating: {
+            '@type':      'AggregateRating',
+            ratingValue:  ctx.rating,
+            reviewCount:  b.googleReviewCount ?? 0,
+            bestRating:   5,
+            worstRating:  1,
+          }}
+      : {}),
     ...(openingHoursSpec?.length ? { openingHoursSpecification: openingHoursSpec } : {}),
-    ...(offerCatalog ? { hasOfferCatalog: offerCatalog } : {}),
-    ...(b.description ? { description: b.description } : {}),
-    ...(b.logoUrl     ? { logo: { '@type': 'ImageObject', url: b.logoUrl } } : {}),
+    ...(offerCatalog              ? { hasOfferCatalog: offerCatalog }               : {}),
+    ...(b.description             ? { description: b.description }                  : {}),
+    ...(b.logoUrl                 ? { logo: { '@type': 'ImageObject', url: b.logoUrl } } : {}),
   }
 }
 </script>
 
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity .2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-from,  .fade-leave-to      { opacity: 0; }
 </style>
