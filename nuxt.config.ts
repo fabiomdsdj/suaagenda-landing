@@ -68,7 +68,7 @@ export default defineNuxtConfig({
   },
   modules: [
     "@vueuse/motion/nuxt",
-    "nuxt-simple-sitemap",
+    '@nuxtjs/sitemap', 
     "@nuxt/image",
   ],
   image: {
@@ -118,9 +118,18 @@ export default defineNuxtConfig({
 
   // ✅ FIX 1: habilitar cache do nuxt-simple-sitemap por 6h
   // Antes estava 0 (desabilitado) — cada req. de crawler batia em /api/sitemap
+  // Substitui o bloco sitemap atual
   sitemap: {
-    sources: ["/api/sitemap"],
-    cacheMaxAgeSeconds: 60 * 60 * 6, // 6h
+    cacheMaxAgeSeconds: 60 * 60 * 6,
+    sitemaps: {
+      static: {
+        sources: ['/api/sitemap/static'],
+      },
+      barbershops: {
+        sources: ['/api/sitemap/barbershops'],
+        chunks: 1000, // ← passa o número direto aqui, sem chunkSize
+      },
+    },
   },
 
   nitro: {
