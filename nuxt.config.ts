@@ -124,6 +124,7 @@ export default defineNuxtConfig({
     sitemaps: {
       static: {
         sources: ['/api/sitemap/static'],
+        chunks: 1000,
       },
       barbershops: {
         sources: ['/api/sitemap/barbershops'],
