@@ -219,8 +219,8 @@ useHead(computed(() => {
 
   return {
     title: countStr
-      ? `${countStr} Barbearias em ${ufData.value.uf} — Agende Online | SuaAgenda`
-      : `Barbearias em ${ufData.value.uf} — Agende Online | SuaAgenda`,
+      ? `${countStr} Barbearias em ${ufData.value.uf} - Agende Online`
+      : `Barbearias em ${ufData.value.uf} - Agende Online`,
     meta: [
       {
         name:    'description',

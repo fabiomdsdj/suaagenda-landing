@@ -147,21 +147,29 @@ const route    = useRoute()
 const ufSlug   = route.params.uf     as string
 const citySlug = route.params.cidade as string
 
-const cityData     = computed(() => allCities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug) ?? null)
-const totalBairros = computed(() => cityData.value?.districts.reduce((acc, d) => acc + d.neighborhoods.length, 0) ?? 0)
-const hasZones     = computed(() => cityData.value?.districts.some(d => d.zone != null) ?? false)
+// ── cityData: estático primeiro, API como fallback ────────────────────────────
+const staticCity = allCities.find(c => c.ufSlug === ufSlug && c.citySlug === citySlug) ?? null
 
-// ── ✅ SSR: contador busca no servidor — H1 tem o número quando Googlebot chega ──
+const { data: cityData } = await useAsyncData(
+  `city-${ufSlug}-${citySlug}`,
+  async () => {
+    if (staticCity) return staticCity
+    return await $fetch(`/api/city-data?uf=${ufSlug}&city=${citySlug}`).catch(() => null)
+  },
+  { server: true, lazy: false, default: () => staticCity }
+)
+
+const totalBairros = computed(() => cityData.value?.districts?.reduce((acc, d) => acc + d.neighborhoods.length, 0) ?? 0)
+const hasZones     = computed(() => cityData.value?.districts?.some((d: District) => d.zone != null) ?? false)
+
+// ── Contador SSR ──────────────────────────────────────────────────────────────
 const { data: cityCount } = await useAsyncData(
   `count-city-${ufSlug}-${citySlug}`,
   () => $fetch<number>(`/api/count?uf=${ufSlug}&city=${citySlug}`).catch(() => 0),
-    { 
-      server: true,
-      lazy: false,
-      default: () => 0,
-    }
+  { server: true, lazy: false, default: () => 0 }
 )
 
+// ── Bairros por zona ──────────────────────────────────────────────────────────
 const districtsByZone = computed(() => {
   const groups: Record<string, District[]> = {}
   for (const d of cityData.value?.districts ?? []) {
@@ -176,11 +184,12 @@ function flatNeighborhoods(districts: District[]): Neighborhood[] {
   return districts.flatMap(d => d.neighborhoods)
 }
 
-// ── SEO com dados reais no servidor ──────────────────────────────────────
+// ── SEO ───────────────────────────────────────────────────────────────────────
 useHead(computed(() => {
   if (!cityData.value) return { title: 'Cidade não encontrada' }
-  const c     = cityData.value
-  const count = cityCount.value ?? 0
+
+  const c        = cityData.value
+  const count    = cityCount.value ?? 0
   const countStr = count > 0 ? count.toLocaleString('pt-BR') : ''
 
   return {
@@ -189,23 +198,27 @@ useHead(computed(() => {
       : `Barbearias em ${c.city}, ${c.uf} | Agende Online`,
     meta: [
       {
-        name: 'description',
+        name:    'description',
         content: countStr
           ? `Encontre entre ${countStr} barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.`
-          : `Encontre barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.`
+          : `Encontre barbearias em ${c.city}, ${c.uf}. ${totalBairros.value} bairros com agendamento online direto pelo WhatsApp.`,
       },
       { name: 'robots', content: 'index, follow' },
     ],
     link: [{ rel: 'canonical', href: `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}` }],
-    script: [{ type: 'application/ld+json', innerHTML: JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Início',     item: 'https://suaagenda.link' },
-        { '@type': 'ListItem', position: 2, name: 'Barbearias', item: 'https://suaagenda.link/barbearias' },
-        { '@type': 'ListItem', position: 3, name: c.uf,         item: `https://suaagenda.link/barbearias/${ufSlug}` },
-        { '@type': 'ListItem', position: 4, name: c.city,       item: `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}` },
-      ],
-    }) }],
+    script: [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type':    'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Início',     item: 'https://suaagenda.link' },
+          { '@type': 'ListItem', position: 2, name: 'Barbearias', item: 'https://suaagenda.link/barbearias' },
+          { '@type': 'ListItem', position: 3, name: c.uf,         item: `https://suaagenda.link/barbearias/${ufSlug}` },
+          { '@type': 'ListItem', position: 4, name: c.city,       item: `https://suaagenda.link/barbearias/${ufSlug}/${citySlug}` },
+        ],
+      }),
+    }],
   }
 }))
 </script>

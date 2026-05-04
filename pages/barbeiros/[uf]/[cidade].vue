@@ -147,7 +147,7 @@
       if (!cityData.value) return { title: 'Cidade não encontrada' }
       const city = cityData.value.city
       return {
-        title: `Barbeiros em ${city} com Agenda Online | SuaAgenda`,
+        title: `Barbeiros em ${city} com Agenda Online`,
         meta: [
           {
             name: 'description',

@@ -221,7 +221,7 @@
   ]
   
   useHead({
-    title: 'Barbeiros com Agenda Online | SuaAgenda',
+    title: 'Barbeiros com Agenda Online',
     meta: [
       {
         name: 'description',

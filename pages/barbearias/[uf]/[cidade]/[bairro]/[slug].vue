@@ -635,7 +635,7 @@ function onWhatsappClick() {
 useHead(computed(() => {
   if (!barbershop.value) {
     return {
-      title: 'Barbearia não encontrada | SuaAgenda',
+      title: 'Barbearia não encontrada',
       meta:  [{ name: 'robots', content: 'noindex, nofollow' }],
     }
   }
@@ -656,7 +656,7 @@ useHead(computed(() => {
   const titleLocation = streetPart
     ? `${streetPart}, ${resolvedNeighborhood}`
     : `${resolvedNeighborhood}, ${resolvedCity}`
-  const metaTitle = `${b.name} — Barbearia em ${titleLocation} | SuaAgenda`
+  const metaTitle = `${b.name} — Barbearia em ${titleLocation}`
 
   // Meta description — máx 160 chars
   const CTA = ' Agende pelo WhatsApp.'
