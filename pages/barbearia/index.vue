@@ -822,6 +822,16 @@ const depoimentos = [
   { texto: 'As faltas caíram muito depois que o sistema começou a pedir confirmação. Sexta-feira sempre cheia.', nome: 'Rafael Lima',        profissao: 'Barbearia RL — Curitiba',  rating: 5 },
   { texto: 'R$79 por mês e minha barbearia nunca ficou tão cheia. Se paga fácil.',                              nome: 'Diego Moura',        profissao: 'Moura Barbers — Fortaleza', rating: 5 },
   { texto: 'Minha barbearia apareceu no Google em 3 semanas. Tenho clientes novos toda semana.',                 nome: 'Júnior Neves',       profissao: 'JN Barber Shop — Recife',  rating: 5 },
+  { texto: 'Antes ficava vazio no meio da semana. Agora sempre pinga cliente novo do Google.', nome: 'Lucas Ferreira', profissao: 'LF Barbearia — Campinas', rating: 5 },
+  { texto: 'Organizou minha agenda total. Não fico mais perdido com horário nem cliente esperando.', nome: 'André Souza', profissao: 'Barber Club — Salvador', rating: 5 },
+  { texto: 'Só de parar de responder WhatsApp já valeu. Hoje foco só em atender.', nome: 'Bruno Martins', profissao: 'BM Studio — SP', rating: 5 },
+  { texto: 'O sistema praticamente trabalha por mim. Cliente entra, agenda e já confirma.', nome: 'Carlos Henrique', profissao: 'CH Barber — Goiânia', rating: 5 },
+  { texto: 'Nunca fui de tecnologia, mas esse aqui é simples demais. Em 1 dia já tava usando.', nome: 'Robson Pereira', profissao: 'RP Barbearia — Osasco', rating: 5 },
+  { texto: 'Minhas sextas e sábados lotaram depois que comecei a usar. Agenda cheia direto.', nome: 'Leandro Rocha', profissao: 'Rocha Barber — Porto Alegre', rating: 5 },
+  { texto: 'O cliente acha mais profissional quando vê que tem sistema. Passa mais confiança.', nome: 'Thiago Nunes', profissao: 'TN Barber Shop — Brasília', rating: 5 },
+  { texto: 'Antes eu esquecia cliente, dava conflito de horário… agora zero dor de cabeça.', nome: 'Gustavo Ribeiro', profissao: 'GR Cuts — Belo Horizonte', rating: 5 },
+  { texto: 'Em poucas semanas já senti diferença no movimento. Valeu muito a pena.', nome: 'Mateus Carvalho', profissao: 'MC Barber — Santos', rating: 5 },
+  { texto: 'Mando o link e pronto. Cliente resolve tudo sozinho, sem ficar me chamando toda hora.', nome: 'Paulo Victor', profissao: 'PV Barbearia — Rio de Janeiro', rating: 5 },
 ]
 
 const mediaRating = computed(() => {
