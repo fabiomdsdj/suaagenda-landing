@@ -321,6 +321,19 @@
           <option value="50">50+ cliques</option>
         </select>
 
+        <!-- Adiciona junto aos outros filtros de engajamento -->
+        <select
+          v-if="filters.engagementEvent"
+          v-model="filters.engagementDays"
+          class="filter-select border-green-400/40 text-green-400"
+          @change="onEngagementChange"
+        >
+          <option value="30">30 dias</option>
+          <option value="60">60 dias</option>
+          <option value="90">90 dias</option>
+          <option value="365">365 dias</option>
+        </select>
+
         <button
           v-if="hasFilters"
           class="text-xs text-gray-500 hover:text-red-400 transition-colors underline"
@@ -654,9 +667,9 @@ const filters = reactive({
   city:            '',
   neighborhood:    '',
   dateRange:       '',
-  // ✅ Engajamento server-side — dois campos separados
-  engagementEvent: '' as string,   // whatsapp_click | maps_click | waze_click | copy_address
-  engagementMin:   '1' as string,  // mínimo de cliques
+  engagementEvent: '' as string,
+  engagementMin:   '1' as string,
+  engagementDays:  '30' as string, // ← novo
   page:            1,
 })
 
@@ -684,7 +697,6 @@ const hasFilters = computed(() =>
   !!filters.neighborhood || !!filters.dateRange || !!filters.engagementEvent
 )
 
-// Label legível do evento de engajamento ativo (para mensagem de "vazio")
 const engagementEventLabel = computed(() => {
   const map: Record<string, string> = {
     whatsapp_click: 'WhatsApp',
@@ -726,7 +738,6 @@ function getThumb(shop: any): string | null {
 }
 
 // ── Fetch lista ───────────────────────────────────────────────────────────
-// ✅ Filtro de engajamento vai direto como params — o backend faz a subquery
 async function fetchList() {
   loading.value = true
   try {
@@ -738,11 +749,10 @@ async function fetchList() {
     if (filters.neighborhood)   params.neighborhood = filters.neighborhood
     if (filters.dateRange)      params.dateRange    = filters.dateRange
 
-    // Engajamento server-side
     if (filters.engagementEvent) {
       params.filterEvent    = filters.engagementEvent
       params.filterMinCount = parseInt(filters.engagementMin) || 1
-      params.filterDays     = 30
+      params.filterDays     = parseInt(filters.engagementDays) || 30 // ← dinâmico
     }
 
     const res = await api.listBarbershops(params)
@@ -787,6 +797,7 @@ function clearFilters() {
   filters.dateRange       = ''
   filters.engagementEvent = ''
   filters.engagementMin   = '1'
+  filters.engagementDays  = '30' // ← reseta
   filters.page            = 1
   fetchList()
 }
@@ -797,7 +808,8 @@ const analyticsMap = ref<Record<string, any>>({})
 
 async function fetchAnalytics(ids: string[]) {
   if (!ids.length) return
-  analyticsMap.value = await fetchBulkSummary(ids, 30)
+  const days = parseInt(filters.engagementDays) || 30 // ← usa o período selecionado
+  analyticsMap.value = await fetchBulkSummary(ids, days)
 }
 
 // ── Metas de cadastros ────────────────────────────────────────────────────
