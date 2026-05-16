@@ -53,8 +53,8 @@ export default defineNuxtConfig({
   app: {
     baseURL: "/",
     head: {
-      title: "Sua agenda",
-      titleTemplate: "%s | Sua agenda",
+      title: "SuaAgenda Barber - Sistema de Agendamento para Barbearias",
+      titleTemplate: "%s | SuaAgenda Barber",
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" }
       ],
