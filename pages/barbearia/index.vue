@@ -245,7 +245,7 @@
           O SISTEMA QUE VAI <span class="text-green-400">ORGANIZAR</span> SUA BARBEARIA
         </h2>
         <p class="fade-on-scroll mb-12 mx-auto max-w-lg text-xl leading-relaxed text-gray-400">
-          Clique nas abas e explore — é exatamente o que você vai usar todo dia.
+          Clique nas abas e explore algumas das funcionalidades que você vai usar todo dia.
         </p>
 
         <!-- frame browser -->
