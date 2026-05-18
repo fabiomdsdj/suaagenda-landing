@@ -232,6 +232,51 @@
       </div>
     </section>
 
+    <!-- ─── DEMO DO SISTEMA ────────────────────────────────── -->
+    <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a] text-center" id="demo">
+      <div class="max-w-6xl mx-auto">
+
+        <!-- cabeçalho -->
+        <span class="fade-on-scroll text-xs font-bold tracking-widest uppercase text-green-400">
+          Veja funcionando ao vivo
+        </span>
+        <h2 class="fade-on-scroll mt-3 mb-4 font-black leading-none text-white"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)">
+          O SISTEMA QUE VAI <span class="text-green-400">ORGANIZAR</span> SUA BARBEARIA
+        </h2>
+        <p class="fade-on-scroll mb-12 mx-auto max-w-lg text-xl leading-relaxed text-gray-400">
+          Clique nas abas e explore — é exatamente o que você vai usar todo dia.
+        </p>
+
+        <!-- frame browser -->
+        <div class="fade-on-scroll demo-browser-frame">
+
+          <!-- barra do browser (decorativa) -->
+          <div class="demo-browser-bar">
+            <div class="demo-browser-dots">
+              <span class="dot-r"/>
+              <span class="dot-y"/>
+              <span class="dot-g"/>
+            </div>
+            
+          </div>
+
+          <!-- o próprio componente -->
+          <div class="demo-admin-wrap">
+            <DemoAdmin />
+          </div>
+
+        </div>
+
+        <p class="mt-6 text-sm text-gray-600">
+          Sem precisar de treinamento. Simples e intuitivo.
+        </p>
+
+      </div>
+    </section>
+
+
+
     <!-- ─── IDENTIFICAÇÃO ─────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
@@ -860,4 +905,7 @@ const faqs = [
 <style scoped>
 .faq-enter-active, .faq-leave-active { transition: opacity .25s, transform .25s; }
 .faq-enter-from, .faq-leave-to       { opacity: 0; transform: translateY(-6px); }
+.demo-admin-wrap > div {
+  height: 100% !important;
+}
 </style>
