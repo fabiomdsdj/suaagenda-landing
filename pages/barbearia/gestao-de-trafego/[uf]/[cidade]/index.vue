@@ -558,7 +558,7 @@ useHead(
         {
           rel: 'canonical',
           href:
-            `https://suaagenda.link/gestao-de-trafego/${ufSlug}/${citySlug}`,
+            `https://suaagenda.link/barbearia/gestao-de-trafego/${ufSlug}/${citySlug}`,
         },
       ],
     }
