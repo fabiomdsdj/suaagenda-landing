@@ -526,7 +526,7 @@ useHead(
 
     return {
       title:
-        `Gestão de Tráfego para Barbearias em ${city}`,
+        `Gestão de Tráfego pago para Barbearias em ${city}`,
 
       meta: [
         {

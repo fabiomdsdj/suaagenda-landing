@@ -1,236 +1,362 @@
-<!-- pages/barbeiros/index.vue -->
+<!-- pages/gestao-de-trafego/index.vue -->
 <template>
-    <div class="text-[15px]">
-  
-      <!-- BREADCRUMB -->
-      <section class="pt-28 pb-6 px-6 md:px-16 bg-[#0a0a0a] border-b border-white/5">
-        <div class="max-w-6xl mx-auto">
-          <nav class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
-            <NuxtLink to="/" class="hover:text-green-400 transition-colors">Início</NuxtLink>
-            <span>/</span>
-            <span class="text-gray-400">Barbeiros</span>
-          </nav>
-        </div>
-      </section>
-  
-      <!-- HERO -->
-      <section class="relative w-full py-20 px-6 md:px-16 bg-[#0a0a0a] overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 55% 50% at 70% 40%,rgba(52,211,153,.07) 0%,transparent 70%)"></div>
-        <div class="relative max-w-6xl mx-auto">
-          <h1
-            class="font-black leading-none mb-6 text-white"
-            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);letter-spacing:.03em"
+  <div class="text-[15px]">
+
+    <!-- BREADCRUMB -->
+    <section class="pt-28 pb-6 px-6 md:px-16 bg-[#0a0a0a] border-b border-white/5">
+      <div class="max-w-6xl mx-auto">
+        <nav class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+
+          <NuxtLink
+            to="/"
+            class="hover:text-green-400 transition-colors"
           >
-            BARBEIROS COM<br>
-            <span class="text-green-400">AGENDA ONLINE</span><br>
-            <span class="text-white/40" style="font-size:clamp(24px,3vw,40px)">EM TODO O BRASIL</span>
-          </h1>
-          <p class="text-xl text-gray-400 max-w-2xl leading-relaxed mb-8">
-            Encontre barbeiros que usam a SuaAgenda para organizar horários, receber agendamentos
-            pelo WhatsApp e aparecer nas primeiras posições do Google no bairro deles.
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <a
-              href="https://wa.me/5511941649284"
-              class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
-            >
-              ✂️ Sou barbeiro — quero entrar
-            </a>
-            <NuxtLink
-              to="/barbearias"
-              class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
-            >
-              Ver por bairro →
-            </NuxtLink>
-          </div>
+            Início
+          </NuxtLink>
+
+          <span>/</span>
+
+          <span class="text-gray-400">
+            Gestão de Tráfego
+          </span>
+
+        </nav>
+      </div>
+    </section>
+
+    <!-- HERO -->
+    <section class="relative w-full py-20 px-6 md:px-16 bg-[#0a0a0a] overflow-hidden">
+
+      <div
+        class="absolute inset-0 pointer-events-none"
+        style="background:radial-gradient(ellipse 55% 50% at 70% 40%,rgba(52,211,153,.07) 0%,transparent 70%)"
+      />
+
+      <div class="relative max-w-6xl mx-auto">
+
+        <!-- TAGS -->
+        <div class="flex flex-wrap gap-3 mb-6">
+
+          <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">
+            🚀 Gestão de tráfego para barbearias
+          </span>
+
+          <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">
+            📍 Brasil
+          </span>
+
         </div>
-      </section>
-  
-      <!-- CIDADES POR REGIÃO -->
-      <section class="w-full py-16 px-6 md:px-16 bg-[#111]">
-        <div class="max-w-6xl mx-auto">
-          <h2
-            class="font-black leading-none mb-3 text-white"
-            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3.5vw,44px)"
+
+        <!-- TITLE -->
+        <h1
+          class="font-black leading-none mb-6 text-white"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,88px);letter-spacing:.03em"
+        >
+          GESTÃO DE<br>
+
+          <span class="text-green-400">
+            TRÁFEGO PAGO
+          </span>
+
+          <br>
+
+          <span
+            class="text-white/40"
+            style="font-size:clamp(24px,3vw,42px)"
           >
-            ESCOLHA SUA <span class="text-green-400">CIDADE</span>
-          </h2>
-          <p class="text-[16px] text-gray-400 mb-12">
-            Selecione a cidade para ver os barbeiros da região com agenda online.
+            PRA BARBEARIAS
+          </span>
+        </h1>
+
+        <!-- TEXT -->
+        <div class="max-w-3xl space-y-5 mb-10">
+
+          <p class="text-xl text-gray-400 leading-relaxed">
+            A SuaAgenda ajuda barbearias a conseguirem mais clientes através de anúncios no Instagram, Facebook e Google.
           </p>
-  
-          <div class="space-y-12">
-            <div v-for="region in groupedByRegion" :key="region.name">
-              <div class="flex items-center gap-3 mb-5">
-                <span class="text-xs font-bold tracking-widest uppercase text-green-400">{{ region.name }}</span>
-                <div class="flex-1 h-px bg-white/[.05]"></div>
-              </div>
-              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                <NuxtLink
-                  v-for="city in region.cities"
-                  :key="city.citySlug"
-                  :to="`/barbeiros/${city.ufSlug}/${city.citySlug}`"
-                  class="group flex flex-col gap-1 px-4 py-3 rounded-xl bg-[#181818] border border-white/[.06] hover:border-green-400/30 hover:bg-[#1e1e1e] transition-all"
-                >
-                  <span class="text-[13px] font-semibold text-gray-300 group-hover:text-green-400 transition-colors leading-snug">
-                    {{ city.city }}
-                  </span>
-                  <span class="text-[11px] text-gray-600 uppercase tracking-wider">{{ city.uf }}</span>
-                </NuxtLink>
-              </div>
+
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Não é só tráfego pago isolado.
+            O anúncio conecta direto com o WhatsApp, agenda online e sistema da barbearia pra transformar visualização em agendamento real.
+          </p>
+
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Enquanto você corta cabelo, o sistema continua trazendo clientes, organizando horários e reduzindo perda de atendimento.
+          </p>
+
+        </div>
+
+        <!-- BENEFITS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mb-12">
+
+          <div
+            v-for="benefit in benefits"
+            :key="benefit.title"
+            class="flex items-start gap-3 rounded-2xl border border-white/[.06] bg-[#181818] p-5"
+          >
+            <div class="text-2xl">
+              {{ benefit.emoji }}
+            </div>
+
+            <div>
+              <p class="font-bold text-white text-[15px] mb-2">
+                {{ benefit.title }}
+              </p>
+
+              <p class="text-sm text-gray-500 leading-relaxed">
+                {{ benefit.desc }}
+              </p>
             </div>
           </div>
+
         </div>
-      </section>
-  
-      <!-- STATS -->
-      <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
-        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+
+        <!-- CTA -->
+        <div class="flex flex-wrap gap-4">
+
+          <a
+            href="https://wa.me/5511941649284"
+            class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
+          >
+            🚀 Quero lotar minha agenda
+          </a>
+
+          <NuxtLink
+            to="/barbearias"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
+          >
+            Ver barbearias →
+          </NuxtLink>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
+
+      <div class="max-w-6xl mx-auto">
+
+        <span class="text-xs font-bold tracking-widest uppercase text-green-400">
+          Como funciona
+        </span>
+
+        <h2
+          class="mt-3 mb-10 font-black leading-none text-white"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+        >
+          O CLIENTE VÊ.<br>
+
+          <span class="text-green-400">
+            CLICA. AGENDA.
+          </span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+          <div
+            v-for="step in trafficSteps"
+            :key="step.title"
+            class="rounded-2xl border border-green-400/10 bg-[#181818] p-7"
+          >
+
+            <div class="text-3xl mb-5">
+              {{ step.emoji }}
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-3">
+              {{ step.title }}
+            </h3>
+
+            <p class="text-sm text-gray-500 leading-relaxed">
+              {{ step.desc }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DIFERENCIAL -->
+    <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
+
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+
+        <div>
+
+          <span class="text-xs font-bold tracking-widest uppercase text-green-400">
+            Sistema + marketing
+          </span>
+
+          <h2
+            class="mt-3 mb-6 font-black leading-none text-white"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,56px)"
+          >
+            NÃO ADIANTA<br>
+
+            <span class="text-green-400">
+              TRAZER CLIENTE
+            </span>
+
+            <br>
+
+            E PERDER NO WHATSAPP
+          </h2>
+
+          <div class="space-y-5 text-gray-400 text-[16px] leading-relaxed">
+
+            <p>
+              Muitas barbearias até conseguem mensagem no Instagram.
+              O problema começa depois:
+              demora pra responder, cliente esquece, horário fica bagunçado e o barbeiro perde atendimento.
+            </p>
+
+            <p>
+              A SuaAgenda junta tráfego pago + agenda online + automação no WhatsApp pra facilitar o processo inteiro.
+            </p>
+
+            <p>
+              O cliente entra, escolhe horário e agenda sem precisar ficar esperando resposta manual.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- STATS -->
+        <div class="grid grid-cols-2 gap-4">
+
           <div
             v-for="stat in stats"
             :key="stat.label"
             class="rounded-2xl border border-green-400/10 bg-[#181818] p-6 text-center"
           >
+
             <p
               class="font-black text-green-400 leading-none mb-2"
-              style="font-family:'Bebas Neue',sans-serif;font-size:44px"
-            >{{ stat.num }}</p>
-            <p class="text-sm text-gray-500 leading-snug">{{ stat.label }}</p>
-          </div>
-        </div>
-      </section>
-  
-      <!-- POR QUE USAR -->
-      <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <span class="text-xs font-bold tracking-widest uppercase text-green-400">Por que barbeiros escolhem a SuaAgenda</span>
-            <h2
-              class="mt-3 mb-5 font-black leading-none text-white"
-              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,48px)"
+              style="font-family:'Bebas Neue',sans-serif;font-size:48px"
             >
-              FEITO PRA QUEM<br><span class="text-green-400">TRABALHA NO CELULAR</span>
-            </h2>
-            <p class="text-[16px] text-gray-400 leading-relaxed mb-4">
-              Barbeiros não ficam sentados na frente de um computador. Trabalham de pé, tesoura na mão, cliente na cadeira.
+              {{ stat.num }}
             </p>
-            <p class="text-[16px] text-gray-400 leading-relaxed mb-6">
-              A SuaAgenda foi construída pra funcionar no celular — agendamentos chegam no WhatsApp, a agenda é gerenciada com um dedo, e o site aparece no Google automaticamente.
+
+            <p class="text-sm text-gray-500 leading-snug">
+              {{ stat.label }}
             </p>
-            <a
-              href="https://wa.me/5511941649284"
-              class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300"
-            >
-              ✂️ Começar grátis
-            </a>
+
           </div>
-          <div class="grid grid-cols-1 gap-4">
-            <div
-              v-for="benefit in benefits"
-              :key="benefit.title"
-              class="flex items-start gap-4 rounded-xl border border-white/[.06] bg-[#181818] p-5"
-            >
-              <span class="text-2xl">{{ benefit.emoji }}</span>
-              <div>
-                <p class="font-semibold text-white text-[15px] mb-1">{{ benefit.title }}</p>
-                <p class="text-[13px] text-gray-500 leading-relaxed">{{ benefit.desc }}</p>
-              </div>
-            </div>
-          </div>
+
         </div>
-      </section>
-  
-      <!-- CTA FINAL -->
-      <section class="relative w-full py-24 px-6 md:px-16 bg-[#0a0a0a] text-center overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(circle 300px at 50% 50%,rgba(52,211,153,.06),transparent)"></div>
-        <div class="relative max-w-xl mx-auto">
-          <span class="text-xs font-bold tracking-widest uppercase text-green-400 block mb-4">Barbeiros em todo o Brasil</span>
-          <h2
-            class="font-black leading-none text-white mb-4"
-            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)"
-          >
-            SUA BARBEARIA<br>NO <span class="text-green-400">GOOGLE</span> EM 5 MIN
-          </h2>
-          <p class="mb-8 text-[17px] leading-relaxed text-gray-400">
-            Cria sua conta, confirma os serviços e já tem site profissional aparecendo no Google quando alguém busca barbearia no seu bairro.
-          </p>
-          <a
-            href="https://wa.me/5511941649284"
-            class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105"
-          >
-            ✂️ Testar grátis por 7 dias
-          </a>
-          <div class="flex items-center justify-center flex-wrap gap-5 mt-6 text-sm text-gray-600">
-            <span>🔒 Sem cartão</span>
-            <span>⚡ 5 minutos</span>
-            <span>✓ Cancela quando quiser</span>
-          </div>
-        </div>
-      </section>
-  
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { computed } from 'vue'
-  import { allCities } from '~/data/locations'
-  
-  definePageMeta({ layout: 'barber' })
-  
-  // Agrupa cidades por region, ordenando alfabeticamente dentro de cada grupo
-  const groupedByRegion = computed(() => {
-    const map = new Map<string, typeof allCities>()
-  
-    for (const city of allCities) {
-      const key = city.region ?? city.zone ?? city.uf
-      if (!map.has(key)) map.set(key, [])
-      map.get(key)!.push(city)
-    }
-  
-    return Array.from(map.entries())
-      .map(([name, cities]) => ({
-        name,
-        cities: [...cities].sort((a, b) => a.city.localeCompare(b.city, 'pt-BR')),
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
-  })
-  
-  const stats = [
-    { num: '500+', label: 'Barbearias ativas na plataforma' },
-    { num: '5min', label: 'Pra estar no ar' },
-    { num: '100%', label: 'Funciona no celular' },
-    { num: '7dias', label: 'Trial gratuito sem cartão' },
-  ]
-  
-  const benefits = [
+
+      </div>
+    </section>
+
+  </div>
+</template>
+
+<script setup lang="ts">
+definePageMeta({
+  layout: 'barber',
+})
+
+const benefits = [
+  {
+    emoji: '📍',
+    title: 'Google da sua cidade',
+    desc:
+      'Apareça quando alguém pesquisar barbeiro, barbearia ou corte masculino na sua região.',
+  },
+
+  {
+    emoji: '🔥',
+    title: 'Instagram e Facebook Ads',
+    desc:
+      'Campanhas criadas pra gerar mensagens, agendamentos e novos clientes pra barbearia.',
+  },
+
+  {
+    emoji: '📲',
+    title: 'WhatsApp integrado',
+    desc:
+      'O cliente sai do anúncio direto pro seu WhatsApp ou agenda online.',
+  },
+
+  {
+    emoji: '💰',
+    title: 'Mais retorno por cliente',
+    desc:
+      'Fidelidade, cashback e retorno automático ajudam o cliente voltar mais vezes.',
+  },
+]
+
+const trafficSteps = [
+  {
+    emoji: '🎯',
+    title: 'Criamos os anúncios',
+    desc:
+      'Rodamos campanhas segmentadas pra pessoas realmente interessadas em corte, barba e barbearia.',
+  },
+
+  {
+    emoji: '📲',
+    title: 'Cliente entra na agenda',
+    desc:
+      'O anúncio conecta direto com WhatsApp, landing page ou sistema de agendamento.',
+  },
+
+  {
+    emoji: '🔥',
+    title: 'Sua operação organiza tudo',
+    desc:
+      'Enquanto chegam novos clientes, o sistema controla horários, lembretes e recorrência.',
+  },
+]
+
+const stats = [
+  {
+    num: '24h',
+    label: 'Anúncios rodando',
+  },
+
+  {
+    num: '7d',
+    label: 'Teste grátis',
+  },
+
+  {
+    num: '100%',
+    label: 'Mobile',
+  },
+
+  {
+    num: '+ROI',
+    label: 'Mais retorno',
+  },
+]
+
+useHead({
+  title: 'Gestão de Tráfego pago para Barbearias',
+
+  meta: [
     {
-      emoji: '📍',
-      title: 'Aparece no Google do seu bairro',
-      desc: 'SEO local automático — quando alguém busca "barbearia em [bairro]", sua página aparece nas primeiras posições.',
+      name: 'description',
+      content:
+        'Gestão de tráfego para barbearias com anúncios no Instagram, Facebook e Google integrados com agenda online e WhatsApp automatizado.',
     },
+
     {
-      emoji: '📱',
-      title: 'Agendamento direto no WhatsApp',
-      desc: 'Cliente escolhe horário e confirma pelo celular. Notificação chega pra você na hora, sem largar a tesoura.',
+      name: 'robots',
+      content: 'index, follow',
     },
+  ],
+
+  link: [
     {
-      emoji: '✅',
-      title: 'Confirmação automática anti-furo',
-      desc: 'Sistema avisa o cliente antes do horário. Não confirmou? O horário volta pra agenda automaticamente.',
+      rel: 'canonical',
+      href: 'https://suaagenda.link/gestao-de-trafego',
     },
-  ]
-  
-  useHead({
-    title: 'Barbeiros com Agenda Online',
-    meta: [
-      {
-        name: 'description',
-        content: 'Encontre barbeiros com agenda online em todo o Brasil. Profissionais que usam a SuaAgenda para organizar horários e receber agendamentos pelo WhatsApp.',
-      },
-      { name: 'robots', content: 'index, follow' },
-    ],
-    link: [
-      { rel: 'canonical', href: 'https://suaagenda.link/barbeiros' },
-    ],
-  })
-  </script>
+  ],
+})
+</script>
