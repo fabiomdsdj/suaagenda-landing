@@ -337,6 +337,267 @@
       </div>
     </section>
 
+    <!-- ───────────────────────────────────────────────────────────── -->
+    <!-- SECTION — TRÁFEGO + SEO + AGENDA INTEGRADOS -->
+    <!-- colocar depois da section "SOLUÇÃO" -->
+    <!-- ───────────────────────────────────────────────────────────── -->
+
+    <section class="w-full py-24 px-6 md:px-16 bg-[#111] overflow-hidden">
+      <div class="max-w-6xl mx-auto">
+
+        <div class="max-w-3xl mb-16">
+          <span class="text-xs font-bold tracking-widest uppercase text-green-400">
+            O diferencial da SuaAgenda
+          </span>
+
+          <h2
+            class="mt-3 mb-6 font-black leading-none text-white"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,68px)"
+          >
+            SUA BARBEARIA NÃO PRECISA SÓ DE <span class="text-red-400">CLIENTE.</span><br>
+            PRECISA DE UM <span class="text-green-400">SISTEMA COMPLETO.</span>
+          </h2>
+
+          <p class="text-xl leading-relaxed text-gray-400">
+            A maioria das plataformas entrega só um link de agendamento.
+            A SuaAgenda conecta Google, tráfego pago, WhatsApp, agenda online
+            e fidelização numa única estrutura.
+          </p>
+        </div>
+
+        <!-- FLOW -->
+        <div class="relative mb-20">
+
+          <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/20 to-transparent"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5 relative z-10">
+
+            <div
+              v-for="(item,i) in marketingFlow"
+              :key="i"
+              class="rounded-2xl border border-green-400/10 bg-[#181818] p-6 text-center hover:border-green-400/40 transition-all duration-200 hover:-translate-y-1"
+            >
+              <div
+                class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4 bg-green-400/10 border border-green-400/20 text-green-400"
+              >
+                <span class="text-2xl">{{ item.emoji }}</span>
+              </div>
+
+              <p class="text-[15px] font-bold text-white mb-2">
+                {{ item.title }}
+              </p>
+
+              <p class="text-sm leading-relaxed text-gray-500">
+                {{ item.desc }}
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- DIFERENCIAL -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div class="rounded-2xl border border-red-400/20 bg-[#181818] p-8">
+            <p class="text-xs font-bold tracking-widest uppercase text-red-400 mb-5">
+              O mercado hoje
+            </p>
+
+            <ul class="space-y-4">
+              <li
+                v-for="(item,i) in marketingBad"
+                :key="i"
+                class="flex items-start gap-3 text-gray-400"
+              >
+                <span class="text-red-400 font-bold">✗</span>
+                <span>{{ item }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border border-green-400/20 bg-[#181818] p-8 relative overflow-hidden">
+            
+            <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-green-400 to-emerald-300"></div>
+
+            <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-5">
+              Como a SuaAgenda funciona
+            </p>
+
+            <ul class="space-y-4">
+              <li
+                v-for="(item,i) in marketingGood"
+                :key="i"
+                class="flex items-start gap-3 text-white"
+              >
+                <span class="text-green-400 font-bold">✓</span>
+                <span>{{ item }}</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────────────────────── -->
+    <!-- SECTION — GESTÃO DE TRÁFEGO -->
+    <!-- colocar depois da section de SEO / integração -->
+    <!-- ───────────────────────────────────────────────────────────── -->
+
+    <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a] overflow-hidden">
+
+    <div class="max-w-6xl mx-auto">
+
+      <div class="max-w-3xl mb-16">
+
+        <span class="text-xs font-bold tracking-widest uppercase text-green-400">
+          Gestão de tráfego para barbearia
+        </span>
+
+        <h2
+          class="mt-3 mb-6 font-black leading-none text-white"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,5vw,72px)"
+        >
+          NÃO É SÓ<br>
+          <span class="text-green-400">RODAR ANÚNCIO.</span>
+        </h2>
+
+        <p class="text-xl leading-relaxed text-gray-400">
+          A SuaAgenda também oferece gestão de tráfego focada em trazer clientes reais
+          pra sua barbearia — conectando anúncio, Google, página profissional,
+          agendamento online e WhatsApp numa única estrutura.
+        </p>
+
+      </div>
+
+      <!-- COMPARAÇÃO -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+
+        <!-- mercado -->
+        <div class="rounded-2xl border border-red-400/20 bg-[#181818] p-8">
+
+          <p class="text-xs font-bold tracking-widest uppercase text-red-400 mb-5">
+            O que normalmente acontece
+          </p>
+
+          <ul class="space-y-4">
+
+            <li
+              v-for="(item,i) in trafegoRuim"
+              :key="i"
+              class="flex items-start gap-3 text-gray-400"
+            >
+              <span class="text-red-400 font-bold">✗</span>
+              <span>{{ item }}</span>
+            </li>
+
+          </ul>
+
+        </div>
+
+        <!-- suaagenda -->
+        <div class="rounded-2xl border border-green-400/20 bg-[#181818] p-8 relative overflow-hidden">
+
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-green-400 to-emerald-300"></div>
+
+          <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-5">
+            Como fazemos na SuaAgenda
+          </p>
+
+          <ul class="space-y-4">
+
+            <li
+              v-for="(item,i) in trafegoBom"
+              :key="i"
+              class="flex items-start gap-3 text-white"
+            >
+              <span class="text-green-400 font-bold">✓</span>
+              <span>{{ item }}</span>
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+      <!-- FLUXO -->
+      <div class="relative">
+
+        <div
+          class="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/20 to-transparent"
+        ></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 relative z-10">
+
+          <div
+            v-for="(item,i) in trafegoFlow"
+            :key="i"
+            class="rounded-2xl border border-green-400/10 bg-[#181818] p-7 text-center hover:border-green-400/30 transition-all duration-200 hover:-translate-y-1"
+          >
+
+            <div
+              class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-green-400/10 border border-green-400/20 text-3xl"
+            >
+              {{ item.emoji }}
+            </div>
+
+            <h3 class="font-bold text-white mb-3">
+              {{ item.title }}
+            </h3>
+
+            <p class="text-sm leading-relaxed text-gray-500">
+              {{ item.desc }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-20 text-center">
+
+        <h3
+          class="font-black leading-none text-white mb-5"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,54px)"
+        >
+          SUA BARBEARIA JÁ TEM A ESTRUTURA.<br>
+          <span class="text-green-400">A GENTE TRAZ O TRÁFEGO.</span>
+        </h3>
+
+        <p class="max-w-2xl mx-auto text-lg leading-relaxed text-gray-400 mb-10">
+          Você não precisa contratar sistema, landing page, automação,
+          gestor de tráfego e CRM separados.
+          A SuaAgenda conecta tudo.
+        </p>
+
+        <div class="flex justify-center flex-wrap gap-4">
+
+          <CtaButton
+            href="https://wa.me/5511941649284"
+            label="Quero gestão de tráfego"
+            emoji="🚀"
+            size="xl"
+          />
+
+          <CtaButton
+            href="/seo-local-barbearia"
+            label="Entender SEO local"
+            variant="ghost"
+            size="xl"
+          />
+
+        </div>
+
+      </div>
+
+    </div>
+
+    </section>
+
     <!-- ─── COMPARAÇÃO ────────────────────────────────────────────────────────── -->
     <section class="w-full py-24 px-6 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
@@ -899,6 +1160,109 @@ const faqs = [
   { q: 'E se eu quiser cancelar? Tem multa?',           a: 'Nenhuma multa. Você cancela quando quiser, sem burocracia. É mês a mês.' },
   { q: 'Qual plano é o certo pra minha barbearia?',     a: 'Se você trabalha sozinho, o Profissional Solo (R$79,90/mês) já resolve tudo. Se você tem 2 ou 3 profissionais, o Equipe Pequena (R$99,90). De 4 a 6, o Equipe Média (R$149,90). 7 ou mais, a gente conversa e monta um plano. Todos começam com 7 dias grátis.' },
   { q: 'Tem suporte? Falo com uma pessoa de verdade?',  a: 'Tem suporte pelo WhatsApp em horário comercial. Você fala com uma pessoa real, sem bot.' },
+]
+
+// ─────────────────────────────────────────────────────────────
+// DADOS
+// colocar no <script setup>
+// ─────────────────────────────────────────────────────────────
+
+const marketingFlow = [
+  {
+    emoji: '📍',
+    title: 'Google',
+    desc: 'Sua barbearia aparece quando alguém busca por barbeiro na região.',
+  },
+  {
+    emoji: '📲',
+    title: 'Instagram Ads',
+    desc: 'Anúnios levando direto pra sua página profissional.',
+  },
+  {
+    emoji: '🌐',
+    title: 'Landing Page',
+    desc: 'Cliente vê serviços, horários e profissionais.',
+  },
+  {
+    emoji: '📅',
+    title: 'Agendamento',
+    desc: 'O cliente agenda sozinho sem te chamar no WhatsApp.',
+  },
+  {
+    emoji: '🤖',
+    title: 'Automação',
+    desc: 'Confirmação automática e recuperação de horários vagos.',
+  },
+  {
+    emoji: '💈',
+    title: 'Fidelização',
+    desc: 'Cashback, assinatura e retorno automático de clientes.',
+  },
+]
+
+const marketingBad = [
+  'Agência manda cliente pro WhatsApp e você perde atendimento',
+  'Você paga anúncio sem saber quantos clientes vieram',
+  'Tudo separado: agenda, tráfego, site e confirmação',
+  'Cliente entra no Instagram e some',
+  'Dependência total do algoritmo',
+]
+
+const marketingGood = [
+  'Anúnio conectado direto na agenda da barbearia',
+  'Pixel ligado nos agendamentos reais',
+  'Google + tráfego + WhatsApp + agenda funcionando juntos',
+  'Cliente agenda sem você parar o atendimento',
+  'Sistema pensado pra trazer e reter clientes',
+]
+
+// ─────────────────────────────────────────────────────────────
+// DADOS
+// adicionar no <script setup>
+// ─────────────────────────────────────────────────────────────
+
+const trafegoRuim = [
+  'Agência manda cliente pro WhatsApp e você perde atendimento',
+  'Você paga anúncio sem saber quantos clientes realmente agendaram',
+  'Landing, agenda e confirmação tudo separado',
+  'Cliente entra no Instagram e some',
+  'Nenhuma estratégia de fidelização ou retorno',
+]
+
+const trafegoBom = [
+  'Anúnio conectado direto na agenda online',
+  'Pixel ligado em agendamento real',
+  'Página profissional otimizada pra conversão',
+  'Automação via WhatsApp integrada',
+  'SEO local + tráfego trabalhando juntos',
+]
+
+const trafegoFlow = [
+  {
+    emoji: '📲',
+    title: 'Anúnio',
+    desc: 'Campanhas no Instagram e Google focadas na sua região.',
+  },
+  {
+    emoji: '🌐',
+    title: 'Página',
+    desc: 'Cliente cai numa página pronta pra converter.',
+  },
+  {
+    emoji: '📅',
+    title: 'Agenda',
+    desc: 'Agendamento online sem precisar chamar no WhatsApp.',
+  },
+  {
+    emoji: '🤖',
+    title: 'Automação',
+    desc: 'Confirmação automática e recuperação de horários.',
+  },
+  {
+    emoji: '💈',
+    title: 'Retenção',
+    desc: 'Cashback, assinatura e fidelização pra cliente voltar.',
+  },
 ]
 </script>
 
