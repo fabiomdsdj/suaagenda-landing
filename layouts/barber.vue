@@ -416,6 +416,71 @@
           </div>
         </div>
       </div>
+      
+      <!-- Links locais SEO — Gestão de Tráfego Pago -->
+      <div class="border-t border-white/[.04] px-6 py-10">
+        <div class="max-w-6xl mx-auto">
+          <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-6">
+            Gestão de tráfego pago por bairro
+          </p>
+
+          <div class="space-y-10">
+            <div v-for="city in allCities" :key="city.citySlug">
+              <NuxtLink
+                :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}`"
+                class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
+              >
+                {{ city.city }}
+              </NuxtLink>
+
+              <template v-if="hasZones(city)">
+                <div v-for="(districts, zoneName) in districtsByZone(city)" :key="String(zoneName)" class="mb-6">
+                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">{{ zoneName }}</p>
+                  <div class="flex flex-wrap gap-x-5 gap-y-2">
+                    <NuxtLink
+                      v-for="neighborhood in flatNeighborhoods(districts)"
+                      :key="neighborhood.slug"
+                      :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
+                      class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                    >
+                      {{ neighborhood.name }}
+                    </NuxtLink>
+                  </div>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="flex flex-wrap gap-x-5 gap-y-2">
+                  <NuxtLink
+                    v-for="neighborhood in allNeighborhoods(city)"
+                    :key="neighborhood.slug"
+                    :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
+                    class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
+                  >
+                    {{ neighborhood.name }}
+                  </NuxtLink>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-white/[.04]">
+            <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">
+              Gestão de tráfego pago por cidade
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <NuxtLink
+                v-for="city in allCities"
+                :key="city.citySlug"
+                :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}`"
+                class="text-[13px] text-gray-600 hover:text-green-400 transition-colors"
+              >
+                Gestão de tráfego em {{ city.city }}
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Bottom bar -->
       <div class="border-t border-white/5 px-6 py-5">
@@ -530,6 +595,7 @@ const recursosLinks = [
   { emoji: '📅', label: 'Agenda online',        href: '/recursos/agenda-online' },
   { emoji: '👥', label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
   { emoji: '🔗', label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
+  { label: 'Tráfego pago',   href: '/gestao-trafego-pago' },
 ]
 
 const blogLinks = [
