@@ -578,15 +578,8 @@
 
           <CtaButton
             href="https://wa.me/5511941649284"
-            label="Quero gestão de tráfego"
+            label="Quero tráfego pago"
             emoji="🚀"
-            size="xl"
-          />
-
-          <CtaButton
-            href="/seo-local-barbearia"
-            label="Entender SEO local"
-            variant="ghost"
             size="xl"
           />
 

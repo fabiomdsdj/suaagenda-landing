@@ -147,7 +147,7 @@ useHead(
 
     return {
       title:
-        `Gestão de Tráfego para Barbearias em ${neighborhoodName} — ${cityName}`,
+        `Tráfego pago para Barbearia em ${neighborhoodName} - ${cityName}`,
 
       meta: [
         {
@@ -165,7 +165,7 @@ useHead(
         {
           property: 'og:title',
           content:
-            `Gestão de Tráfego para Barbearias em ${neighborhoodName}`,
+            `Tráfego pago para Barbearias em ${neighborhoodName}`,
         },
 
         {
@@ -260,22 +260,13 @@ useHead(
 
         <!-- TITLE -->
         <h1
-          class="font-black leading-none mb-6 text-white"
+          class="font-black leading-none mb-6 text-green-400"
           style="font-family:'Bebas Neue',sans-serif;font-size:clamp(46px,6vw,90px);letter-spacing:.03em"
         >
-          BARBEIROS EM<br>
+          TRÁFEGO PAGO EM<br>
 
-          <span class="text-green-400">
-            {{ neighborhood?.name?.toUpperCase() }}
-          </span>
-
-          <br>
-
-          <span
-            class="text-white/40"
-            style="font-size:clamp(24px,3vw,42px)"
-          >
-            QUE LOTAM A AGENDA TODOS OS DIAS
+          <span class="text-white">
+            {{ neighborhood?.name?.toUpperCase() }} - {{ city?.city }}
           </span>
         </h1>
 

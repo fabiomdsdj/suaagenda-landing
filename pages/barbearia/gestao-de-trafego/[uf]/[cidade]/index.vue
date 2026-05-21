@@ -45,7 +45,7 @@
         <div class="flex flex-wrap gap-3 mb-6">
 
           <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">
-            🚀 Gestão de tráfego para barbearias
+            🚀 Tráfego pago para barbearias
           </span>
 
           <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">
@@ -56,22 +56,13 @@
 
         <!-- TITLE -->
         <h1
-          class="font-black leading-none mb-6 text-white"
+          class="font-black leading-none mb-6 text-green-400"
           style="font-family:'Bebas Neue',sans-serif;font-size:clamp(46px,6vw,90px);letter-spacing:.03em"
         >
-          BARBEIROS EM<br>
+          TRÁFEGO PAGO EM<br>
 
-          <span class="text-green-400">
+          <span class="text-white">
             {{ cityData.city.toUpperCase() }}
-          </span>
-
-          <br>
-
-          <span
-            class="text-white/40"
-            style="font-size:clamp(24px,3vw,42px)"
-          >
-            QUE LOTAM A AGENDA TODOS OS DIAS
           </span>
         </h1>
 
@@ -526,7 +517,7 @@ useHead(
 
     return {
       title:
-        `Gestão de Tráfego pago para Barbearias em ${city}`,
+        `Tráfego pago para Barbearia em ${city}`,
 
       meta: [
         {
@@ -544,7 +535,7 @@ useHead(
         {
           property: 'og:title',
           content:
-            `Gestão de Tráfego para Barbearias em ${city}`,
+            `Tráfego pago para Barbearias em ${city}`,
         },
 
         {

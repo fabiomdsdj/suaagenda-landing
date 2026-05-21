@@ -38,7 +38,7 @@
         <div class="flex flex-wrap gap-3 mb-6">
 
           <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-green-400 bg-green-400/10 border border-green-400/20">
-            🚀 Gestão de tráfego para barbearias
+            🚀 Tráfego para barbearias
           </span>
 
           <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-gray-500 bg-white/[.04] border border-white/[.06]">
@@ -49,22 +49,14 @@
 
         <!-- TITLE -->
         <h1
-          class="font-black leading-none mb-6 text-white"
+          class="font-black leading-none mb-6 text-green-400"
           style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,88px);letter-spacing:.03em"
         >
-          GESTÃO DE<br>
-
-          <span class="text-green-400">
-            TRÁFEGO PAGO
-          </span>
-
-          <br>
-
+          TRÁFEGO PAGO<br>
           <span
-            class="text-white/40"
-            style="font-size:clamp(24px,3vw,42px)"
+            class="text-white"
           >
-            PRA BARBEARIAS
+            PARA BARBEARIAS
           </span>
         </h1>
 
