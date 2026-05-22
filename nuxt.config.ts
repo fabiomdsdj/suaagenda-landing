@@ -128,7 +128,11 @@ export default defineNuxtConfig({
       },
       barbershops: {
         sources: ['/api/sitemap/barbershops'],
-        chunks: 1000, // ← passa o número direto aqui, sem chunkSize
+        chunks: 1000, 
+      },
+      traffic: {                              
+        sources: ['/api/sitemap/traffic'],
+        chunks: 1000,
       },
     },
   },
