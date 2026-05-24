@@ -16,7 +16,10 @@ export default defineEventHandler(async (event) => {
     `${apiBase}/barbershops/stats/counts`,
     {
       params: { uf, city, neighborhood },
-      headers: apiKey ? { 'x-api-key': apiKey } : {},
+      headers: {
+        ...(config.public.apiKey        ? { 'x-api-key':        config.public.apiKey        } : {}),
+        ...(config.sitemapInternalToken  ? { 'x-internal-token': config.sitemapInternalToken  } : {}),
+      },
     }
   ).catch(() => 0)
 

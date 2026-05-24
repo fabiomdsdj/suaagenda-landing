@@ -6,6 +6,11 @@ export default defineEventHandler(async (event) => {
   
     return await $fetch(
       `${config.public.apiBase}/geoLocations/export/${uf}/${city}`,
-      { headers: config.public.apiKey ? { 'x-api-key': config.public.apiKey } : {} }
+      { 
+        headers: {
+          ...(config.public.apiKey        ? { 'x-api-key':        config.public.apiKey        } : {}),
+          ...(config.sitemapInternalToken  ? { 'x-internal-token': config.sitemapInternalToken  } : {}),
+        },
+      }
     ).catch(() => null)
   })

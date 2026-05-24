@@ -19,9 +19,13 @@ for (const { from, to } of [
 async function fetchActiveUFSlugs(): Promise<string[]> {
   const apiBase = process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3011'
   const apiKey  = process.env.NUXT_PUBLIC_API_KEY || ''
+  const internalToken = process.env.SITEMAP_INTERNAL_TOKEN    || ''
   try {
     const res = await fetch(`${apiBase}/geoLocations/available-ufs`, {
-      headers: apiKey ? { 'x-api-key': apiKey } : {},
+      headers: {
+        ...(apiKey        ? { 'x-api-key':        apiKey        } : {}),
+        ...(internalToken ? { 'x-internal-token': internalToken } : {}),
+      },
       signal: AbortSignal.timeout(5000),
     })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
