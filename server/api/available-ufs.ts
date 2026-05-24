@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
     `${config.public.apiBase}/geoLocations/available-ufs`,
     {
       headers: {
-        ...(config.public.apiKey        ? { 'x-api-key':        config.public.apiKey        } : {}),
-        ...(config.sitemapInternalToken  ? { 'x-internal-token': config.sitemapInternalToken  } : {}),
+        ...(config.public.apiKey        ? { 'x-api-key':     config.public.apiKey        } : {}),
+        ...(config.sitemapInternalToken ? { 'authorization': `Bearer ${config.sitemapInternalToken}` } : {}),
       },
     }
   ).catch((err) => {

@@ -24,7 +24,7 @@ async function fetchActiveUFSlugs(): Promise<string[]> {
     const res = await fetch(`${apiBase}/geoLocations/available-ufs`, {
       headers: {
         ...(apiKey        ? { 'x-api-key':        apiKey        } : {}),
-        ...(internalToken ? { 'x-internal-token': internalToken } : {}),
+        ...(internalToken ? { 'authorization': `Bearer ${internalToken}`    } : {}),
       },
       signal: AbortSignal.timeout(5000),
     })
