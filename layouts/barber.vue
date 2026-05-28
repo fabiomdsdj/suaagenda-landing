@@ -88,7 +88,7 @@
           </div>
 
           <CtaButton
-            href="/choose-plan?segment=barber"
+            href="/barbearia/choose-plan?segment=barber"
             label="Ver planos"
             :external="false"
           />
@@ -164,7 +164,7 @@
             </div>
 
             <a
-              :href="wpLink"
+              href="/barbearia/choose-plan?segment=barber"
               class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-400 text-black text-[16px] font-bold mt-2"
               @click="mobileOpen = false"
             >

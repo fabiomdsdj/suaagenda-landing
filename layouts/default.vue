@@ -88,7 +88,7 @@
           </div>
 
           <CtaButton
-            href="/choose-plan?segment=barber"
+            href="/barbearia/choose-plan?segment=barber"
             label="Ver planos"
             :external="false"
           />
@@ -164,7 +164,7 @@
             </div>
 
             <CtaButton
-              href="/choose-plan?segment=barber"
+              href="/barbearia/choose-plan?segment=barber"
               label="Ver planos"
               :external="false"
             />
