@@ -237,18 +237,6 @@
       </div>
     </section>
 
-    <div class="mb-6">
-      <span
-        class="inline-flex px-4 py-2 rounded-full bg-green-400/10 text-green-400 text-sm font-bold"
-      >
-        {{
-          partnerMode === 'system'
-            ? 'Modo Parceiro Sistema'
-            : 'Modo Parceiro Growth'
-        }}
-      </span>
-    </div>
-
     <!-- SIMULADOR INTERATIVO -->
     <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
@@ -265,6 +253,17 @@
         </h2>
         <p class="text-gray-500 mb-10 text-[15px]">Selecione quantas indicações ativas você teria por mês:</p>
 
+        <div class="mb-6">
+          <span
+            class="inline-flex px-4 py-2 rounded-full bg-green-400/10 text-green-400 text-sm font-bold"
+          >
+            {{
+              partnerMode === 'system'
+                ? 'Modo Parceiro Sistema'
+                : 'Modo Parceiro Growth'
+            }}
+          </span>
+        </div>
         <!-- SELETOR -->
         <div class="flex flex-wrap gap-3 mb-10">
           <button
