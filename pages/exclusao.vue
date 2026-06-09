@@ -53,9 +53,9 @@
 </template>
 
 <script setup>
-const name = 'Exclusão de Dados — SuaAgenda'
+const name = 'Exclusão de Dados'
 const content = 'Saiba como solicitar a exclusão dos seus dados pessoais da plataforma SuaAgenda conforme a LGPD.'
-const slug = 'exclusao-de-dados'
+const slug = 'exclusao'
 
 useHead({
   title: name,
