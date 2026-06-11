@@ -1,3 +1,5 @@
+bash
+mkdir -p /home/claude/suaagenda && cat > /home/claude/suaagenda/indicacoes.vue << 'VEOF'
 <!-- pages/indicacoes/index.vue -->
 <template>
   <div class="text-[15px]">
@@ -271,7 +273,7 @@
               <h3 class="text-white font-bold text-xl mb-2">Parceiro Growth</h3>
               <p class="text-gray-400 mb-4 text-sm">Sistema + gestão de tráfego pago.</p>
               <p class="text-green-400 text-4xl font-black leading-none">
-                R$ {{ fmtPrice(systemCommission(activePlan) + TRAFFIC_COMMISSION) }}
+                R$ {{ fmtPrice(totalCommission(activePlan)) }}
               </p>
               <p class="text-gray-500 text-sm mt-1">por cliente ativo · 30% sistema + 10% tráfego</p>
               <div
@@ -951,3 +953,10 @@ useHead({
   ],
 })
 </script>
+VEOF
+echo "OK"
+
+Saída
+OK
+Concluído
+Você está sem mensagens gratuitas até 16:40
