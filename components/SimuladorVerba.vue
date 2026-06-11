@@ -1,6 +1,6 @@
 <!-- components/SimuladorVerba.vue -->
 <template>
-  <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
+  <section class="w-full py-20 px-4 md:px-16 bg-[#0a0a0a]">
     <div class="max-w-6xl mx-auto">
 
       <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -8,7 +8,7 @@
       </span>
       <h2
         class="mt-3 mb-4 font-black leading-none text-white"
-        style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+        style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,58px)"
       >
         QUANTOS CLIENTES<br>
         <span class="text-green-400">SUA VERBA PODE TRAZER</span>
@@ -53,7 +53,7 @@
         <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-5">
           1. Verba mensal no Google Ads
         </p>
-        <div class="flex items-center gap-5">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
           <input
             type="range"
             :value="budget"
@@ -61,11 +61,11 @@
             min="100"
             max="3000"
             step="50"
-            class="flex-1 accent-green-400"
+            class="w-full sm:flex-1 accent-green-400"
           />
           <span
-            class="font-black text-green-400 shrink-0"
-            style="font-family:'Bebas Neue',sans-serif;font-size:28px;min-width:120px;text-align:right"
+            class="font-black text-green-400 sm:shrink-0"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,5vw,28px)"
           >
             R$ {{ budget.toLocaleString('pt-BR') }}/mês
           </span>
@@ -91,7 +91,7 @@
             v-for="opt in ticketOptions"
             :key="opt.value"
             @click="selectTicket(opt.value)"
-            class="px-5 py-3 rounded-xl border text-sm font-bold transition"
+            class="px-4 py-3 rounded-xl border text-sm font-bold transition"
             :class="ticketPreset === opt.value
               ? 'bg-green-400 text-black border-green-400'
               : 'bg-[#181818] text-gray-400 border-white/[.08] hover:border-green-400/40'"
@@ -100,7 +100,7 @@
           </button>
           <button
             @click="selectTicket('custom')"
-            class="px-5 py-3 rounded-xl border text-sm font-bold transition"
+            class="px-4 py-3 rounded-xl border text-sm font-bold transition"
             :class="ticketPreset === 'custom'
               ? 'bg-green-400 text-black border-green-400'
               : 'bg-[#181818] text-gray-400 border-white/[.08] hover:border-green-400/40'"
@@ -108,7 +108,7 @@
             Personalizado
           </button>
         </div>
-        <div v-if="ticketPreset === 'custom'" class="flex items-center gap-5 mt-4">
+        <div v-if="ticketPreset === 'custom'" class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mt-4">
           <input
             type="range"
             :value="customTicket"
@@ -116,11 +116,11 @@
             min="20"
             max="250"
             step="5"
-            class="flex-1 accent-green-400"
+            class="w-full sm:flex-1 accent-green-400"
           />
           <span
-            class="font-black text-green-400 shrink-0"
-            style="font-family:'Bebas Neue',sans-serif;font-size:24px;min-width:80px;text-align:right"
+            class="font-black text-green-400 sm:shrink-0"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,5vw,24px)"
           >
             R$ {{ customTicket }}
           </span>
@@ -137,7 +137,7 @@
             v-for="opt in frequencyOptions"
             :key="opt.value"
             @click="frequency = opt.value"
-            class="px-5 py-3 rounded-xl border text-sm font-bold transition"
+            class="px-4 py-3 rounded-xl border text-sm font-bold transition"
             :class="frequency === opt.value
               ? 'bg-green-400 text-black border-green-400'
               : 'bg-[#181818] text-gray-400 border-white/[.08] hover:border-green-400/40'"
@@ -152,7 +152,7 @@
         <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-5">
           4. Cenário de conversão
         </p>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             v-for="sc in SCENARIOS"
             :key="sc.id"
@@ -177,17 +177,18 @@
         <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-5">
           Resultado estimado — captação mensal via Google Ads
         </p>
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
           <div
             v-for="card in mainCards"
             :key="card.label"
             class="rounded-xl border border-white/[.06] bg-[#111] p-4 text-center"
+            :class="{ 'col-span-2 lg:col-span-1': card.wide }"
           >
             <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">{{ card.label }}</p>
             <p
-              class="font-black leading-none mb-1"
+              class="font-black leading-none mb-1 break-words"
               :class="card.green ? 'text-green-400' : 'text-white'"
-              style="font-family:'Bebas Neue',sans-serif;font-size:28px"
+              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,4vw,28px)"
             >
               {{ card.value }}
             </p>
@@ -203,36 +204,36 @@
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-7">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 sm:p-7">
             <p class="text-[15px] font-bold text-white mb-5">Como calculamos o valor</p>
-            <div class="space-y-4">
-              <div class="flex justify-between items-center py-3 border-b border-white/[.04]">
-                <span class="text-sm text-gray-500">Ticket médio</span>
+            <div class="space-y-1">
+              <div class="flex justify-between items-center py-3 border-b border-white/[.04] gap-4">
+                <span class="text-sm text-gray-500 shrink-0">Ticket médio</span>
                 <span class="text-sm font-bold text-white">R$ {{ effectiveTicket }}</span>
               </div>
-              <div class="flex justify-between items-center py-3 border-b border-white/[.04]">
-                <span class="text-sm text-gray-500">Visitas por mês</span>
+              <div class="flex justify-between items-center py-3 border-b border-white/[.04] gap-4">
+                <span class="text-sm text-gray-500 shrink-0">Visitas por mês</span>
                 <span class="text-sm font-bold text-white">{{ frequency }}×</span>
               </div>
-              <div class="flex justify-between items-center py-3 border-b border-white/[.04]">
-                <span class="text-sm text-gray-500">Valor mensal por cliente</span>
+              <div class="flex justify-between items-center py-3 border-b border-white/[.04] gap-4">
+                <span class="text-sm text-gray-500 shrink-0">Valor mensal por cliente</span>
                 <span class="text-sm font-bold text-green-400">{{ fmtBRL(clientMonthlyValue) }}</span>
               </div>
-              <div class="flex justify-between items-center py-3 border-b border-white/[.04]">
-                <span class="text-sm text-gray-500">Valor anual por cliente</span>
+              <div class="flex justify-between items-center py-3 border-b border-white/[.04] gap-4">
+                <span class="text-sm text-gray-500 shrink-0">Valor anual por cliente</span>
                 <span class="text-sm font-bold text-green-400">{{ fmtBRL(clientAnnualValue) }}</span>
               </div>
-              <div class="flex justify-between items-center py-3">
-                <span class="text-sm text-gray-500">Clientes captados</span>
+              <div class="flex justify-between items-center py-3 gap-4">
+                <span class="text-sm text-gray-500 shrink-0">Clientes captados</span>
                 <span class="text-sm font-bold text-white">{{ currentClients }}</span>
               </div>
             </div>
             <div class="mt-5 pt-5 border-t border-white/[.08]">
-              <div class="flex justify-between items-center">
+              <div class="flex flex-wrap justify-between items-center gap-2">
                 <span class="text-[15px] font-bold text-white">Valor potencial da carteira</span>
                 <span
                   class="font-black text-green-400"
-                  style="font-family:'Bebas Neue',sans-serif;font-size:28px"
+                  style="font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,5vw,28px)"
                 >
                   {{ fmtBRL(portfolioValue) }}
                 </span>
@@ -243,7 +244,7 @@
             </div>
           </div>
 
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-7">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 sm:p-7">
             <p class="text-[15px] font-bold text-white mb-2">Cenários de retenção</p>
             <p class="text-xs text-gray-500 mb-5 leading-relaxed">
               Nem todo cliente retorna por 12 meses. Veja o valor gerado em cada cenário.
@@ -255,7 +256,7 @@
                 class="rounded-xl p-4"
                 :class="ret.highlight ? 'border border-green-400/20 bg-green-400/5' : 'bg-[#141414]'"
               >
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
                   <span class="text-sm font-bold" :class="ret.highlight ? 'text-white' : 'text-gray-400'">
                     {{ ret.label }}
                   </span>
@@ -268,12 +269,12 @@
                     {{ ret.rate * 100 }}% retenção
                   </span>
                 </div>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-2">
                   <span class="text-xs text-gray-600">{{ Math.round(currentClients * ret.rate) }} clientes permanecendo</span>
                   <span
-                    class="font-black"
+                    class="font-black shrink-0"
                     :class="ret.highlight ? 'text-green-400' : 'text-gray-400'"
-                    style="font-family:'Bebas Neue',sans-serif;font-size:22px"
+                    style="font-family:'Bebas Neue',sans-serif;font-size:clamp(16px,4vw,22px)"
                   >
                     {{ fmtBRL(portfolioValue * ret.rate) }}
                   </span>
@@ -296,48 +297,48 @@
         <p class="text-xs font-bold tracking-widest uppercase text-gray-500 mb-5">
           Ponto de equilíbrio
         </p>
-        <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-7">
+        <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 sm:p-7">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             <div>
               <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Investimento total/mês</p>
               <div class="space-y-2 mb-4">
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500">Sistema SuaAgenda ({{ activeSystemPlan.name }})</span>
-                  <span class="text-gray-300">R$ {{ activeSystemPlan.monthly.toFixed(2).replace('.', ',') }}</span>
+                <div class="flex justify-between text-sm gap-3">
+                  <span class="text-gray-500 min-w-0 truncate">Sistema ({{ activeSystemPlan.name }})</span>
+                  <span class="text-gray-300 shrink-0">R$ {{ activeSystemPlan.monthly.toFixed(2).replace('.', ',') }}</span>
                 </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500">Captação Automática</span>
-                  <span class="text-gray-300">R$ 300,00</span>
+                <div class="flex justify-between text-sm gap-3">
+                  <span class="text-gray-500 shrink-0">Captação Automática</span>
+                  <span class="text-gray-300 shrink-0">R$ 300,00</span>
                 </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500">Verba Google Ads</span>
-                  <span class="text-gray-300">R$ {{ budget.toLocaleString('pt-BR') }}</span>
+                <div class="flex justify-between text-sm gap-3">
+                  <span class="text-gray-500 shrink-0">Verba Google Ads</span>
+                  <span class="text-gray-300 shrink-0">R$ {{ budget.toLocaleString('pt-BR') }}</span>
                 </div>
-                <div class="flex justify-between text-sm pt-2 border-t border-white/[.06]">
+                <div class="flex justify-between text-sm pt-2 border-t border-white/[.06] gap-3">
                   <span class="font-bold text-white">Total</span>
-                  <span class="font-bold text-white">R$ {{ totalInvestment.toLocaleString('pt-BR') }}</span>
+                  <span class="font-bold text-white shrink-0">R$ {{ totalInvestment.toLocaleString('pt-BR') }}</span>
                 </div>
               </div>
             </div>
 
-            <div class="md:border-x border-white/[.06] md:px-6">
-              <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Cortes necessários para empatar</p>
+            <div class="md:border-x border-t md:border-t-0 border-white/[.06] md:px-6 pt-6 md:pt-0">
+              <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Cortes para empatar</p>
               <p
                 class="font-black text-white leading-none mb-1"
-                style="font-family:'Bebas Neue',sans-serif;font-size:48px"
+                style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,8vw,48px)"
               >
                 {{ breakEvenCuts }}
               </p>
               <p class="text-xs text-gray-500">atendimentos no mês</p>
             </div>
 
-            <div>
+            <div class="border-t md:border-t-0 border-white/[.06] pt-6 md:pt-0">
               <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Clientes retornando {{ frequency }}×/mês</p>
               <p
                 class="font-black leading-none mb-1"
                 :class="breakEvenClients <= currentClients ? 'text-green-400' : 'text-yellow-500'"
-                style="font-family:'Bebas Neue',sans-serif;font-size:48px"
+                style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,8vw,48px)"
               >
                 {{ breakEvenClients }}
               </p>
@@ -361,16 +362,16 @@
           Comparativo por nível de verba
         </p>
         <div class="rounded-2xl border border-white/[.06] bg-[#181818] overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+          <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
+            <table class="w-full text-sm min-w-[540px]">
               <thead>
                 <tr class="border-b border-white/[.06]">
-                  <th class="text-left text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Verba/mês</th>
-                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Cliques</th>
-                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Agendamentos</th>
-                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Clientes</th>
-                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Receita inicial</th>
-                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-5 py-3">Valor carteira/ano</th>
+                  <th class="text-left text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Verba/mês</th>
+                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Cliques</th>
+                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Agendamentos</th>
+                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Clientes</th>
+                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Receita inicial</th>
+                  <th class="text-right text-xs text-gray-600 uppercase tracking-wider px-4 py-3 whitespace-nowrap">Carteira/ano</th>
                 </tr>
               </thead>
               <tbody>
@@ -380,7 +381,7 @@
                   class="border-b border-white/[.04] last:border-0 transition"
                   :class="row.isActive ? 'bg-green-400/5' : ''"
                 >
-                  <td class="px-5 py-4">
+                  <td class="px-4 py-4 whitespace-nowrap">
                     <span class="font-bold" :class="row.isActive ? 'text-green-400' : 'text-gray-300'">
                       {{ row.budgetFmt }}
                     </span>
@@ -391,11 +392,11 @@
                       atual
                     </span>
                   </td>
-                  <td class="text-right px-5 py-4 text-gray-400">{{ row.clicks }}</td>
-                  <td class="text-right px-5 py-4 text-gray-400">{{ row.bookings }}</td>
-                  <td class="text-right px-5 py-4 text-gray-400">{{ row.clients }}</td>
-                  <td class="text-right px-5 py-4 text-gray-300">{{ row.revenue }}</td>
-                  <td class="text-right px-5 py-4 font-bold" :class="row.isActive ? 'text-green-400' : 'text-gray-300'">{{ row.portfolio }}</td>
+                  <td class="text-right px-4 py-4 text-gray-400">{{ row.clicks }}</td>
+                  <td class="text-right px-4 py-4 text-gray-400">{{ row.bookings }}</td>
+                  <td class="text-right px-4 py-4 text-gray-400">{{ row.clients }}</td>
+                  <td class="text-right px-4 py-4 text-gray-300 whitespace-nowrap">{{ row.revenue }}</td>
+                  <td class="text-right px-4 py-4 font-bold whitespace-nowrap" :class="row.isActive ? 'text-green-400' : 'text-gray-300'">{{ row.portfolio }}</td>
                 </tr>
               </tbody>
             </table>
@@ -424,10 +425,8 @@ const SYSTEM_PLANS = [
 
 type SystemPlanId = typeof SYSTEM_PLANS[number]['id']
 
-// ─── GOOGLE ADS — CPC FIXO ────────────────────────────────────────────────────
 const GOOGLE_CPC = 1.85
 
-// ─── CENÁRIOS ─────────────────────────────────────────────────────────────────
 const SCENARIOS = [
   { id: 'conservative', label: 'Conservador', cvr: 0.03, showUp: 0.65 },
   { id: 'likely',       label: 'Provável',    cvr: 0.05, showUp: 0.75 },
@@ -442,7 +441,6 @@ const retentionScenarios = [
   { label: 'Excelente',   rate: 0.75, highlight: false },
 ]
 
-// ─── ESTADO ───────────────────────────────────────────────────────────────────
 const systemPlan   = ref<SystemPlanId>('solo')
 const budget       = ref<number>(300)
 const ticketPreset = ref<number | 'custom'>(45)
@@ -469,7 +467,6 @@ function fmtBRL(v: number): string {
   return `R$ ${Math.round(v).toLocaleString('pt-BR')}`
 }
 
-// ─── COMPUTEDS ────────────────────────────────────────────────────────────────
 const activeSystemPlan = computed(() => SYSTEM_PLANS.find(p => p.id === systemPlan.value)!)
 
 const effectiveTicket = computed<number>(() =>
@@ -497,30 +494,35 @@ const mainCards = computed(() => [
     value: currentClicks.value.toLocaleString('pt-BR'),
     sub:   'Google Ads · R$ 1,85/clique',
     green: false,
+    wide:  false,
   },
   {
     label: 'Agendamentos',
     value: String(currentBookings.value),
     sub:   `${activeScenario.value.cvr * 100}% de conversão`,
     green: false,
+    wide:  false,
   },
   {
     label: 'Clientes novos',
     value: String(currentClients.value),
-    sub:   `${activeScenario.value.showUp * 100}% de comparecimento`,
+    sub:   `${activeScenario.value.showUp * 100}% comparecimento`,
     green: true,
+    wide:  false,
   },
   {
     label: 'Receita inicial',
     value: fmtBRL(currentRevenue.value),
     sub:   `${currentClients.value} clientes × R$ ${effectiveTicket.value}`,
     green: true,
+    wide:  false,
   },
   {
     label: 'Valor potencial carteira',
     value: fmtBRL(portfolioValue.value),
     sub:   'se retornarem por 12 meses',
     green: true,
+    wide:  true,
   },
 ])
 

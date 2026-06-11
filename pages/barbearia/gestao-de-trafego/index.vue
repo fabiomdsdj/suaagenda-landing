@@ -3,7 +3,7 @@
   <div class="text-[15px]">
 
     <!-- BREADCRUMB -->
-    <section class="pt-28 pb-6 px-6 md:px-16 bg-[#0a0a0a] border-b border-white/5">
+    <section class="pt-28 pb-6 px-4 md:px-16 bg-[#0a0a0a] border-b border-white/5">
       <div class="max-w-6xl mx-auto">
         <nav class="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
           <NuxtLink to="/" class="hover:text-green-400 transition-colors">Início</NuxtLink>
@@ -14,7 +14,7 @@
     </section>
 
     <!-- HERO -->
-    <section class="relative w-full py-20 px-6 md:px-16 bg-[#0a0a0a] overflow-hidden">
+    <section class="relative w-full py-20 px-4 md:px-16 bg-[#0a0a0a] overflow-hidden">
       <div
         class="absolute inset-0 pointer-events-none"
         style="background:radial-gradient(ellipse 55% 50% at 70% 40%,rgba(52,211,153,.07) 0%,transparent 70%)"
@@ -32,7 +32,7 @@
 
         <h1
           class="font-black leading-none mb-6 text-green-400"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,88px);letter-spacing:.03em"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,88px);letter-spacing:.03em"
         >
           NÃO É AGÊNCIA.<br>
           <span class="text-white">É CAPTAÇÃO AUTOMÁTICA.</span>
@@ -53,7 +53,7 @@
             :key="benefit.title"
             class="flex items-start gap-3 rounded-2xl border border-white/[.06] bg-[#181818] p-5"
           >
-            <div class="text-2xl">{{ benefit.emoji }}</div>
+            <div class="text-2xl shrink-0">{{ benefit.emoji }}</div>
             <div>
               <p class="font-bold text-white text-[15px] mb-2">{{ benefit.title }}</p>
               <p class="text-sm text-gray-500 leading-relaxed">{{ benefit.desc }}</p>
@@ -63,14 +63,14 @@
 
         <div class="flex flex-wrap gap-4">
           
-          <a  href="https://wa.me/5511941649284"
-            class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
+          <a href="https://wa.me/5511941649284"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-green-400 text-black text-base font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
           >
             🚀 Quero captar clientes automaticamente
           </a>
           <NuxtLink
             to="/barbearias"
-            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-base text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
           >
             Ver barbearias →
           </NuxtLink>
@@ -80,9 +80,9 @@
     </section>
 
     <!-- POR QUE GOOGLE ADS -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#0d0d0d] border-y border-white/5">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#0d0d0d] border-y border-white/5">
       <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
 
           <div>
             <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -90,7 +90,7 @@
             </span>
             <h2
               class="mt-3 mb-6 font-black leading-none text-white"
-              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,56px)"
+              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,56px)"
             >
               QUEM PESQUISA<br>
               <span class="text-green-400">JÁ QUER CORTAR.</span><br>
@@ -110,13 +110,13 @@
           </div>
 
           <!-- SERP MOCKUP -->
-          <div class="space-y-3">
+          <div class="space-y-3 mt-8 md:mt-0">
             <p class="text-xs text-gray-600 uppercase tracking-widest mb-4">Como você aparece no Google</p>
 
             <div class="rounded-2xl border border-green-400/20 bg-[#181818] p-5 relative">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold border border-green-400/40 text-green-400 px-2 py-0.5 rounded">Anúncio</span>
-                <span class="text-xs text-gray-600">suaagenda.link/barbearia</span>
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="text-[10px] font-bold border border-green-400/40 text-green-400 px-2 py-0.5 rounded shrink-0">Anúncio</span>
+                <span class="text-xs text-gray-600 truncate">suaagenda.link/barbearia</span>
               </div>
               <p class="text-[15px] font-bold text-green-400 mb-1">Barbearia em [Cidade] — Agende Online Agora</p>
               <p class="text-sm text-gray-500">Agenda online 24h · Confirmação automática · Sem espera · Marque seu horário agora.</p>
@@ -125,7 +125,7 @@
 
             <div class="rounded-2xl border border-white/[.04] bg-[#141414] p-5 opacity-40">
               <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold border border-gray-700 text-gray-600 px-2 py-0.5 rounded">Anúncio</span>
+                <span class="text-[10px] font-bold border border-gray-700 text-gray-600 px-2 py-0.5 rounded shrink-0">Anúncio</span>
                 <span class="text-xs text-gray-700">concorrente.com.br</span>
               </div>
               <p class="text-[15px] font-bold text-gray-600 mb-1">Barbearia — Entre em contato</p>
@@ -135,7 +135,7 @@
             <div class="rounded-2xl border border-white/[.04] bg-[#181818] p-5">
               <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-3">Google Perfil da Empresa</p>
               <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-green-400/10 flex items-center justify-center text-green-400 font-black text-lg flex-shrink-0">B</div>
+                <div class="w-10 h-10 rounded-xl bg-green-400/10 flex items-center justify-center text-green-400 font-black text-lg shrink-0">B</div>
                 <div>
                   <p class="text-[15px] font-bold text-white">Sua Barbearia</p>
                   <p class="text-xs text-yellow-400 mb-1">★★★★★ <span class="text-gray-500">4,9 (128 avaliações)</span></p>
@@ -155,22 +155,22 @@
           <div
             v-for="gstat in googleStats"
             :key="gstat.label"
-            class="rounded-2xl border border-green-400/10 bg-[#181818] p-6 text-center"
+            class="rounded-2xl border border-green-400/10 bg-[#181818] p-5 text-center"
           >
             <p
               class="font-black text-green-400 leading-none mb-2"
-              style="font-family:'Bebas Neue',sans-serif;font-size:40px"
+              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,5vw,40px)"
             >
               {{ gstat.num }}
             </p>
-            <p class="text-sm text-gray-500 leading-snug">{{ gstat.label }}</p>
+            <p class="text-xs text-gray-500 leading-snug">{{ gstat.label }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- COMO FUNCIONA — FUNIL -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -178,12 +178,13 @@
         </span>
         <h2
           class="mt-3 mb-10 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,58px)"
         >
           DO CLIQUE<br>
           <span class="text-green-400">AO AGENDAMENTO REGISTRADO.</span>
         </h2>
 
+        <!-- Funil: no mobile sem encolhimento, no desktop mantém o efeito -->
         <div class="max-w-3xl mx-auto mb-16">
           <div
             v-for="(step, i) in funnelSteps"
@@ -191,18 +192,18 @@
             class="flex flex-col items-center"
           >
             <div
-              class="w-full flex items-center gap-4 rounded-2xl border border-white/[.06] bg-[#181818] p-5"
-              :style="`max-width: ${100 - i * 7}%`"
+              class="w-full flex items-center gap-4 rounded-2xl border border-white/[.06] bg-[#181818] p-5 transition-all"
+              :style="isMobile ? '' : `max-width: ${100 - i * 7}%`"
             >
               <div
-                class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0"
+                class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0"
                 :class="step.highlight ? 'bg-green-400 text-black' : 'bg-green-400/10 text-green-400'"
               >
                 {{ i + 1 }}
               </div>
-              <div>
+              <div class="min-w-0">
                 <p class="font-bold text-white text-[15px]">{{ step.title }}</p>
-                <p class="text-sm text-gray-500 mt-0.5">{{ step.desc }}</p>
+                <p class="text-sm text-gray-500 mt-0.5 leading-relaxed">{{ step.desc }}</p>
               </div>
             </div>
             <div v-if="i < funnelSteps.length - 1" class="text-green-400/40 text-2xl my-1">↓</div>
@@ -226,7 +227,7 @@
     </section>
 
     <!-- O QUE INCLUI / NÃO INCLUI -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -234,7 +235,7 @@
         </span>
         <h2
           class="mt-3 mb-4 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,58px)"
         >
           O QUE ESTÁ<br>
           <span class="text-green-400">DENTRO E FORA DO PLANO</span>
@@ -245,9 +246,9 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          <div class="rounded-2xl border border-green-400/20 bg-[#181818] p-7">
+          <div class="rounded-2xl border border-green-400/20 bg-[#181818] p-5 sm:p-7">
             <div class="flex items-center gap-3 mb-6">
-              <span class="w-8 h-8 rounded-full bg-green-400/15 flex items-center justify-center text-green-400 font-black text-sm">✓</span>
+              <span class="w-8 h-8 rounded-full bg-green-400/15 flex items-center justify-center text-green-400 font-black text-sm shrink-0">✓</span>
               <h3 class="text-lg font-bold text-white">Incluso no plano</h3>
             </div>
             <div class="space-y-4">
@@ -261,9 +262,9 @@
             </div>
           </div>
 
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-7">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 sm:p-7">
             <div class="flex items-center gap-3 mb-6">
-              <span class="w-8 h-8 rounded-full bg-white/[.05] flex items-center justify-center text-gray-500 font-black text-sm">✕</span>
+              <span class="w-8 h-8 rounded-full bg-white/[.05] flex items-center justify-center text-gray-500 font-black text-sm shrink-0">✕</span>
               <h3 class="text-lg font-bold text-gray-400">Fora do escopo</h3>
             </div>
             <div class="space-y-4">
@@ -288,7 +289,7 @@
     </section>
 
     <!-- PROJEÇÃO FINANCEIRA -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#111]">
       <div class="max-w-6xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -296,14 +297,14 @@
         </span>
         <h2
           class="mt-3 mb-4 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,58px)"
         >
           O QUE ESPERAR<br>
           <span class="text-green-400">NOS PRIMEIROS 3 MESES</span>
         </h2>
         <p class="text-gray-500 mb-10">Exemplo com R$ 300 de verba no Google Ads e ticket médio de R$ 45.</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
           <div v-for="metric in projectionMetrics" :key="metric.label">
             <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">{{ metric.label }}</p>
             <div v-for="(bar, i) in metric.bars" :key="i" class="mb-3">
@@ -325,7 +326,7 @@
           <div
             v-for="(month, i) in revenueMonths"
             :key="month.label"
-            class="rounded-2xl p-7 text-center border"
+            class="rounded-2xl p-6 text-center border"
             :class="i === 2 ? 'border-green-400/30 bg-green-400/5' : 'border-white/[.06] bg-[#181818]'"
           >
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">{{ month.label }}</p>
@@ -333,7 +334,7 @@
             <p
               class="font-black leading-none"
               :class="i === 2 ? 'text-green-400' : 'text-white'"
-              style="font-family:'Bebas Neue',sans-serif;font-size:48px"
+              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,6vw,48px)"
             >
               {{ month.revenue }}
             </p>
@@ -350,10 +351,8 @@
       </div>
     </section>
 
-    <SimuladorVerba />
-
     <!-- VALOR REAL DO CLIENTE -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#111]">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#111]">
       <div class="max-w-5xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -361,7 +360,7 @@
         </span>
         <h2
           class="mt-3 mb-6 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,58px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,58px)"
         >
           O VALOR REAL NÃO ESTÁ<br>
           NO PRIMEIRO CORTE
@@ -370,45 +369,45 @@
           Quando um novo cliente entra na sua barbearia, o retorno não acontece só naquele atendimento. O verdadeiro lucro vem da recorrência dos próximos meses.
         </p>
 
-        <div class="grid md:grid-cols-4 gap-5">
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6 text-center">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 text-center">
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Cliente novo</p>
-            <p class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:52px">1</p>
+            <p class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,6vw,52px)">1</p>
           </div>
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6 text-center">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 text-center">
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Ticket médio</p>
-            <p class="font-black text-green-400" style="font-family:'Bebas Neue',sans-serif;font-size:52px">R$45</p>
+            <p class="font-black text-green-400" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,52px)">R$45</p>
           </div>
-          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6 text-center">
+          <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-5 text-center">
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Frequência média</p>
-            <p class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:52px">2x</p>
+            <p class="font-black text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,6vw,52px)">2x</p>
             <p class="text-xs text-gray-600">cortes por mês</p>
           </div>
-          <div class="rounded-2xl border border-green-400/20 bg-green-400/5 p-6 text-center">
+          <div class="rounded-2xl border border-green-400/20 bg-green-400/5 p-5 text-center">
             <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Valor anual</p>
-            <p class="font-black text-green-400" style="font-family:'Bebas Neue',sans-serif;font-size:52px">R$1.080</p>
+            <p class="font-black text-green-400" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,3.5vw,52px)">R$1.080</p>
           </div>
         </div>
 
-        <div class="mt-10 rounded-2xl border border-green-400/20 bg-green-400/5 p-8">
-          <h3 class="font-black text-white mb-4" style="font-family:'Bebas Neue',sans-serif;font-size:40px">
+        <div class="mt-10 rounded-2xl border border-green-400/20 bg-green-400/5 p-6 sm:p-8">
+          <h3 class="font-black text-white mb-4" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,40px)">
             5 CLIENTES NOVOS POR MÊS
           </h3>
           <p class="text-gray-300 text-lg leading-relaxed mb-6">
             Mesmo que sua campanha gere apenas 5 novos clientes por mês, isso representa:
           </p>
-          <div class="grid md:grid-cols-3 gap-5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div class="rounded-xl bg-[#111] p-5 text-center">
               <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Clientes captados</p>
               <p class="text-4xl font-black text-white">5</p>
             </div>
             <div class="rounded-xl bg-[#111] p-5 text-center">
               <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Valor anual por cliente</p>
-              <p class="text-4xl font-black text-white">R$1.080</p>
+              <p class="text-3xl font-black text-white">R$1.080</p>
             </div>
             <div class="rounded-xl bg-[#111] p-5 text-center">
               <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Receita potencial</p>
-              <p class="text-4xl font-black text-green-400">R$5.400</p>
+              <p class="text-3xl font-black text-green-400">R$5.400</p>
             </div>
           </div>
           <p class="mt-8 text-gray-400">
@@ -420,7 +419,7 @@
     </section>
 
     <!-- INVESTIMENTO -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -428,7 +427,7 @@
         </span>
         <h2
           class="mt-3 mb-4 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,56px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,56px)"
         >
           TRÊS PARTES.<br>
           <span class="text-green-400">UM SISTEMA SÓ.</span>
@@ -441,7 +440,7 @@
           <div
             v-for="item in planItems"
             :key="item.label"
-            class="rounded-2xl border bg-[#181818] p-7 flex flex-col gap-4"
+            class="rounded-2xl border bg-[#181818] p-6 sm:p-7 flex flex-col gap-4"
             :class="item.highlight ? 'border-green-400/30' : 'border-white/[.06]'"
           >
             <div class="flex items-start justify-between gap-3">
@@ -458,7 +457,7 @@
               <p
                 class="font-black leading-none mb-3"
                 :class="item.highlight ? 'text-green-400' : 'text-gray-300'"
-                style="font-family:'Bebas Neue',sans-serif;font-size:28px"
+                style="font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,3vw,28px)"
               >
                 {{ item.price }}
               </p>
@@ -473,12 +472,12 @@
           </div>
         </div>
 
-        <div class="rounded-2xl border border-green-400/20 bg-green-400/5 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="rounded-2xl border border-green-400/20 bg-green-400/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p class="text-xs uppercase tracking-widest text-green-400 mb-1">Investimento total recomendado</p>
             <p class="text-sm text-gray-500 max-w-md">Sistema SuaAgenda + Captação Automática + Verba Google Ads. Tudo integrado, funcionando junto.</p>
           </div>
-          <p class="font-black text-green-400 shrink-0" style="font-family:'Bebas Neue',sans-serif;font-size:36px">
+          <p class="font-black text-green-400 shrink-0" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,36px)">
             R$ 699/mês
           </p>
         </div>
@@ -487,7 +486,7 @@
     </section>
 
     <!-- RELATÓRIO INTEGRADO -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#0d0d0d] border-y border-white/5">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#0d0d0d] border-y border-white/5">
       <div class="max-w-6xl mx-auto">
 
         <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -495,7 +494,7 @@
         </span>
         <h2
           class="mt-3 mb-4 font-black leading-none text-white"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,56px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,56px)"
         >
           VOCÊ VÊ O RESULTADO<br>
           <span class="text-green-400">DENTRO DO SEU PAINEL.</span>
@@ -506,17 +505,17 @@
 
         <!-- MOCKUP DO PAINEL -->
         <div class="rounded-2xl border border-white/[.06] bg-[#0e0e0e] overflow-hidden max-w-3xl">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.05] bg-[#141414]">
-            <div class="flex items-center gap-3">
-              <div class="w-6 h-6 rounded-md bg-green-400/20 flex items-center justify-center">
+          <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-white/[.05] bg-[#141414] gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-6 h-6 rounded-md bg-green-400/20 flex items-center justify-center shrink-0">
                 <span class="text-green-400 text-xs font-black">S</span>
               </div>
-              <span class="text-sm font-bold text-white">SuaAgenda · Relatório Mensal</span>
+              <span class="text-sm font-bold text-white truncate">SuaAgenda · Relatório Mensal</span>
             </div>
-            <span class="text-xs text-gray-600">Gerado automaticamente</span>
+            <span class="text-xs text-gray-600 shrink-0">Auto</span>
           </div>
 
-          <div class="p-6 border-b border-white/[.05]">
+          <div class="p-4 sm:p-6 border-b border-white/[.05]">
             <p class="text-xs text-gray-600 uppercase tracking-widest mb-3">Resumo da campanha — Junho</p>
             <div class="rounded-xl bg-green-400/5 border border-green-400/20 p-4">
               <p class="text-sm text-green-400/90 leading-relaxed">
@@ -525,13 +524,23 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-white/[.05]">
-            <div v-for="ds in reportStats" :key="ds.label" class="p-5 text-center">
+          <!-- Grid de stats: 2 colunas no mobile, 4 no sm -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 divide-white/[.05]" style="border-top: none">
+            <div
+              v-for="(ds, i) in reportStats"
+              :key="ds.label"
+              class="p-5 text-center border-white/[.05]"
+              :class="[
+                i % 2 === 0 && i < reportStats.length - 1 ? 'border-r' : '',
+                i < 2 ? 'border-b sm:border-b-0' : '',
+                i > 0 && i < 3 ? 'sm:border-r' : ''
+              ]"
+            >
               <p class="text-xs text-gray-600 uppercase tracking-widest mb-2">{{ ds.label }}</p>
               <p
                 class="font-black leading-none"
                 :class="ds.green ? 'text-green-400' : 'text-white'"
-                style="font-family:'Bebas Neue',sans-serif;font-size:28px"
+                style="font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,4vw,28px)"
               >
                 {{ ds.value }}
               </p>
@@ -545,8 +554,8 @@
     </section>
 
     <!-- DIFERENCIAIS -->
-    <section class="w-full py-20 px-6 md:px-16 bg-[#0a0a0a]">
-      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
+    <section class="w-full py-20 px-4 md:px-16 bg-[#0a0a0a]">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
 
         <div>
           <span class="text-xs font-bold tracking-widest uppercase text-green-400">
@@ -554,7 +563,7 @@
           </span>
           <h2
             class="mt-3 mb-8 font-black leading-none text-white"
-            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4vw,56px)"
+            style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,56px)"
           >
             NÃO ENTREGAMOS<br>
             <span class="text-green-400">CLIQUES.</span><br>
@@ -565,9 +574,9 @@
             <div
               v-for="diff in differentials"
               :key="diff"
-              class="flex items-center gap-3 rounded-xl border border-white/[.06] bg-[#181818] px-5 py-4"
+              class="flex items-center gap-3 rounded-xl border border-white/[.06] bg-[#181818] px-4 py-4"
             >
-              <span class="text-green-400 font-black text-lg">✓</span>
+              <span class="text-green-400 font-black text-lg shrink-0">✓</span>
               <span class="text-[15px] text-gray-300">{{ diff }}</span>
             </div>
           </div>
@@ -581,11 +590,11 @@
           <div
             v-for="stat in stats"
             :key="stat.label"
-            class="rounded-2xl border border-green-400/10 bg-[#181818] p-6 text-center"
+            class="rounded-2xl border border-green-400/10 bg-[#181818] p-5 text-center"
           >
             <p
               class="font-black text-green-400 leading-none mb-2"
-              style="font-family:'Bebas Neue',sans-serif;font-size:48px"
+              style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,5vw,48px)"
             >
               {{ stat.num }}
             </p>
@@ -597,11 +606,11 @@
     </section>
 
     <!-- CTA FINAL -->
-    <section class="w-full py-24 px-6 md:px-16 bg-[#0a0a0a] border-t border-white/5">
+    <section class="w-full py-24 px-4 md:px-16 bg-[#0a0a0a] border-t border-white/5">
       <div class="max-w-2xl mx-auto text-center">
         <h2
           class="font-black leading-none text-white mb-4"
-          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,72px)"
+          style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,72px)"
         >
           PRONTO PARA<br>
           <span class="text-green-400">LOTAR SUA AGENDA?</span>
@@ -612,13 +621,13 @@
         <div class="flex flex-wrap gap-4 justify-center">
           
           <a  href="https://wa.me/5511941649284"
-            class="inline-flex items-center gap-2 px-8 py-5 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-green-400 text-black text-base font-bold transition hover:bg-green-300 hover:-translate-y-0.5"
           >
             🚀 Começar agora — é grátis
           </a>
           <NuxtLink
             to="/barbearias"
-            class="inline-flex items-center gap-2 px-7 py-5 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-base text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
           >
             Ver barbearias →
           </NuxtLink>
@@ -632,6 +641,16 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'barber' })
 
+// Detecta mobile para desativar o efeito de funil encolhendo
+const isMobile = ref(false)
+onMounted(() => {
+  isMobile.value = window.innerWidth < 640
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth < 640
+  })
+})
+
+// ... todo o resto do script permanece igual ao original
 const benefits = [
   {
     emoji: '🔍',
@@ -726,10 +745,10 @@ const notIncluded = [
 ]
 
 const googleStats = [
-  { num: '3×',  label: 'mais conversão que redes sociais' },
-  { num: '1ª',  label: 'posição na pesquisa local' },
-  { num: '24h', label: 'campanha rodando' },
-  { num: '100%',label: 'intenção de compra' },
+  { num: '3×',   label: 'mais conversão que redes sociais' },
+  { num: '1ª',   label: 'posição na pesquisa local' },
+  { num: '24h',  label: 'campanha rodando' },
+  { num: '100%', label: 'intenção de compra' },
 ]
 
 const projectionMetrics = [
@@ -796,10 +815,10 @@ const planItems = [
 ]
 
 const reportStats = [
-  { label: 'Cliques',       value: '126', green: false },
-  { label: 'Agendamentos',  value: '9',   green: false },
-  { label: 'Novos clientes',value: '6',   green: true  },
-  { label: 'Receita est.',  value: 'R$270',green: true },
+  { label: 'Cliques',        value: '126',  green: false },
+  { label: 'Agendamentos',   value: '9',    green: false },
+  { label: 'Novos clientes', value: '6',    green: true  },
+  { label: 'Receita est.',   value: 'R$270',green: true  },
 ]
 
 const differentials = [
