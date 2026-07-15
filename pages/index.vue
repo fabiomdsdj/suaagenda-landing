@@ -31,12 +31,13 @@
         </p>
 
         <div class="mt-12 flex justify-center gap-4">
-          <NuxtLink
-            to="/login"
-            class="bg-green-400 text-black font-bold px-8 py-4 rounded-xl"
+          
+          <a
+              href="https://admin.suaagenda.link"
+              class="bg-green-400 text-black font-bold px-8 py-4 rounded-xl"
           >
             Entrar
-          </NuxtLink>
+          </a>
 
           <NuxtLink
             to="/barbearia/gestao-de-trafego"
