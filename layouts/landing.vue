@@ -171,12 +171,22 @@
 
       <!-- Bottom bar -->
       <div class="border-t border-white/5 px-6 py-5">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-gray-600">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600">
           <p>© {{ year }} SuaAgenda · Feito pra barbeiro, por quem entende de barbearia.</p>
           <div class="flex gap-5">
-            <NuxtLink to="/privacidade" class="hover:text-gray-400 transition-colors">Privacidade</NuxtLink>
-            <NuxtLink to="/termos" class="hover:text-gray-400 transition-colors">Termos</NuxtLink>
-          </div>
+            <a
+              href="https://suaagenda.link/privacidade"
+              class="hover:text-gray-400 transition-colors"
+            >
+              Política de Privacidade
+            </a>
+
+            <a
+              href="https://suaagenda.link/termos"
+              class="hover:text-gray-400 transition-colors"
+            >
+              Termos de Uso
+            </a>          </div>
         </div>
       </div>
     </footer><!-- end v-else footer padrão -->
