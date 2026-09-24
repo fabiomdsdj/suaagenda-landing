@@ -96,6 +96,10 @@ export default defineNuxtConfig({
       // para o backend.* (outro produto). Dev continua no localhost.
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL
         || (process.env.NODE_ENV === "production" ? "https://api.suaagenda.link" : "http://localhost:3011"),
+      // Planos/contratação sempre na API do SuaAgenda, independente do apiBase
+      // (diretório de barbearias). Override em runtime: NUXT_PUBLIC_PLANS_API_BASE.
+      plansApiBase: process.env.NUXT_PUBLIC_PLANS_API_BASE
+        || (process.env.NODE_ENV === "production" ? "https://api.suaagenda.link" : (process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011")),
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',

@@ -6,7 +6,7 @@ primary_region = "gru"
 
 [env]
   NODE_ENV = "production"
-  NUXT_PUBLIC_API_BASE_URL = "https://backend.suaagenda.link"
+  NUXT_PUBLIC_API_BASE_URL = "https://api.suaagenda.link"
 
 [http_service]
   internal_port = 3000

@@ -1007,7 +1007,7 @@ async function loadGrowthPlans() {
   plansLoading.value = true
   plansError.value   = false
   try {
-    const res  = await fetch(`${config.public.apiBase}/plans/public`)
+    const res  = await fetch(`${config.public.plansApiBase}/plans/public`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = await res.json()
     const list: any[] = Array.isArray(json) ? json : (json.data ?? [])

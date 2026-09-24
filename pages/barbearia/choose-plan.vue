@@ -43,8 +43,10 @@
           <span class="cp-title-accent">do seu tamanho</span>
         </h1>
         <p class="cp-subtitle">
-          Todos os planos pagos começam com
-          <strong>{{ trialDays }} dias grátis</strong> — sem cartão de crédito.
+          <template v-if="trialDays">
+            Planos com teste começam com
+            <strong>{{ trialDays }} dias grátis</strong> — sem cartão de crédito.
+          </template>
           Cancela quando quiser.
         </p>
   
@@ -63,10 +65,10 @@
           :segment="segment"
           :redirect-base="adminBase"
           :redirect="true"
-          :trial-days="trialDays"
           :annual-discount="annualDiscount"
           :quarterly-discount="quarterlyDiscount"
           @select="onSelect"
+          @loaded="onPlansLoaded"
         />
       </main>
   
@@ -85,7 +87,7 @@
   </template>
   
   <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useRuntimeConfig } from '#app'
   import PlanSelector from '~/components/PlanSelector.vue'
@@ -98,10 +100,15 @@
   
   // ── env / config ─────────────────────────────────────────────────────────
   const adminBase          = (config.public.adminBaseUrl as string) || 'https://app.suaagenda.link'
-  const trialDays          = Number((config.public.trialDays         as string) || 15)
   const annualDiscount     = Number((config.public.annualDiscount    as string) || 15)
   const quarterlyDiscount  = Number((config.public.quarterlyDiscount as string) || 10)
   
+  // ── trial — vem de plans.trialDays (/plans/public); 0 = nenhum plano com teste
+  const trialDays = ref(0)
+  function onPlansLoaded(plans: any[]) {
+    trialDays.value = Math.max(0, ...plans.map(p => Number(p.trialDays) || 0))
+  }
+
   // ── segment ───────────────────────────────────────────────────────────────
   const segment = computed(() => (route.query.segment as string) || 'barber')
   
@@ -133,12 +140,12 @@
   })
   
   // ── trust items ───────────────────────────────────────────────────────────
-  const trustItems = [
+  const trustItems = computed(() => [
     { icon: '🔒', label: 'Sem cartão de crédito' },
-    { icon: '⚡', label: `${trialDays} dias grátis nos planos pagos` },
+    ...(trialDays.value ? [{ icon: '⚡', label: `${trialDays.value} dias grátis nos planos com teste` }] : []),
     { icon: '✓',  label: 'Cancela quando quiser' },
     { icon: '💬', label: 'Suporte via WhatsApp' },
-  ]
+  ])
   
   // ── select handler (só para emit; redirect acontece dentro do componente) ─
   function onSelect(payload: {
@@ -157,10 +164,12 @@
   }
   
   // ── FAQ ───────────────────────────────────────────────────────────────────
-  const faqs = [
+  const faqs = computed(() => [
     {
       q: 'Preciso de cartão de crédito pra começar?',
-      a: `Não. Todos os planos pagos têm ${trialDays} dias grátis, sem pedir cartão. Você cadastra o cartão só se quiser continuar depois do período de teste.`,
+      a: trialDays.value
+        ? `Não. Os planos com teste grátis têm ${trialDays.value} dias, sem pedir cartão. Você cadastra o cartão só se quiser continuar depois do período de teste.`
+        : 'Não. O cadastro não pede cartão de crédito.',
     },
     {
       q: 'Posso mudar de plano depois?',
@@ -178,7 +187,7 @@
       q: 'Posso cancelar sem multa?',
       a: 'Sim. Cancele quando quiser, sem burocracia e sem multa. O acesso continua até o fim do período já pago.',
     },
-  ]
+  ])
   </script>
   
   <style scoped>

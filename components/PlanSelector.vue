@@ -6,16 +6,22 @@
     - segment           : String  — 'barber' | 'salon' | etc.
     - redirectBase      : String  — URL base do admin
     - redirect          : Boolean — false = só emite, não navega
-    - trialDays         : Number
     - annualDiscount    : Number (default 15)
     - quarterlyDiscount : Number (default 10)
-    - apiBase           : String  — URL base da API (ex: https://api.suaagenda.link)
+    - apiBase           : String  — URL base da API (default: runtimeConfig.public.plansApiBase)
+
+  Trial, preço e "sob consulta" vêm de cada plano (/plans/public):
+    - isCustomPricing → sob consulta, contato
+    - price = 0       → Free, cadastro direto
+    - trialDays > 0   → cadastro com trial de N dias
+    - pago sem trial  → contato (o /auth/register recusa com 422)
 
   Emits:
     - select(payload) → { planId, billingCycle, priceMonthly, priceTotal }
+    - loaded(plans)   → lista recebida de /plans/public, já ordenada
 
   Uso na landing:
-    <PlanSelector segment="barber" api-base="https://api.suaagenda.link" />
+    <PlanSelector segment="barber" />
 
   Uso incorporado (sem redirect):
     <PlanSelector segment="barber" :redirect="false" @select="onSelect" />
@@ -106,8 +112,8 @@
                 {{ billingCycle === 'quarterly' ? '/trimestre' : '/ano' }}
                 · economia R$ {{ savings(plano.price) }}
               </p>
-              <p class="ps-trial-chip">
-                🎁 {{ trialDays }} dias grátis · sem cartão
+              <p v-if="hasTrial(plano)" class="ps-trial-chip">
+                🎁 {{ trialDaysOf(plano) }} dias grátis · sem cartão
               </p>
             </template>
           </div>
@@ -152,7 +158,6 @@ const props = withDefaults(defineProps<{
   segment?:            string
   redirectBase?:       string
   redirect?:           boolean
-  trialDays?:          number
   annualDiscount?:     number
   quarterlyDiscount?:  number
   apiBase?:            string
@@ -160,7 +165,6 @@ const props = withDefaults(defineProps<{
   segment:             'barber',
   redirectBase:        'https://app.suaagenda.link',
   redirect:            true,
-  trialDays:           15,
   annualDiscount:      15,
   quarterlyDiscount:   10,
   apiBase:             '',
@@ -174,6 +178,7 @@ const emit = defineEmits<{
     priceMonthly: string
     priceTotal:   string
   }): void
+  (e: 'loaded', plans: any[]): void
 }>()
 
 // ── State ───────────────────────────────────────────────────────────────────
@@ -216,6 +221,11 @@ function savings(p: number | string) {
 // Enterprise → isCustomPricing (sob consulta, ex.: Advanced)
 function isFree(plan: any)       { return Number(plan.price) === 0 && !plan.isCustomPricing }
 function isEnterprise(plan: any) { return !!plan.isCustomPricing }
+// Trial é por plano (plans.trialDays; null = sem trial, ex.: Growth).
+function trialDaysOf(plan: any)  { const n = Number(plan.trialDays); return n > 0 ? n : 0 }
+function hasTrial(plan: any)     { return !isFree(plan) && !isEnterprise(plan) && trialDaysOf(plan) > 0 }
+// Só Free e pago com trial passam pelo cadastro; o resto vai para contato.
+function canSelfSignup(plan: any) { return isFree(plan) || hasTrial(plan) }
 
 // ── Feature labels (keys reais da tabela `features`) ────────────────────────
 const FEATURE_LABELS: Record<string, (v: string | number) => string> = {
@@ -283,23 +293,23 @@ const planosExibidos = computed(() =>
 )
 
 // ── Fetch — rota pública, sem JWT ────────────────────────────────────────────
-// ── Fetch ──────────────────────────────────────────────────────────────────
-const config = useRuntimeConfig() // 👈 pega a config do nuxt.config.ts
+// plansApiBase é a API do SuaAgenda (api.*), separada do apiBase do diretório.
+const config = useRuntimeConfig()
+const plansBase = props.apiBase || (config.public.plansApiBase as string)
 
 async function fetchPlans() {
   loading.value = true
   error.value   = ''
   try {
-    // 👇 usa a baseURL da config em vez da prop apiBase
-    const res = await fetch(`${config.public.apiBase}/plans/public`)
+    const res = await fetch(`${plansBase}/plans/public`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = await res.json()
     const list: any[] = Array.isArray(json) ? json : (json.data ?? [])
-    rawPlans.value = list.sort((a: any, b: any) => {
-      if (isEnterprise(a)) return 1
-      if (isEnterprise(b)) return -1
-      return Number(a.price) - Number(b.price)
-    })
+    // sortOrder vem da API (mesma ordem do admin); price só como fallback
+    rawPlans.value = list.sort((a: any, b: any) =>
+      (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0)
+      || Number(a.price) - Number(b.price))
+    emit('loaded', rawPlans.value)
   } catch (e: any) {
     error.value = 'Não foi possível carregar os planos. Tente novamente.'
     console.error('[PlanSelector] fetch error:', e)
@@ -315,8 +325,8 @@ function selectPlan(plano: any) { selectedPlanId.value = plano.id }
 
 function ctaLabel(plano: any) {
   if (isFree(plano))       return '🎁 Começar grátis'
-  if (isEnterprise(plano)) return '💬 Falar com a gente'
-  return `✂️ Começar ${props.trialDays} dias grátis`
+  if (hasTrial(plano))     return `✂️ Começar ${trialDaysOf(plano)} dias grátis`
+  return '💬 Falar com a gente'
 }
 
 function buildUrl(plano: any): string {
@@ -338,10 +348,11 @@ function handleCta(plano: any) {
   })
 
   if (props.redirect) {
-    if (isEnterprise(plano)) {
-      window.open('https://wa.me/5511941649284', '_blank')
-    } else {
+    if (canSelfSignup(plano)) {
       window.location.href = buildUrl(plano)
+    } else {
+      const text = `Quero saber mais sobre o plano ${plano.name}`
+      window.open(`https://wa.me/5511941649284?text=${encodeURIComponent(text)}`, '_blank')
     }
   }
 }

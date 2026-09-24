@@ -9,7 +9,6 @@
       segment="barber"
       :redirect-base="adminBase"
       :redirect="true"
-      :trial-days="trialDays"
       :annual-discount="annualDiscount"
       :quarterly-discount="quarterlyDiscount"
     />
@@ -21,7 +20,6 @@ import PlanSelector from '~/components/PlanSelector.vue'
 // Mesma configuração do /barbearia/choose-plan.
 const config            = useRuntimeConfig()
 const adminBase         = config.public.adminBaseUrl || 'https://app.suaagenda.link'
-const trialDays         = Number(config.public.trialDays         || 15)
 const annualDiscount    = Number(config.public.annualDiscount    || 15)
 const quarterlyDiscount = Number(config.public.quarterlyDiscount || 10)
 

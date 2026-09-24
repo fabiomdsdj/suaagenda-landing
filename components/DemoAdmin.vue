@@ -1273,16 +1273,16 @@ const loyaltyTiers = [
 // ─── Planos ───────────────────────────────────────────────────────────────────
 const demoPlans = [
   {
-    name: 'Básico', price: 'R$49', current: false, popular: false,
+    name: 'Profissional Solo', price: 'R$79,90', current: false, popular: false,
     features: ['1 profissional', '50 clientes', '100 agendamentos/mês', 'Agenda online', 'Site de agendamento'],
   },
   {
-    name: 'Pro', price: 'R$99', current: true, popular: true,
-    features: ['5 profissionais', 'Clientes ilimitados', 'Agendamentos ilimitados', 'Relatórios completos', 'Programa de fidelidade', 'Metas e indicadores', 'Suporte prioritário'],
+    name: 'Equipe Pequena', price: 'R$99,90', current: true, popular: true,
+    features: ['Até 3 profissionais', 'Clientes ilimitados', 'Agendamentos ilimitados', 'Relatórios completos', 'Programa de fidelidade', 'Metas e indicadores', 'Suporte prioritário'],
   },
   {
-    name: 'Enterprise', price: 'R$199', current: false, popular: false,
-    features: ['Profissionais ilimitados', 'Múltiplas unidades', 'Tudo do Pro', 'API de integração', 'Gerente de conta', 'Onboarding dedicado'],
+    name: 'Equipe Média', price: 'R$149,90', current: false, popular: false,
+    features: ['Até 6 profissionais', 'Múltiplas unidades', 'Tudo do Equipe Pequena', 'API de integração', 'Gerente de conta', 'Onboarding dedicado'],
   },
 ]
 </script>
