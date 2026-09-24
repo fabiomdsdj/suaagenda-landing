@@ -1,11 +1,11 @@
 <!--
-  pages/choose-plan.vue   (landing app)
+  pages/barbearia/choose-plan.vue   (landing app)
   ─────────────────────────────────────────────────────────────────────────────
   Página intermediária entre a landing e o cadastro.
   Recebe ?segment=barber (opcional) via query.
 
   Fluxo:
-    landing CTA  →  /choose-plan?segment=barber
+    landing CTA  →  /barbearia/choose-plan?segment=barber
                  →  usuário escolhe plano + ciclo
                  →  redirect para admin/auth/register?planId=X&billingCycle=Y
 -->
@@ -97,9 +97,9 @@
   const config = useRuntimeConfig()
   
   // ── env / config ─────────────────────────────────────────────────────────
-  const adminBase          = (config.public.adminBaseUrl as string) || 'https://admin.suaagenda.link'
-  const trialDays          = Number((config.public.trialDays         as string) || 7)
-  const annualDiscount     = Number((config.public.annualDiscount    as string) || 20)
+  const adminBase          = (config.public.adminBaseUrl as string) || 'https://app.suaagenda.link'
+  const trialDays          = Number((config.public.trialDays         as string) || 15)
+  const annualDiscount     = Number((config.public.annualDiscount    as string) || 15)
   const quarterlyDiscount  = Number((config.public.quarterlyDiscount as string) || 10)
   
   // ── segment ───────────────────────────────────────────────────────────────

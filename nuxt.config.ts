@@ -92,7 +92,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     sitemapInternalToken: process.env.SITEMAP_INTERNAL_TOKEN ?? '',
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011",
+      // Build de produção sem env aponta para a API do SuaAgenda (api.*), nunca
+      // para o backend.* (outro produto). Dev continua no localhost.
+      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL
+        || (process.env.NODE_ENV === "production" ? "https://api.suaagenda.link" : "http://localhost:3011"),
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',

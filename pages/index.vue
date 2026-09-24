@@ -33,7 +33,7 @@
         <div class="mt-12 flex justify-center gap-4">
           
           <a
-              href="https://admin.suaagenda.link"
+              href="https://app.suaagenda.link"
               class="bg-green-400 text-black font-bold px-8 py-4 rounded-xl"
           >
             Entrar

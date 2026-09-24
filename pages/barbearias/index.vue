@@ -431,7 +431,7 @@
         <div class="relative max-w-xl mx-auto">
           <h2 class="font-black leading-none text-white mb-4" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px)">SUA BARBEARIA<br>NO <span class="text-green-400">GOOGLE</span> EM 5 MIN</h2>
           <p class="mb-8 text-[17px] leading-relaxed text-gray-400">Barbeiros que usam a SuaAgenda aparecem quando alguém busca "barbearia perto de mim" — sem pagar anúncio.</p>
-          <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105">✂️ Testar grátis por 7 dias</a>
+          <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105">✂️ Testar grátis por 15 dias</a>
           <div class="flex items-center justify-center flex-wrap gap-5 mt-6 text-sm text-gray-600">
             <span>🔒 Sem cartão</span><span>⚡ 5 minutos</span><span>✓ Cancela quando quiser</span>
           </div>

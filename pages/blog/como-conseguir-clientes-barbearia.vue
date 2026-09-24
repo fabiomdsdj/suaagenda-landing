@@ -177,7 +177,7 @@
               href="https://wa.me/5511941649284"
               class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold transition hover:bg-green-300"
             >
-              🔥 Testar 7 dias grátis
+              🔥 Testar 15 dias grátis
             </a>
           </div>
   

@@ -31,7 +31,7 @@
             <a
               href="https://wa.me/5511941649284"
               class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-green-400 text-black text-lg font-bold shadow transition hover:bg-green-300 hover:-translate-y-0.5"
-            >🔥 Testar 7 dias grátis</a>
+            >🔥 Testar 15 dias grátis</a>
             <a
               href="#funcionalidades"
               class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white border border-white/20 transition hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5"
@@ -189,7 +189,7 @@
           <h2 class="mt-3 mb-4 font-black leading-none text-white" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,4.5vw,60px)">
             A PARTIR DE <span class="text-green-400">R$79,90</span>/MÊS
           </h2>
-          <p class="mb-3 text-xl text-gray-400">Sem taxa de setup. Sem contrato. 7 dias grátis pra testar.</p>
+          <p class="mb-3 text-xl text-gray-400">Sem taxa de setup. Sem contrato. 15 dias grátis pra testar.</p>
           <p class="mb-10 text-sm text-gray-600">💬 Notificações via WhatsApp são cobradas por uso — você paga só o que usar.</p>
           <div class="flex flex-wrap justify-center gap-4">
             <a href="https://wa.me/5511941649284"

@@ -171,7 +171,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
               </svg>
-              Testar 7 dias grátis
+              Testar 15 dias grátis
             </a>
           </div>
         </div>
@@ -535,7 +535,7 @@ useHead({
 
 // ── Influencer white label ────────────────────────────────────────────────────
 const { hasInfluencer, nomeDisplay, fotoUrl, corHex, whatsappLink } = useInfluencer()
-const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+const plan1 = "https://app.suaagenda.link/admin/auth/register?planId=1"
 /** Link do WhatsApp unificado — com ref quando tem influencer, padrão caso contrário */
 const wpLink = computed(() =>
   hasInfluencer.value
@@ -607,7 +607,7 @@ const footerProduto = [
   { label: 'Como funciona', href: '#como-funciona' },
   { label: 'Preço',         href: '#preco' },
   { label: 'Depoimentos',   href: '#depoimentos' },
-  { label: 'Criar barbearia grátis agora', href: 'https://admin.suaagenda.link/admin/auth/register?planId=1' },
+  { label: 'Criar barbearia grátis agora', href: 'https://app.suaagenda.link/admin/auth/register?planId=1' },
 ]
 
 const footerRecursos = [

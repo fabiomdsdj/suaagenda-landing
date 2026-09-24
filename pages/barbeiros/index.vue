@@ -158,7 +158,7 @@
             href="https://wa.me/5511941649284"
             class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105"
           >
-            ✂️ Testar grátis por 7 dias
+            ✂️ Testar grátis por 15 dias
           </a>
           <div class="flex items-center justify-center flex-wrap gap-5 mt-6 text-sm text-gray-600">
             <span>🔒 Sem cartão</span>

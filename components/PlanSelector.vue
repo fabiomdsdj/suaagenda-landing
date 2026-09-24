@@ -7,7 +7,7 @@
     - redirectBase      : String  — URL base do admin
     - redirect          : Boolean — false = só emite, não navega
     - trialDays         : Number
-    - annualDiscount    : Number (default 20)
+    - annualDiscount    : Number (default 15)
     - quarterlyDiscount : Number (default 10)
     - apiBase           : String  — URL base da API (ex: https://api.suaagenda.link)
 
@@ -158,9 +158,9 @@ const props = withDefaults(defineProps<{
   apiBase?:            string
 }>(), {
   segment:             'barber',
-  redirectBase:        'https://admin.suaagenda.link',
+  redirectBase:        'https://app.suaagenda.link',
   redirect:            true,
-  trialDays:           7,
+  trialDays:           15,
   annualDiscount:      15,
   quarterlyDiscount:   10,
   apiBase:             '',
@@ -210,10 +210,12 @@ function savings(p: number | string) {
 }
 
 // ── Classificadores ─────────────────────────────────────────────────────────
-// Plano Free  → id=1, price=0, isTrial=false (gratuito para sempre)
-// Enterprise  → id=5, price=0, isTrial=true  (sob consulta)
-function isFree(plan: any)       { return Number(plan.price) === 0 && !plan.isTrial }
-function isEnterprise(plan: any) { return Number(plan.price) === 0 && !!plan.isTrial }
+// Mesma regra do admin (contratar.vue/checkout.vue): `isCustomPricing` vem do
+// banco; `plan.isTrial` é legado e está zerado em todos os planos.
+// Free       → price=0 e não é sob consulta (gratuito para sempre)
+// Enterprise → isCustomPricing (sob consulta, ex.: Advanced)
+function isFree(plan: any)       { return Number(plan.price) === 0 && !plan.isCustomPricing }
+function isEnterprise(plan: any) { return !!plan.isCustomPricing }
 
 // ── Feature labels (keys reais da tabela `features`) ────────────────────────
 const FEATURE_LABELS: Record<string, (v: string | number) => string> = {

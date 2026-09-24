@@ -6,21 +6,21 @@
 
   // ── 1. Constante plan1 (linha ~430 do <script setup>) ──────
   // ANTES:
-  const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+  const plan1 = "https://app.suaagenda.link/admin/auth/register?planId=1"
 
   // DEPOIS:
   // Botões de "Criar agenda grátis" continuam indo direto pro planId=1 (Free não tem ciclo)
-  const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1"
+  const plan1 = "https://app.suaagenda.link/admin/auth/register?planId=1"
   // CTA de planos pagos vai para choose-plan com segment=barber
-  const choosePlan = "/choose-plan?segment=barber"
+  const choosePlan = "/barbearia/choose-plan?segment=barber"
 
 
   // ── 2. Hero CTA — botão "Criar agenda grátis agora" ────────
   // ANTES (template):
-  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  // <a href="https://app.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
   //
   // DEPOIS: mantém planId=1 (Free, sem ciclo)
-  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  // <a href="https://app.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
 
 
   // ── 3. Card de planos — botão do plano ─────────────────────
@@ -28,7 +28,7 @@
   /*
     <a :href="plano.preco === null
         ? 'https://wa.me/5511941649284'
-        : `https://admin.suaagenda.link/admin/auth/register?planId=${plano.planId}`"
+        : `https://app.suaagenda.link/admin/auth/register?planId=${plano.planId}`"
       ...>
   */
 
@@ -40,8 +40,8 @@
     <a :href="plano.preco === null
         ? 'https://wa.me/5511941649284'
         : plano.isFree
-          ? `https://admin.suaagenda.link/admin/auth/register?planId=${plano.planId}`
-          : `/choose-plan?segment=barber&planId=${plano.planId}`"
+          ? `https://app.suaagenda.link/admin/auth/register?planId=${plano.planId}`
+          : `/barbearia/choose-plan?segment=barber&planId=${plano.planId}`"
       ...>
   */
 
@@ -56,10 +56,10 @@
 
   // ── 5. Seção de plano Gratuito — "Criar conta" ─────────────
   // ANTES:
-  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  // <a href="https://app.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
   //
   // DEPOIS: igual, pois é o plano Free
-  // <a href="https://admin.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
+  // <a href="https://app.suaagenda.link/admin/auth/register?planId=1" ...>Criar agenda grátis agora</a>
 -->
 <!--landing - pages/barbearia/index.vue-->
 <template>
@@ -927,8 +927,8 @@ useHead({
 })
 useBarberJsonLd()
 
-const plan1 = "https://admin.suaagenda.link/admin/auth/register?planId=1&segment=barber"
-const choosePlan = "/choose-plan?segment=barber"
+const plan1 = "https://app.suaagenda.link/admin/auth/register?planId=1&segment=barber"
+const choosePlan = "/barbearia/choose-plan?segment=barber"
 
 // ─── CONTADOR BRASIL ──────────────────────────────────────────────────────────
 const { count: totalCount, pending: totalCountPending, fetch: fetchCount } = useBarbershopCounts()
@@ -1151,7 +1151,7 @@ const faqs = [
   { q: 'O que é a fila de espera?',                     a: 'Quando um horário libera, o sistema chama automaticamente o próximo interessado via WhatsApp. Se não responder, chama o próximo. Você não perde a cadeira à toa.' },
   { q: 'Os clientes precisam baixar algum aplicativo?', a: 'Não. O cliente clica no link, abre no navegador do celular e já agenda. Sem baixar nada.' },
   { q: 'E se eu quiser cancelar? Tem multa?',           a: 'Nenhuma multa. Você cancela quando quiser, sem burocracia. É mês a mês.' },
-  { q: 'Qual plano é o certo pra minha barbearia?',     a: 'Se você trabalha sozinho, o Profissional Solo (R$79,90/mês) já resolve tudo. Se você tem 2 ou 3 profissionais, o Equipe Pequena (R$99,90). De 4 a 6, o Equipe Média (R$149,90). 7 ou mais, a gente conversa e monta um plano. Todos começam com 7 dias grátis.' },
+  { q: 'Qual plano é o certo pra minha barbearia?',     a: 'Se você trabalha sozinho, o Profissional Solo (R$79,90/mês) já resolve tudo. Se você tem 2 ou 3 profissionais, o Equipe Pequena (R$99,90). De 4 a 6, o Equipe Média (R$149,90). 7 ou mais, a gente conversa e monta um plano. Todos começam com 15 dias grátis.' },
   { q: 'Tem suporte? Falo com uma pessoa de verdade?',  a: 'Tem suporte pelo WhatsApp em horário comercial. Você fala com uma pessoa real, sem bot.' },
 ]
 

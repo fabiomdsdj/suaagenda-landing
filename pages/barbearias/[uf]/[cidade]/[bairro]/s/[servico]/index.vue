@@ -208,7 +208,7 @@
                 <strong class="text-white">{{ seo.serviceName }}</strong> em
                 <strong class="text-white">{{ seo.neighborhoodName }}</strong>.
               </p>
-              <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">🔥 Testar 7 dias grátis</a>
+              <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">🔥 Testar 15 dias grátis</a>
               <p class="text-xs text-center text-gray-600 mt-3">Sem cartão de crédito · Cancela quando quiser</p>
             </div>
             <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6">
@@ -239,7 +239,7 @@
             "{{ seo?.serviceName ?? serviceLabel }} em {{ seo?.neighborhoodName ?? neighborhoodLabel }}" no Google — sem pagar anúncio.
           </p>
           <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105">
-            ✂️ Testar grátis por 7 dias
+            ✂️ Testar grátis por 15 dias
           </a>
           <div class="flex items-center justify-center flex-wrap gap-5 mt-6 text-sm text-gray-600">
             <span>🔒 Sem cartão</span><span>⚡ 5 minutos</span><span>✓ Cancela quando quiser</span>
@@ -432,7 +432,7 @@
                   <strong class="text-white">{{ neighborhoodLabel }}</strong>.
                 </p>
                 <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">
-                  🔥 Testar 7 dias grátis
+                  🔥 Testar 15 dias grátis
                 </a>
                 <p class="text-xs text-center text-gray-600 mt-3">Sem cartão de crédito · Cancela quando quiser</p>
               </div>

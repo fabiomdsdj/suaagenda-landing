@@ -240,7 +240,7 @@
                 <p class="text-xs font-bold tracking-widest uppercase text-green-400 mb-3">Você é barbeiro?</p>
                 <h3 class="font-black leading-none text-white mb-3" style="font-family:'Bebas Neue',sans-serif;font-size:28px">APAREÇA NO GOOGLE EM 5 MIN</h3>
                 <p class="text-[14px] text-gray-400 leading-relaxed mb-5">Cria sua conta, confirma os serviços e já tem site profissional nas primeiras posições do Google — sem mexer em nada técnico.</p>
-                <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">🔥 Testar 7 dias grátis</a>
+                <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">🔥 Testar 15 dias grátis</a>
                 <p class="text-xs text-center text-gray-600 mt-3">Sem cartão de crédito · Cancela quando quiser</p>
               </div>
               <div class="rounded-2xl border border-white/[.06] bg-[#181818] p-6">
@@ -298,7 +298,7 @@
             Barbeiros em {{ seo?.neighborhoodName ?? neighborhoodLabel }} que usam a SuaAgenda aparecem quando alguém busca "barbearia em {{ seo?.neighborhoodName ?? neighborhoodLabel }}" no Google — sem pagar anúncio.
           </p>
           <a href="https://wa.me/5511941649284" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-400 text-black text-xl font-bold shadow transition hover:bg-green-300 hover:scale-105">
-            ✂️ Testar grátis por 7 dias
+            ✂️ Testar grátis por 15 dias
           </a>
           <div class="flex items-center justify-center flex-wrap gap-5 mt-6 text-sm text-gray-600">
             <span>🔒 Sem cartão</span><span>⚡ 5 minutos</span><span>✓ Cancela quando quiser</span>
@@ -481,7 +481,7 @@
                   Cadastre sua barbearia em <strong class="text-white">{{ neighborhoodLabel }}</strong> e apareça no Google quando alguém buscar aqui.
                 </p>
                 <a href="https://wa.me/5511941649284" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-green-400 text-black text-[15px] font-bold transition hover:bg-green-300">
-                  🔥 Testar 7 dias grátis
+                  🔥 Testar 15 dias grátis
                 </a>
                 <p class="text-xs text-center text-gray-600 mt-3">Sem cartão de crédito · Cancela quando quiser</p>
               </div>
@@ -520,7 +520,7 @@ const citySlug         = (route.params.cidade as string).toLowerCase().trim()
 const neighborhoodSlug = (route.params.bairro as string).toLowerCase().trim()
 const neighborhoodLabel = neighborhoodSlug.replace(/-/g, ' ')
 
-const choosePlan = "/choose-plan?segment=barber"
+const choosePlan = "/barbearia/choose-plan?segment=barber"
 
 // ✅ Contador do bairro
 const neighborhoodCount = useBarbershopCounts()
