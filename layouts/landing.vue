@@ -38,7 +38,57 @@
             />
           </template>
         </component>
+
+        <!-- Desktop -->
+        <nav class="hidden md:flex items-center gap-7" aria-label="Principal">
+          <NuxtLink
+            v-for="link in navLinks" :key="link.label"
+            :to="link.to"
+            class="text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200"
+          >
+            {{ link.label }}
+          </NuxtLink>
+          <a
+            :href="appUrl"
+            class="text-[15px] font-bold text-black bg-green-400 hover:bg-green-300 px-5 py-2.5 rounded-xl transition-colors"
+          >
+            Entrar
+          </a>
+        </nav>
+
+        <!-- Mobile: burger -->
+        <button
+          class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition"
+          aria-label="Menu"
+          :aria-expanded="mobileOpen"
+          @click="mobileOpen = !mobileOpen"
+        >
+          <svg v-if="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
+
+      <!-- Mobile drawer -->
+      <Transition name="slide-down">
+        <nav v-if="mobileOpen" class="md:hidden border-t border-white/5 bg-[#0f0f0f]" aria-label="Principal">
+          <div class="flex flex-col px-6 py-5 gap-1">
+            <NuxtLink
+              v-for="link in navLinks" :key="link.label"
+              :to="link.to"
+              class="text-[17px] font-medium text-gray-300 hover:text-green-400 transition-colors py-2"
+              @click="mobileOpen = false"
+            >{{ link.label }}</NuxtLink>
+            <a
+              :href="appUrl"
+              class="mt-3 text-center font-bold text-black bg-green-400 px-5 py-3 rounded-xl"
+            >Entrar</a>
+          </div>
+        </nav>
+      </Transition>
     </header>
 
     <!-- CONTEÚDO -->
@@ -49,14 +99,8 @@
     <!-- ══════════════════════════════════════════════════════
          FOOTER
     ═══════════════════════════════════════════════════════ -->
-
-    <!-- ── FOOTER PADRÃO ── -->
     <footer class="bg-[#0a0a0a] border-t border-white/5">
 
-      <!-- CTA strip -->
-
-
-      <!-- Grid principal -->
       <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10 px-6 py-16">
 
         <!-- Marca (2 cols) -->
@@ -71,9 +115,8 @@
           </div>
 
           <p class="text-[15px] text-gray-400 leading-relaxed mb-5 max-w-sm">
-            A primeira plataforma do Brasil a unir IA e Google Ads pra encher a
-            agenda da barbearia e aumentar os resultados. 
-          </p>       
+            Agenda e agendamento online para negócios que atendem com hora marcada.
+          </p>
 
           <!-- Redes sociais -->
           <div class="flex gap-3">
@@ -97,96 +140,50 @@
             </a>
           </div>
         </div>
+
+        <!-- Colunas de links -->
+        <div v-for="col in footerCols" :key="col.title">
+          <h4 class="text-[12px] font-bold tracking-widest uppercase text-gray-500 mb-5">{{ col.title }}</h4>
+          <ul class="space-y-3">
+            <li v-for="link in col.links" :key="link.label">
+              <a
+                v-if="link.external"
+                :href="link.to"
+                class="text-[14px] text-gray-400 hover:text-green-400 transition-colors"
+              >{{ link.label }}</a>
+              <NuxtLink
+                v-else
+                :to="link.to"
+                class="text-[14px] text-gray-400 hover:text-green-400 transition-colors"
+              >{{ link.label }}</NuxtLink>
+            </li>
+          </ul>
+        </div>
       </div>
 
-    
-      
-      <!-- Links locais SEO — Gestão de Tráfego Pago -->
-      <!--div class="border-t border-white/[.04] px-6 py-10">
-        <div class="max-w-6xl mx-auto">
-          <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-6">
-            Gestão de tráfego pago por bairro
-          </p>
-
-          <div class="space-y-10">
-            <div v-for="city in allCities" :key="city.citySlug">
-              <NuxtLink
-                :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}`"
-                class="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-gray-500 hover:text-green-400 transition-colors mb-5"
-              >
-                {{ city.city }}
-              </NuxtLink>
-
-              <template v-if="hasZones(city)">
-                <div v-for="(districts, zoneName) in districtsByZone(city)" :key="String(zoneName)" class="mb-6">
-                  <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-3">{{ zoneName }}</p>
-                  <div class="flex flex-wrap gap-x-5 gap-y-2">
-                    <NuxtLink
-                      v-for="neighborhood in flatNeighborhoods(districts)"
-                      :key="neighborhood.slug"
-                      :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
-                      class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
-                    >
-                      {{ neighborhood.name }}
-                    </NuxtLink>
-                  </div>
-                </div>
-              </template>
-
-              <template v-else>
-                <div class="flex flex-wrap gap-x-5 gap-y-2">
-                  <NuxtLink
-                    v-for="neighborhood in allNeighborhoods(city)"
-                    :key="neighborhood.slug"
-                    :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}/${neighborhood.slug}`"
-                    class="text-[13px] text-gray-600 hover:text-green-400 transition-colors whitespace-nowrap"
-                  >
-                    {{ neighborhood.name }}
-                  </NuxtLink>
-                </div>
-              </template>
-            </div>
-          </div>
-
-          <div class="mt-8 pt-6 border-t border-white/[.04]">
-            <p class="text-[11px] font-bold tracking-widest uppercase text-gray-700 mb-4">
-              Gestão de tráfego pago por cidade
-            </p>
-            <div class="flex flex-wrap gap-4">
-              <NuxtLink
-                v-for="city in allCities"
-                :key="city.citySlug"
-                :to="`/barbearia/gestao-de-trafego/${city.ufSlug}/${city.citySlug}`"
-                class="text-[13px] text-gray-600 hover:text-green-400 transition-colors"
-              >
-                Gestão de tráfego em {{ city.city }}
-              </NuxtLink>
-            </div>
-          </div>
-        </div>
-      </div -->
+      <!-- Integração Google Ads (referência discreta; conteúdo técnico que ficava na home) -->
+      <div id="google-ads" class="border-t border-white/5 px-6 py-6">
+        <p class="max-w-6xl mx-auto text-[12px] leading-relaxed text-gray-600">
+          <strong class="font-semibold text-gray-500">Integração com Google Ads:</strong>
+          o SuaAgenda utiliza a Google Ads API para permitir que usuários autorizados criem,
+          consultem e gerenciem campanhas publicitárias em suas próprias contas do Google Ads.
+          O acesso é concedido exclusivamente após autenticação via OAuth 2.0 e consentimento
+          explícito do usuário. Nenhum dado é compartilhado ou vendido a terceiros; as informações
+          são utilizadas somente para fornecer as funcionalidades contratadas pelo usuário.
+        </p>
+      </div>
 
       <!-- Bottom bar -->
       <div class="border-t border-white/5 px-6 py-5">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600">
-          <p>© {{ year }} SuaAgenda · Feito pra barbeiro, por quem entende de barbearia.</p>
+          <p>© {{ year }} SuaAgenda · Plataforma de agendamento online.</p>
           <div class="flex gap-5">
-            <a
-              href="https://suaagenda.link/privacidade"
-              class="hover:text-gray-400 transition-colors"
-            >
-              Política de Privacidade
-            </a>
-
-            <a
-              href="https://suaagenda.link/termos"
-              class="hover:text-gray-400 transition-colors"
-            >
-              Termos de Uso
-            </a>          </div>
+            <NuxtLink to="/privacidade" class="hover:text-gray-400 transition-colors">Política de Privacidade</NuxtLink>
+            <NuxtLink to="/termos" class="hover:text-gray-400 transition-colors">Termos de Uso</NuxtLink>
+          </div>
         </div>
       </div>
-    </footer><!-- end v-else footer padrão -->
+    </footer>
 
     <CookieBanner />
   </div>
@@ -195,7 +192,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { NuxtLink } from '#components'
-import { allCities, type CityData, type District, type Neighborhood } from '~/data/locations'
 import { useInfluencer } from '~/composables/useInfluencer'
 
 useHead({
@@ -220,19 +216,11 @@ useHead({
 
 // ── Influencer white label ────────────────────────────────────────────────────
 const { hasInfluencer, nomeDisplay, fotoUrl, corHex, whatsappLink } = useInfluencer()
-const plan1 = "https://app.suaagenda.link/admin/auth/register?planId=1"
 /** Link do WhatsApp unificado — com ref quando tem influencer, padrão caso contrário */
 const wpLink = computed(() =>
   hasInfluencer.value
     ? whatsappLink.value   // já tem o ref embutido via useInfluencer
     : 'https://wa.me/5511941649284'
-)
-
-/** Mensagem padrão do WhatsApp flutuante */
-const wpDefaultMessage = computed(() =>
-  hasInfluencer.value
-    ? `Vim pela indicação de ${nomeDisplay.value} e quero testar a SuaAgenda`
-    : 'Olá, vim pelo site de barbearia e gostaria de atendimento'
 )
 
 // Injeta CSS var de cor do influencer
@@ -243,78 +231,39 @@ onMounted(() => {
 })
 
 // ── Estado local ──────────────────────────────────────────────────────────────
-const mobileOpen       = ref(false)
-const showMobileSearch = ref(false)
-const year             = new Date().getFullYear()
-
-// ── Helpers de localização ────────────────────────────────────────────────────
-function allNeighborhoods(city: CityData): Neighborhood[] {
-  return city.districts.flatMap((d) => d.neighborhoods)
-}
-function flatNeighborhoods(districts: District[]): Neighborhood[] {
-  return districts.flatMap((d) => d.neighborhoods)
-}
-function hasZones(city: CityData): boolean {
-  return city.districts.some((d) => d.zone != null)
-}
-function districtsByZone(city: CityData): Record<string, District[]> {
-  const groups: Record<string, District[]> = {}
-  for (const district of city.districts) {
-    const zone = district.zone ?? 'Outras regiões'
-    if (!groups[zone]) groups[zone] = []
-    groups[zone].push(district)
-  }
-  return groups
-}
+const mobileOpen = ref(false)
+const year       = new Date().getFullYear()
 
 // ── Nav / Footer data ─────────────────────────────────────────────────────────
+// Portal: sem "Preços" — preço e cadastro ficam na página de cada segmento.
+const appUrl = 'https://app.suaagenda.link'
+
 const navLinks = [
-  { label: 'Como funciona', href: '#como-funciona' },
-  { label: 'Benefícios',    href: '#como-funciona-passos' },
-  { label: 'Depoimentos',   href: '#depoimentos' },
-  //{ label: 'Preço',         href: '#preco' },
-  { label: 'Dúvidas',       href: '#faq' },
+  { label: 'Segmentos',           to: '/#segmentos' },
+  { label: 'Encontrar barbearia', to: '/barbearias' },
 ]
 
-const recursosLinks = [
-  { emoji: '📅', label: 'Agenda online',        href: '/recursos/agenda-online' },
-  { emoji: '👥', label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
-  { emoji: '🔗', label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
-  { label: 'Tráfego pago',   href: '/gestao-trafego-pago' },
-]
-
-const blogLinks = [
-  { emoji: '📣', label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
-  { emoji: '💡', label: 'Como conseguir mais clientes',  href: '/blog/como-conseguir-clientes-barbearia' },
-]
-
-const footerProduto = [
-  { label: 'Como funciona', href: '#como-funciona' },
-  { label: 'Preço',         href: '#preco' },
-  { label: 'Depoimentos',   href: '#depoimentos' },
-  { label: 'Criar barbearia grátis agora', href: 'https://app.suaagenda.link/admin/auth/register?planId=1' },
-]
-
-const footerRecursos = [
-  { label: 'Agenda online',         href: '/recursos/agenda-online' },
-  { label: 'Controle de clientes',  href: '/recursos/controle-clientes' },
-  { label: 'Link de agendamento',   href: '/recursos/link-agendamento' },
-]
-
-const footerBlog = [
-  { label: 'Como divulgar barbearia',      href: '/blog/como-divulgar-barbearia' },
-  { label: 'Como conseguir mais clientes', href: '/blog/como-conseguir-clientes-barbearia' },
-]
-
-const footerDiretorio = [
-  { label: 'Barbearias por bairro', href: '/barbearias' },
-  { label: 'Barbeiros por cidade',  href: '/barbeiros' },
-]
-
-const footerEmpresa = [
-  { label: 'Planos',                  to: '/precos' },
-  { label: 'Política de privacidade', to: '/privacidade' },
-  { label: 'Termos de serviço',       to: '/termos' },
+const footerCols = [
+  {
+    title: 'Plataforma',
+    links: [
+      { label: 'Segmentos',       to: '/#segmentos' },
+      { label: 'Entrar no app',   to: appUrl, external: true },
+    ],
+  },
+  {
+    title: 'Para clientes',
+    links: [
+      { label: 'Encontrar barbearia', to: '/barbearias' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { label: 'Política de privacidade', to: '/privacidade' },
+      { label: 'Termos de uso',           to: '/termos' },
+    ],
+  },
 ]
 </script>
 
