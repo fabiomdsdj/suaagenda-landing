@@ -240,6 +240,7 @@ const appUrl = 'https://app.suaagenda.link'
 
 const navLinks = [
   { label: 'Segmentos',           to: '/#segmentos' },
+  { label: 'Só Site',             to: '/so-site' },
   { label: 'Encontrar barbearia', to: '/barbearias' },
 ]
 

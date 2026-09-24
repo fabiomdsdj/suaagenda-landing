@@ -98,6 +98,23 @@
       </div>
     </section>
 
+    <!-- Só Site: oferta sem agenda, para qualquer segmento -->
+    <section class="px-6 pb-20">
+      <div class="max-w-4xl mx-auto rounded-2xl border border-green-400/25 bg-white/[.03] px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+        <div>
+          <p class="text-xs font-bold tracking-widest uppercase text-green-400">Só Site</p>
+          <h2 class="mt-2 text-2xl font-bold text-white">Só precisa de um site?</h2>
+          <p class="mt-2 text-gray-400">Tenha seu próprio site e personalize você mesmo, para qualquer tipo de negócio.</p>
+        </div>
+        <NuxtLink
+          to="/so-site"
+          class="flex-shrink-0 bg-green-400 hover:bg-green-300 text-black font-bold px-7 py-3.5 rounded-xl transition-colors"
+        >
+          Conhecer o Só Site →
+        </NuxtLink>
+      </div>
+    </section>
+
     <!-- Recursos comuns -->
     <section class="px-6 py-20 border-t border-white/5">
       <div class="max-w-6xl mx-auto">
