@@ -120,6 +120,15 @@ export interface SiteModelSeo {
   faq: { q: string; a: string }[]
 }
 
+/** Placeholders do EditorPanel: o "Ex.: …" de cada campo, por segmento. */
+export interface SiteEditorExamples {
+  businessName: string
+  heroText: string
+  tagline: string
+  professionalName: string
+  professionalRole: string
+}
+
 export interface SegmentSiteModels {
   segment: SiteModelSegmentId
   /** `segment_types.name` do segmento real (ver SiteModelSegmentId). */
@@ -132,6 +141,14 @@ export interface SegmentSiteModels {
    * editor (fisioterapia, comportamento da etapa 4).
    */
   previewOnly?: boolean
+  /**
+   * true = a moldura do preview mostra o endereço de demonstração
+   * "seusite.<siteDomain>" (utils/sitePreview.ts demoSiteAddress). Ausente =
+   * sem barra de endereço (fisioterapia, comportamento da etapa 4).
+   */
+  showDemoAddress?: boolean
+  /** Exemplos dos campos do editor (placeholder), no vocabulário do segmento. */
+  editorExamples: SiteEditorExamples
   models: [SiteModel, SiteModel, SiteModel]
   seo: SiteModelSeo
 }

@@ -3,9 +3,11 @@
 // Três modelos de site para barbearia (segment_types.name = 'barber') e o
 // conteúdo da página comercial do segmento. Chunk próprio (index.ts).
 //
-// Catálogo só de visualização (previewOnly): o visitante escolhe o modelo e
-// contrata; a personalização é no admin (Configuração do Site), a partir do
-// modelo escolhido (utils/siteModelSeed.ts → API).
+// Mesmo configurador da fisioterapia: o visitante escolhe o modelo, mexe no
+// visual e nos textos do preview e contrata. O cadastro leva só o segmento e
+// o modelo; a base do site vem do modelo (utils/siteModelSeed.ts → API) e o
+// acabamento é no admin (Configuração do Site). A moldura mostra o endereço
+// de demonstração (showDemoAddress).
 //
 // Cuidados de texto: vocabulário de barbearia, sem termos de saúde
 // (tests/siteModelsBarbearia.test.ts confere). Preços e durações realistas,
@@ -22,7 +24,14 @@ const barbearia: SegmentSiteModels = {
   segment: 'barbearia',
   segmentType: 'barber',
   label: 'Barbearia',
-  previewOnly: true,
+  showDemoAddress: true,
+  editorExamples: {
+    businessName: 'Ex.: Barbearia do Zé',
+    heroText: 'Ex.: Corte e barba com hora marcada',
+    tagline: 'Ex.: Barbearia no centro da cidade, com horário marcado pelo site',
+    professionalName: 'Ex.: Rafael Costa',
+    professionalRole: 'Ex.: Barbeiro',
+  },
 
   models: [
     // ── 1. Clássica: barbearia tradicional de bairro ────────────────────────

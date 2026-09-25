@@ -51,6 +51,7 @@ function allTexts(seg: SegmentSiteModels): [string, string][] {
   }
   seg.models.forEach((m, i) => walk(m, `models[${i}]`))
   walk(seg.seo, 'seo')
+  walk(seg.editorExamples, 'editorExamples')
   return out
 }
 
@@ -70,9 +71,11 @@ describe('barbearia: segmento', () => {
     expect(siteModelPaths()).toContain('/site-para-barbearia')
   })
 
-  it('catálogo só de visualização (fisioterapia segue com editor)', () => {
-    expect(segment.previewOnly).toBe(true)
+  it('configurador com editor, como a fisioterapia; só a barbearia mostra o endereço de demonstração', () => {
+    expect(segment.previewOnly).toBeUndefined()
     expect(fisioterapia.previewOnly).toBeUndefined()
+    expect(segment.showDemoAddress).toBe(true)
+    expect(fisioterapia.showDemoAddress).toBeUndefined()
   })
 })
 
@@ -267,28 +270,40 @@ describe('barbearia: compatível com o site real', () => {
 
 // ─── Catálogo (SSR do configurador) ──────────────────────────────────────────
 
-describe('barbearia: catálogo só de visualização', () => {
-  it('modelos, preview com seusite.<domínio> e CTA — sem editor', async () => {
+describe('barbearia: configurador (mesmo da fisioterapia)', () => {
+  it('modelos, editor (visual/textos/serviços), preview com seusite.<domínio> e CTA', async () => {
     const html = await renderToString(createSSRApp({
-      render: () => h(SiteConfigurator, { segment, editable: false, demoAddress: demoSiteAddress('suaagenda.link') }),
+      render: () => h(SiteConfigurator, { segment, demoAddress: demoSiteAddress('suaagenda.link') }),
     }))
     for (const m of models) expect(html).toContain(`data-model="${m.id}"`)
     expect(html).toContain('class="sp-root"')
     expect(html).toContain('data-preview-address')
     expect(html).toContain('seusite.suaagenda.link')
     expect(html).toContain('data-action="start"')
+    for (const s of ['negocio', 'visual', 'textos', 'servicos', 'profissional', 'contato']) expect(html).toContain(`data-section="${s}"`)
+    expect(html).toContain('data-preset="barbearia"')
+    expect(html).toContain('data-font="barbearia"')
+    expect(html).toContain('data-radius="sm"')
+    expect(html).toContain('data-action="reset"')
+    expect(html).toContain('Isto é uma prévia: nada do que você editou aqui é salvo ou enviado.')
+    expect(html).not.toContain('data-catalog-note')
+  })
+
+  it('placeholders do editor no vocabulário de barbearia (nada de fisioterapia)', async () => {
+    const html = await renderToString(createSSRApp({ render: () => h(SiteConfigurator, { segment }) }))
+    for (const ex of Object.values(segment.editorExamples)) expect(html).toContain(`placeholder="${ex}"`)
+    expect(html).not.toMatch(/fisio|paciente|Dra\./i)
+  })
+
+  it('modo previewOnly (editable=false) continua disponível', async () => {
+    const html = await renderToString(createSSRApp({ render: () => h(SiteConfigurator, { segment, editable: false }) }))
     expect(html).toContain('data-catalog-note')
-    expect(html).not.toContain('nada do que você editou')
-    // nada do editor
     expect(html).not.toContain('data-section=')
-    expect(html).not.toContain('data-field=')
-    expect(html).not.toContain('data-preset=')
-    expect(html).not.toContain('data-action="reset"')
   })
 
   it('?modelo=premium abre no Premium', async () => {
     const html = await renderToString(createSSRApp({
-      render: () => h(SiteConfigurator, { segment, editable: false, initialModelId: 'premium' }),
+      render: () => h(SiteConfigurator, { segment, initialModelId: 'premium' }),
     }))
     expect(html).toContain('Nobre Barbearia')
     expect(html).not.toContain('Barbearia Tradição')
@@ -301,6 +316,8 @@ describe('barbearia: catálogo só de visualização', () => {
     expect(html).not.toContain('data-preview-address')
     expect(html).not.toContain('data-catalog-note')
     expect(html).toContain('Isto é uma prévia: nada do que você editou aqui é salvo ou enviado.')
+    expect(html).toContain('placeholder="Ex.: Studio Fisio Ana Souza"')
+    expect(html).toContain('placeholder="Ex.: Fisioterapeuta"')
   })
 
   it('demoSiteAddress segue a config do domínio', () => {

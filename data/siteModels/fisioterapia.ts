@@ -19,6 +19,13 @@ const fisioterapia: SegmentSiteModels = {
   segment: 'fisioterapia',
   segmentType: 'physio',
   label: 'Fisioterapia',
+  editorExamples: {
+    businessName: 'Ex.: Studio Fisio Ana Souza',
+    heroText: 'Ex.: Fisioterapia com atenção de verdade',
+    tagline: 'Ex.: Atendimento com hora marcada no centro da cidade',
+    professionalName: 'Ex.: Dra. Ana Souza',
+    professionalRole: 'Ex.: Fisioterapeuta',
+  },
 
   models: [
     // ── 1. Clínica: equipe, várias especialidades ───────────────────────────

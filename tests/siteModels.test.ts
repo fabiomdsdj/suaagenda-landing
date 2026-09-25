@@ -58,6 +58,7 @@ function allTexts(seg: SegmentSiteModels): [string, string][] {
   }
   seg.models.forEach((m, i) => walk(m, `models[${i}]`))
   walk(seg.seo, 'seo')
+  walk(seg.editorExamples, 'editorExamples')
   return out
 }
 

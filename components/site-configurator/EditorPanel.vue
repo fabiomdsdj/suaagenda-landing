@@ -16,7 +16,7 @@
           label="Nome do negócio"
           :model-value="identity.businessName"
           :maxlength="LIMITS.businessName"
-          placeholder="Ex.: Studio Fisio Ana Souza"
+          :placeholder="examples.businessName"
           hint="Aparece no topo, no rodapé e nos textos do site."
           autocomplete="organization"
           data-field="businessName"
@@ -156,7 +156,7 @@
           label="Título"
           :model-value="config.textOf('heroText')"
           :maxlength="LIMITS.heroText"
-          placeholder="Ex.: Fisioterapia com atenção de verdade"
+          :placeholder="examples.heroText"
           hint="A frase grande do topo do site."
           data-field="heroText"
           @update:model-value="v => config.setText('heroText', v)"
@@ -165,7 +165,7 @@
           label="Subtítulo"
           :model-value="config.textOf('tagline')"
           :maxlength="LIMITS.tagline"
-          placeholder="Ex.: Atendimento com hora marcada no centro da cidade"
+          :placeholder="examples.tagline"
           multiline
           :rows="2"
           data-field="tagline"
@@ -275,7 +275,7 @@
             label="Nome"
             :model-value="pro.name"
             :maxlength="LIMITS.professionalName"
-            placeholder="Ex.: Dra. Ana Souza"
+            :placeholder="examples.professionalName"
             data-field="professionalName"
             @update:model-value="v => config.updateProfessional(i, { name: v })"
           />
@@ -283,7 +283,7 @@
             label="Cargo"
             :model-value="pro.role"
             :maxlength="LIMITS.professionalRole"
-            placeholder="Ex.: Fisioterapeuta"
+            :placeholder="examples.professionalRole"
             @update:model-value="v => config.updateProfessional(i, { role: v })"
           />
         </div>
@@ -380,6 +380,8 @@ const props = defineProps<{
 const uid = useId()
 const identity = computed(() => props.config.identity)
 const content = computed(() => props.config.content.value)
+/** Placeholders no vocabulário do segmento (data/siteModels/<segmento>.ts). */
+const examples = computed(() => props.config.segment.editorExamples)
 
 // Listas vindas do theme.ts — nenhuma cópia aqui. Amostra de cada estilo com
 // as cores dele (presetPreviewTheme), como a galeria do admin.

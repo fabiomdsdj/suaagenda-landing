@@ -12,9 +12,11 @@
          cadastro grava. Sem plano ou com trial no banco, cai no WhatsApp.
          O WhatsApp fica como contato secundário. Preço de /plans/public.
        - ?modelo=<id> abre direto no modelo e acompanha a troca.
-       - Segmento `previewOnly` (barbearia): catálogo só de visualização, sem
-         editor, com o endereço de demonstração "seusite.<siteDomain>" na
-         moldura. O modelo escolhido vira a base do site no cadastro. -->
+       - Todos os segmentos usam o mesmo configurador (modelos, editor,
+         preview). `previewOnly` (nenhum segmento hoje) esconde o editor;
+         `showDemoAddress` (barbearia) mostra "seusite.<siteDomain>" na
+         moldura. O modelo escolhido vira a base do site no cadastro; o
+         visual editado aqui não vai junto (a URL só leva segmento e modelo). -->
 <template>
   <div class="text-[15px]" style="--cfg-sticky-top:5.5rem">
 
@@ -37,7 +39,7 @@
           :initial-model-id="initialModelId"
           :price="price || undefined"
           :editable="!segment.previewOnly"
-          :demo-address="segment.previewOnly ? demoAddress : undefined"
+          :demo-address="segment.previewOnly || segment.showDemoAddress ? demoAddress : undefined"
           @start="onStart"
           @model-change="onModelChange"
         />

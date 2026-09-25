@@ -111,8 +111,11 @@ try {
     ['classica', 'premium', 'autonomo'].every(id => bhtml.includes(`data-model="${id}"`))
     && /data-model="classica"[^>]*aria-checked="true"|aria-checked="true"[^>]*data-model="classica"/.test(bhtml)
     && bhtml.includes('Barbearia Tradição'))
-  check('barbearia: catálogo só de visualização (sem editor)',
-    !/data-section=|data-field=|data-preset=|data-action="reset"/.test(bhtml) && bhtml.includes('data-catalog-note'))
+  check('barbearia: mesmo configurador da fisioterapia (editor com visual)',
+    ['negocio', 'visual', 'textos', 'servicos'].every(x => bhtml.includes(`data-section="${x}"`))
+    && /data-preset="barbearia"[^>]*aria-pressed="true"|aria-pressed="true"[^>]*data-preset="barbearia"/.test(bhtml)
+    && bhtml.includes('data-action="reset"') && !bhtml.includes('data-catalog-note'))
+  check('barbearia: placeholders do editor de barbearia', bhtml.includes('placeholder="Ex.: Barbearia do Zé"') && bhtml.includes('placeholder="Ex.: Barbeiro"'))
   check('barbearia: endereço de demonstração seusite.suaagenda.link', /data-preview-address[\s\S]*seusite\.suaagenda\.link/.test(bhtml))
   check('barbearia: SSR sem vocabulário de fisioterapia', !/fisioterap|paciente/i.test(bhtml.replace(/<script[\s\S]*?<\/script>/g, '')))
   check('barbearia: CTA final (trial) no WhatsApp com barber + classica',
@@ -194,6 +197,39 @@ try {
   await b.click('[data-model="autonomo"]')
   check('barbearia: Barbeiro Autônomo no preview', await waitTrue(b, () =>
     document.querySelector('[data-preview-frame]').innerText.includes('Thiago Barber')))
+
+  // Visual ao vivo: estilo → cor → fonte → cantos (aplicar estilo zera a cor)
+  const bVar = name => b.$eval('[data-preview-frame] .sp-root', (el, n) => el.style.getPropertyValue(n).trim(), name)
+  const bgBefore = await bVar('--background')
+  await b.click('[data-preset="preto-amarelo"]')
+  check('barbearia: estilo muda o tema do preview', await waitTrue(b, prev =>
+    document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--background').trim() !== prev, bgBefore))
+  const colorInput = await b.$('input[aria-label="Código da cor"]')
+  await colorInput.click({ clickCount: 3 })
+  await colorInput.type('#e11d48')
+  check('barbearia: cor muda --primary do preview', await waitTrue(b, () =>
+    document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--primary').trim() === '#e11d48'))
+  await b.click('[data-font="vintage"]')
+  const vintage = await b.$eval('[data-font="vintage"] span', el => getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '').trim())
+  check('barbearia: fonte muda o título do site', await waitTrue(b, f =>
+    getComputedStyle(document.querySelector('[data-preview-frame] .sp-hero__title')).fontFamily.includes(f), vintage), vintage)
+  await b.click('[data-radius="none"]')
+  check('barbearia: cantos mudam', await waitTrue(b, () =>
+    document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--card-radius').trim() === '0px'))
+  await b.click('[data-model="classica"]')
+  check('barbearia: visual escolhido sobrevive à troca de modelo', await waitTrue(b, () =>
+    document.querySelector('[data-preview-frame]').innerText.includes('Barbearia Tradição')
+    && document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--primary').trim() === '#e11d48'
+    && document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--card-radius').trim() === '0px'))
+  reg = await regOf()
+  check('barbearia: CTA leva só segmento e modelo (visual não vai na URL)',
+    reg.searchParams.get('segmentType') === 'barber' && reg.searchParams.get('siteModel') === 'classica'
+    && [...reg.searchParams.keys()].sort().join() === 'billingCycle,planId,segmentType,siteModel', reg.href)
+  await b.click('[data-action="reset"]')
+  check('barbearia: desfazer volta ao visual do modelo', await waitTrue(b, () =>
+    !!document.querySelector('[data-preset="barbearia"][aria-pressed="true"]')
+    && document.querySelector('[data-preview-frame] .sp-root').style.getPropertyValue('--primary').trim() !== '#e11d48'))
+
   await b.goto(`${BARBER}?modelo=premium`, { waitUntil: 'networkidle2' })
   check('barbearia: ?modelo=premium abre no Premium', !!(await b.$('[data-model="premium"][aria-checked="true"]')))
   const navs = []
