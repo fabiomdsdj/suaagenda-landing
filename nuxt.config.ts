@@ -145,6 +145,9 @@ export default defineNuxtConfig({
         sources: ['/api/sitemap/traffic'],
         chunks: 1000,
       },
+      sites: {
+        sources: ['/api/sitemap/site-models'],
+      },
     },
   },
 

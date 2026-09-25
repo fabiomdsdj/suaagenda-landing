@@ -13,8 +13,7 @@
       <SiteConfigurator class="mt-6" :segment="segment" :initial-model-id="initialModel" @start="onStart" />
 
       <p v-if="started" class="mt-6 rounded-lg border border-white/10 p-3 text-sm text-gray-400" data-cta-result>
-        CTA: segment={{ started.segment }} planSegment={{ started.planSegment }} modelo={{ started.modelId }}
-        — a etapa 5 liga isto ao cadastro.
+        CTA: segment={{ started.segment }} segmentType={{ started.segmentType }} modelo={{ started.modelId }}
       </p>
     </div>
   </div>

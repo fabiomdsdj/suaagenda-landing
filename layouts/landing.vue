@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-[#0a0a0a] text-white min-h-screen overflow-x-hidden" style="font-family:'DM Sans',sans-serif">
+  <!-- overflow-x clip (hidden só como fallback): hidden vira contêiner de rolagem
+       e desliga o position:sticky das páginas (preview do /site-para-*). -->
+  <div class="bg-[#0a0a0a] text-white min-h-screen overflow-x-hidden supports-[overflow:clip]:overflow-x-clip" style="font-family:'DM Sans',sans-serif">
 
     <!-- ══════════════════════════════════════════════════════
          NAV

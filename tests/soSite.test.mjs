@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findSoSitePlan, isSoSitePlan, soSiteCta, formatBRL, trialDaysOf } from '../utils/soSite.js'
+import { findSoSitePlan, isSoSitePlan, soSiteCta, siteModelCtaText, formatBRL } from '../utils/soSite.js'
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -50,16 +50,13 @@ test('preço exibido é o do plano (mudar no banco muda a página)', () => {
   assert.equal(formatBRL(findSoSitePlan({ data: [plan(11, 44.9, SO_SITE)] }).price), 'R$ 44,90')
 })
 
-test('com trial o CTA vai para o cadastro do admin com o planId; sem trial, WhatsApp', () => {
+test('Só Site é pagamento imediato: CTA sempre WhatsApp de vendas, mesmo com trialDays no plano', () => {
   const p = findSoSitePlan(CATALOGO)
-  assert.equal(trialDaysOf(p), 15)
-  assert.deepEqual(soSiteCta(p), {
-    kind: 'signup',
-    href: 'https://app.suaagenda.link/admin/auth/register?planId=11&billingCycle=monthly',
+  assert.equal(p.trialDays, 15) // o banco ainda pode ter trialDays; a oferta ignora
+  assert.deepEqual(soSiteCta(), {
+    kind: 'whatsapp',
+    href: `https://wa.me/5511941649284?text=${encodeURIComponent('Quero contratar o Só Site')}`,
   })
-  const semTrial = soSiteCta({ ...p, trialDays: null })
-  assert.equal(semTrial.kind, 'whatsapp')
-  assert.match(semTrial.href, /^https:\/\/wa\.me\/\d+\?text=/)
 })
 
 test('a página não tem preço escrito no código e usa /plans/public', () => {
@@ -68,4 +65,26 @@ test('a página não tem preço escrito no código e usa /plans/public', () => {
   assert.doesNotMatch(page, /39[,.]9/)
   assert.match(page, /\/plans\/public/)
   assert.match(page, /findSoSitePlan/)
+})
+
+test('páginas /site-para-*: WhatsApp com o segmento real (segment_types) e o modelo', () => {
+  const text = siteModelCtaText({ segmentLabel: 'Fisioterapia', segmentType: 'physio', modelLabel: 'Reabilitação', modelId: 'reabilitacao' })
+  assert.equal(text, 'Quero contratar o Só Site. Segmento: Fisioterapia (physio). Modelo: Reabilitação (reabilitacao).')
+  assert.equal(soSiteCta(text).href, `https://wa.me/5511941649284?text=${encodeURIComponent(text)}`)
+})
+
+test('oferta Só Site não anuncia teste grátis nem manda ao cadastro de trial', () => {
+  for (const file of ['pages/so-site.vue', 'pages/site-para-[segmento].vue', 'components/site-configurator/ConversionCard.vue']) {
+    const src = fs.readFileSync(path.join(ROOT, file), 'utf8')
+    assert.doesNotMatch(src, /dias grátis|trialDays|auth\/register/, file)
+  }
+})
+
+test('a página /site-para-[segmento] usa /plans/public e soSiteCta, sem preço no código', () => {
+  const page = fs.readFileSync(path.join(ROOT, 'pages/site-para-[segmento].vue'), 'utf8')
+  assert.doesNotMatch(page, /R\$\s?\d/)
+  assert.doesNotMatch(page, /39[,.]9/)
+  assert.match(page, /\/plans\/public/)
+  assert.match(page, /findSoSitePlan/)
+  assert.match(page, /soSiteCta/)
 })

@@ -78,10 +78,10 @@ export interface SiteIdentity {
   radius: ThemeRadiusId
 }
 
-/** O que o CTA (ConversionCard) entrega para a etapa 5 ligar ao cadastro. */
+/** O que o CTA (ConversionCard) entrega à página: slug, segmento real e modelo. */
 export interface ConversionStart {
   segment: SegmentSiteModels['segment']
-  planSegment: SegmentSiteModels['planSegment']
+  segmentType: SegmentSiteModels['segmentType']
   modelId: string
 }
 

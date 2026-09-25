@@ -18,3 +18,13 @@ export async function loadSiteModels(segment: string): Promise<SegmentSiteModels
   if (!isSiteModelSegment(segment)) return null
   return (await SITE_MODEL_SEGMENTS[segment]()).default
 }
+
+/** Rota pública do segmento (pages/site-para-[segmento].vue). */
+export function siteModelPath(segment: SiteModelSegmentId): string {
+  return `/site-para-${segment}`
+}
+
+/** Rotas públicas de todos os segmentos com modelos — fonte do sitemap. */
+export function siteModelPaths(): string[] {
+  return (Object.keys(SITE_MODEL_SEGMENTS) as SiteModelSegmentId[]).map(siteModelPath)
+}

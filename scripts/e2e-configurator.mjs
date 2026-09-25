@@ -315,7 +315,7 @@ try {
   // ── CTA ───────────────────────────────────────────────────────────────
   await page.click('[data-action="start"]')
   check('CTA emite segmento e modelo', await waitTrue(page, () =>
-    (document.querySelector('[data-cta-result]')?.textContent || '').includes('segment=fisioterapia planSegment=physio modelo=reabilitacao')))
+    (document.querySelector('[data-cta-result]')?.textContent || '').includes('segment=fisioterapia segmentType=physio modelo=reabilitacao')))
 
   // ── 390px ─────────────────────────────────────────────────────────────
   const phone = await browser.newPage()

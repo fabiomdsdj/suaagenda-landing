@@ -33,9 +33,6 @@
             <span class="font-black" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,6vw,64px)">{{ price }}</span>
             <span class="text-gray-400 text-lg">/mês</span>
           </p>
-          <p v-if="trialDays" class="mt-1 text-green-400 font-semibold">
-            {{ trialDays }} dias grátis para testar · cancele quando quiser
-          </p>
         </div>
 
         <div class="mt-8 flex flex-wrap justify-center gap-4">
@@ -91,9 +88,7 @@
       <div class="max-w-4xl mx-auto rounded-2xl border border-green-400/25 bg-white/[.03] px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         <div>
           <h2 class="text-2xl font-bold text-white">Seu site no ar, do seu jeito.</h2>
-          <p v-if="plan" class="mt-2 text-gray-400">
-            {{ price }}/mês<template v-if="trialDays"> · {{ trialDays }} dias grátis</template>
-          </p>
+          <p v-if="plan" class="mt-2 text-gray-400">{{ price }}/mês</p>
         </div>
         <a
           :href="cta.href"
@@ -114,12 +109,11 @@
 </template>
 
 <script setup lang="ts">
-import { findSoSitePlan, soSiteCta, formatBRL, trialDaysOf, WHATSAPP_VENDAS } from '~/utils/soSite.js'
+import { findSoSitePlan, soSiteCta, formatBRL, WHATSAPP_VENDAS } from '~/utils/soSite.js'
 
 definePageMeta({ layout: 'landing' })
 
-const config    = useRuntimeConfig()
-const adminBase = (config.public.adminBaseUrl as string) || 'https://app.suaagenda.link'
+const config = useRuntimeConfig()
 
 // SSR: preço no HTML. Mesma fonte do cadastro e do checkout (/plans/public).
 const { data: plan } = await useAsyncData('so-site-plan', async () => {
@@ -132,12 +126,10 @@ const { data: plan } = await useAsyncData('so-site-plan', async () => {
   }
 })
 
-const price     = computed(() => (plan.value ? formatBRL(plan.value.price) : ''))
-const trialDays = computed(() => trialDaysOf(plan.value))
-const cta       = computed(() => soSiteCta(plan.value, adminBase))
-const ctaLabel  = computed(() => (cta.value.kind === 'signup'
-  ? (trialDays.value ? `Quero meu site — ${trialDays.value} dias grátis` : 'Quero meu site')
-  : 'Quero meu site'))
+const price    = computed(() => (plan.value ? formatBRL(plan.value.price) : ''))
+// Pagamento imediato, sem teste grátis: contratação pelo WhatsApp de vendas.
+const cta      = soSiteCta()
+const ctaLabel = 'Quero meu site'
 const whatsappHref = `https://wa.me/${WHATSAPP_VENDAS}?text=${encodeURIComponent('Tenho dúvidas sobre o Só Site')}`
 
 // Só o que o produto entrega hoje (painel "Meu site" + site público).

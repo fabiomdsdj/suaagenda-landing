@@ -36,7 +36,7 @@ export function aboutAsDescription(about: string[], values: PlaceholderValues): 
  */
 export function siteModelToPreview(
   model: SiteModel,
-  segment: Pick<SegmentSiteModels, 'planSegment' | 'label'>,
+  segment: Pick<SegmentSiteModels, 'segmentType' | 'label'>,
   options: { canBook?: boolean; values?: PlaceholderValues } = {},
 ): PreviewSiteData {
   const c = model.content
@@ -50,7 +50,7 @@ export function siteModelToPreview(
     heroSubText: fillPlaceholders(c.tagline, values),
     heroImage: c.heroImage,
     description: aboutAsDescription(c.about, values),
-    segment: { name: segment.planSegment, label: segment.label },
+    segment: { name: segment.segmentType, label: segment.label },
     whatsapp: c.whatsapp,
     canBook: options.canBook ?? false,
     services: c.services.map((s, i) => {

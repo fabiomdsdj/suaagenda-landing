@@ -17,7 +17,7 @@ const IMG = 'suaagenda/site-models/fisioterapia'
 
 const fisioterapia: SegmentSiteModels = {
   segment: 'fisioterapia',
-  planSegment: 'physio',
+  segmentType: 'physio',
   label: 'Fisioterapia',
 
   models: [

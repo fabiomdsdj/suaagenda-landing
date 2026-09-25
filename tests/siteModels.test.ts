@@ -6,7 +6,7 @@ import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it } from 'vitest'
 import fisioterapia from '../data/siteModels/fisioterapia'
-import { SITE_MODEL_SEGMENTS, isSiteModelSegment, loadSiteModels } from '../data/siteModels'
+import { SITE_MODEL_SEGMENTS, isSiteModelSegment, loadSiteModels, siteModelPaths } from '../data/siteModels'
 import {
   SITE_DURATIONS_MIN,
   SITE_MAX_PRICE,
@@ -71,11 +71,13 @@ describe('registro de segmentos', () => {
     expect(isSiteModelSegment('toString')).toBe(false)
     expect(await loadSiteModels('fisioterapia')).toBe(fisioterapia)
     expect(await loadSiteModels('nao-existe')).toBeNull()
+    // sitemap: uma rota pública por segmento registrado
+    expect(siteModelPaths()).toEqual(['/site-para-fisioterapia'])
   })
 
-  it('o segmento aponta para o physio do banco', () => {
+  it('o slug público aponta para o segmento real do banco (segment_types.name)', () => {
     expect(segment.segment).toBe('fisioterapia')
-    expect(segment.planSegment).toBe('physio')
+    expect(segment.segmentType).toBe('physio')
     expect(segment.label).toBe('Fisioterapia')
   })
 })

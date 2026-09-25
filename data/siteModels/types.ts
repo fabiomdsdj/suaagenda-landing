@@ -18,9 +18,19 @@
 //   whatsapp     → website.whatsapp (CTAs do "Só Site")
 import type { ThemeFontId, ThemePresetId, ThemeRadiusId } from '~/utils/theme'
 
-/** Segmentos com modelos (slug da landing) e o name em segment_types. */
+/**
+ * Slug público da landing (/site-para-<slug>) → segmento REAL do sistema.
+ * O segmento é o `name` de `segment_types` (fonte da verdade: API, seed
+ * 20260219223812-seed-segment_types; prod: physio = id 9, "Fisioterapia").
+ * É por esse name que a API acha o segmento e os service_templates dele
+ * (GET /service-templates/:segmentType). O id numérico não entra aqui: ele
+ * muda entre bancos.
+ *   fisioterapia → physio
+ * O `modelo` (SiteModel.id) é só da landing: o sistema não tem entidade de
+ * modelo de site, e service_templates é uma lista plana por segmento.
+ */
 export type SiteModelSegmentId = 'fisioterapia'
-export type PlanSegment = 'physio'
+export type SegmentTypeName = 'physio'
 
 export interface SiteModelTheme {
   preset: ThemePresetId
@@ -109,7 +119,9 @@ export interface SiteModelSeo {
 
 export interface SegmentSiteModels {
   segment: SiteModelSegmentId
-  planSegment: PlanSegment
+  /** `segment_types.name` do segmento real (ver SiteModelSegmentId). */
+  segmentType: SegmentTypeName
+  /** Igual ao `segment_types.label` (prod: "Fisioterapia"). */
   label: string
   models: [SiteModel, SiteModel, SiteModel]
   seo: SiteModelSeo

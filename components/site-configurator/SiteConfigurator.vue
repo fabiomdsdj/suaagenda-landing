@@ -1,8 +1,8 @@
 <!-- Configurador "site já pronto" (etapa 4): escolha do modelo, editor e
      preview em tempo real, e o CTA. Dono do estado (useSiteConfigurator) e das
      imagens locais (useLocalImage). Nada é salvo nem enviado.
-     A página que o usa (bancada hoje, /site-para-[segmento] na etapa 5) só
-     passa o segmento e trata o `start` do CTA. -->
+     A página que o usa (bancada e /site-para-[segmento]) só passa o segmento
+     (e o preço do plano) e trata o `start` do CTA. -->
 <template>
   <div class="cfg-root">
     <section aria-labelledby="cfg-models-title">
@@ -19,7 +19,8 @@
 
     <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start">
       <!-- Preview primeiro no celular: quem edita vê o resultado antes do formulário. -->
-      <div class="min-w-0 lg:sticky lg:top-6 lg:order-2">
+      <!-- --cfg-sticky-top: a página com header fixo empurra o preview para baixo dele. -->
+      <div class="min-w-0 lg:sticky lg:top-[var(--cfg-sticky-top,1.5rem)] lg:order-2">
         <PreviewFrame
           v-model:page="page"
           v-model:device="device"
@@ -47,10 +48,11 @@
         <ConversionCard
           class="mt-6"
           :segment="segment.segment"
-          :plan-segment="segment.planSegment"
+          :segment-type="segment.segmentType"
           :segment-label="segment.label"
           :model-id="config.modelId.value"
           :model-label="config.model.value.label"
+          :price="price"
           @start="payload => emit('start', payload)"
         />
       </div>
@@ -76,9 +78,11 @@ const props = withDefaults(defineProps<{
   /** false = "Só Site" (o produto da vitrine). */
   canBook?: boolean
   previewHeight?: string
-}>(), { initialModelId: undefined, canBook: false, previewHeight: undefined })
+  /** Preço do plano já formatado ("R$ 39,90"), para o CTA. */
+  price?: string
+}>(), { initialModelId: undefined, canBook: false, previewHeight: undefined, price: undefined })
 
-const emit = defineEmits<{ start: [payload: ConversionStart] }>()
+const emit = defineEmits<{ start: [payload: ConversionStart]; modelChange: [modelId: string] }>()
 
 const config = useSiteConfigurator(props.segment, { initialModelId: props.initialModelId, canBook: props.canBook })
 const logo = useLocalImage('logo')
@@ -91,6 +95,8 @@ const device = ref<PreviewDevice>('mobile')
 // do useLocalImage: troca, clear() e saída da página.
 watch(() => logo.url.value, url => config.setLogo(url))
 watch(() => hero.url.value, url => config.setHeroImage(url))
+// A página pública espelha o modelo em ?modelo= (link direto para anúncio).
+watch(() => config.modelId.value, id => emit('modelChange', id))
 
 function chooseModel(id: string) {
   // Confirmação simples do navegador: só quando há texto/serviço editado.
