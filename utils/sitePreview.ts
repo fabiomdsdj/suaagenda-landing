@@ -125,6 +125,15 @@ export function resolveImg(src: string | null | undefined, options: ImgOptions =
   return `https://res.cloudinary.com/${PREVIEW_CLOUDINARY_CLOUD}/image/upload/f_auto,q_auto,${dims.join(',')}/${src}`
 }
 
+/**
+ * A imagem já terminou de carregar e falhou? Com SSR, o erro pode acontecer
+ * antes da hidratação — o `@error` do Vue ainda não existia e não dispara.
+ * Quem usa `@error` para cair no estado "sem imagem" confere isto no mount.
+ */
+export function imageFailed(img: Pick<HTMLImageElement, 'complete' | 'naturalWidth'> | null | undefined): boolean {
+  return !!img && img.complete && img.naturalWidth === 0
+}
+
 // ─── formatters.ts ───────────────────────────────────────────────────────────
 
 export function formatCurrency(value: number | string): string {

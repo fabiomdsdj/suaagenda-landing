@@ -19,6 +19,7 @@ import {
   formatOpeningHours,
   formatUnitAddress,
   homeTexts,
+  imageFailed,
   normalizeBrWhatsapp,
   previewFromWlPayload,
   showsWhatsapp,
@@ -63,6 +64,22 @@ describe.skipIf(!hasWl)('espelho do white-label', () => {
     const wl = await import('../../white-label/utils/formatters')
     for (const v of [0, 80, 950, 1234.5, '120.00']) expect(formatCurrency(v)).toBe(wl.formatCurrency(v))
     for (const ms of [1800000, 3000000, 3600000, 5400000]) expect(formatDuration(ms)).toBe(wl.formatDuration(ms))
+  })
+})
+
+describe('imageFailed (fallback do hero)', () => {
+  it('só é falha a imagem que terminou de carregar sem pixels', () => {
+    expect(imageFailed({ complete: true, naturalWidth: 0 })).toBe(true)
+    expect(imageFailed({ complete: true, naturalWidth: 1600 })).toBe(false)
+    expect(imageFailed({ complete: false, naturalWidth: 0 })).toBe(false) // ainda carregando: o @error decide
+    expect(imageFailed(null)).toBe(false)
+    expect(imageFailed(undefined)).toBe(false)
+  })
+
+  it('o PreviewHero confere a falha no mount (erro antes da hidratação)', () => {
+    const src = readFileSync(file('../components/site-preview/PreviewHero.vue'), 'utf8')
+    expect(src).toMatch(/onMounted\(\(\) => \{ if \(imageFailed\(img\.value\)\) imgError\.value = true \}\)/)
+    expect(src).toMatch(/<img ref="img"[^>]*@error="imgError = true"/)
   })
 })
 

@@ -1,0 +1,95 @@
+/* assets/css/site-configurator.css
+ *
+ * Interface do configurador (components/site-configurator), no visual escuro
+ * da landing (#0a0a0a, verde green-400). Classes .cfg-* com escopo próprio:
+ * nada vai para o :root e nada aqui alcança o .sp-root do preview, que tem o
+ * tema do site do visitante (site-preview.css).
+ */
+.cfg-root { color: #e5e7eb; }
+
+.cfg-section {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.02);
+}
+.cfg-summary {
+  display: flex; flex-direction: column; gap: 0.125rem;
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  cursor: pointer; list-style: none; position: relative;
+  border-radius: 1rem;
+}
+.cfg-summary::-webkit-details-marker { display: none; }
+.cfg-summary::after {
+  content: ''; position: absolute; right: 1.1rem; top: 50%;
+  width: 0.5rem; height: 0.5rem; margin-top: -0.35rem;
+  border-right: 2px solid #9ca3af; border-bottom: 2px solid #9ca3af;
+  transform: rotate(45deg); transition: transform 150ms ease;
+}
+.cfg-section[open] > .cfg-summary::after { transform: rotate(-135deg); margin-top: -0.1rem; }
+.cfg-summary:focus-visible { outline: 2px solid #4ade80; outline-offset: 2px; }
+.cfg-summary__title { font-weight: 700; color: #fff; }
+.cfg-summary__hint { font-size: 0.8125rem; color: #9ca3af; }
+.cfg-section__body { display: flex; flex-direction: column; gap: 1rem; padding: 0 1rem 1rem; }
+
+.cfg-field { min-width: 0; }
+.cfg-label { display: block; margin-bottom: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: #d1d5db; }
+fieldset > .cfg-label { padding: 0; }
+
+.cfg-input {
+  display: block; width: 100%; min-width: 0;
+  padding: 0.5rem 0.75rem; font-size: 0.9375rem; line-height: 1.4;
+  color: #fff; background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.12); border-radius: 0.625rem;
+  outline: none; transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.cfg-input::placeholder { color: #6b7280; }
+.cfg-input:focus, .cfg-input:focus-within { border-color: #4ade80; box-shadow: 0 0 0 3px rgb(74 222 128 / 0.18); }
+.cfg-input--error, .cfg-input--error:focus, .cfg-input--error:focus-within { border-color: #fcd34d; box-shadow: 0 0 0 3px rgb(252 211 77 / 0.15); }
+.cfg-input--prefix { display: flex; align-items: center; gap: 0.375rem; }
+select.cfg-input { appearance: auto; background-color: #151515; }
+select.cfg-input option { background: #151515; color: #fff; }
+
+.cfg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+  padding: 0.5rem 0.875rem; font-size: 0.875rem; font-weight: 600;
+  color: #0a0a0a; background: #4ade80; border-radius: 0.625rem; cursor: pointer;
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+.cfg-btn:hover { background: #86efac; }
+.cfg-btn--ghost { color: #d1d5db; background: transparent; border: 1px solid rgb(255 255 255 / 0.15); }
+.cfg-btn--ghost:hover { background: rgb(255 255 255 / 0.06); }
+.cfg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cfg-btn:focus-visible, .cfg-icon-btn:focus-visible, .cfg-choice:focus-visible, .cfg-tab:focus-visible {
+  outline: 2px solid #4ade80; outline-offset: 2px;
+}
+
+.cfg-icon-btn {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 2.5rem; height: 2.5rem; border-radius: 0.625rem;
+  color: #9ca3af; border: 1px solid rgb(255 255 255 / 0.12); cursor: pointer;
+}
+.cfg-icon-btn:hover { color: #fca5a5; border-color: rgb(252 165 165 / 0.4); }
+.cfg-icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Opção visual (estilo, fonte, cantos): marcada com aria-pressed. */
+.cfg-choice {
+  min-width: 0; padding: 0.5rem; border-radius: 0.75rem; cursor: pointer;
+  color: #d1d5db; border: 1px solid rgb(255 255 255 / 0.1); background: rgb(255 255 255 / 0.02);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.cfg-choice:hover { border-color: rgb(255 255 255 / 0.25); }
+.cfg-choice[aria-pressed='true'] { border-color: #4ade80; background: rgb(74 222 128 / 0.08); color: #fff; }
+
+.cfg-tab {
+  padding: 0.375rem 0.625rem; font-size: 0.8125rem; font-weight: 600;
+  color: #9ca3af; border-radius: 0.5rem; cursor: pointer;
+}
+.cfg-tab:hover { color: #fff; }
+.cfg-tab[aria-pressed='true'] { color: #0a0a0a; background: #4ade80; }
+
+/* Palco do preview: rola na vertical, nunca na horizontal. */
+.cfg-stage {
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  padding-block: 1rem; background: #1c1c1c;
+}
+.cfg-device-phone { box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 20px 40px rgb(0 0 0 / 0.4); }
