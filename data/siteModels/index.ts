@@ -7,6 +7,7 @@ import type { SegmentSiteModels, SiteModelSegmentId } from './types'
 
 export const SITE_MODEL_SEGMENTS: Record<SiteModelSegmentId, () => Promise<{ default: SegmentSiteModels }>> = {
   fisioterapia: () => import('./fisioterapia'),
+  barbearia: () => import('./barbearia'),
 }
 
 export function isSiteModelSegment(value: unknown): value is SiteModelSegmentId {

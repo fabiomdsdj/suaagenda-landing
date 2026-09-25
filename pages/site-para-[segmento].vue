@@ -11,7 +11,10 @@
          plano, o segmento real (segmentType) e o modelo (siteModel), que o
          cadastro grava. Sem plano ou com trial no banco, cai no WhatsApp.
          O WhatsApp fica como contato secundário. Preço de /plans/public.
-       - ?modelo=<id> abre direto no modelo e acompanha a troca. -->
+       - ?modelo=<id> abre direto no modelo e acompanha a troca.
+       - Segmento `previewOnly` (barbearia): catálogo só de visualização, sem
+         editor, com o endereço de demonstração "seusite.<siteDomain>" na
+         moldura. O modelo escolhido vira a base do site no cadastro. -->
 <template>
   <div class="text-[15px]" style="--cfg-sticky-top:5.5rem">
 
@@ -33,6 +36,8 @@
           :segment="segment"
           :initial-model-id="initialModelId"
           :price="price || undefined"
+          :editable="!segment.previewOnly"
+          :demo-address="segment.previewOnly ? demoAddress : undefined"
           @start="onStart"
           @model-change="onModelChange"
         />
@@ -93,6 +98,7 @@
 import SiteConfigurator from '~/components/site-configurator/SiteConfigurator.vue'
 import { loadSiteModels, siteModelPath } from '~/data/siteModels'
 import { findSoSitePlan, soSiteCta, siteModelCtaText, formatBRL, whatsappHref, ADMIN_BASE } from '~/utils/soSite.js'
+import { demoSiteAddress } from '~/utils/sitePreview'
 import type { ConversionStart } from '~/composables/useSiteConfigurator'
 
 definePageMeta({ layout: 'landing' })
@@ -124,6 +130,7 @@ const { data: plan } = await useAsyncData('site-para-plan', async () => {
 const price = computed(() => (plan.value ? formatBRL(plan.value.price) : ''))
 
 const adminBase = (config.public.adminBaseUrl as string) || ADMIN_BASE
+const demoAddress = demoSiteAddress(config.public.siteDomain as string)
 
 function whatsappText(id: string) {
   return siteModelCtaText({

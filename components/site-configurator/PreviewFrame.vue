@@ -32,6 +32,12 @@
       </div>
     </div>
 
+    <!-- Endereço de demonstração (opcional): o padrão comercial do site publicado. -->
+    <div v-if="address" class="flex items-center gap-2 border-b border-white/10 px-3 py-1.5" data-preview-address>
+      <span class="h-2 w-2 flex-shrink-0 rounded-full bg-white/20" aria-hidden="true" />
+      <span class="min-w-0 truncate rounded-md bg-white/5 px-2 py-0.5 font-mono text-xs text-gray-400">{{ address }}</span>
+    </div>
+
     <div ref="stage" class="cfg-stage" :style="{ height: viewportHeight }">
       <div
         class="mx-auto"
@@ -72,7 +78,9 @@ const props = withDefaults(defineProps<{
   device?: PreviewDevice
   /** Altura visível da moldura (CSS). O site rola dentro dela. */
   viewportHeight?: string
-}>(), { primaryColor: null, page: 'inicio', device: 'mobile', viewportHeight: 'min(80vh, 860px)' })
+  /** Endereço mostrado acima do site; ausente = sem barra (padrão da etapa 4). */
+  address?: string
+}>(), { primaryColor: null, page: 'inicio', device: 'mobile', viewportHeight: 'min(80vh, 860px)', address: undefined })
 
 const emit = defineEmits<{
   'update:page': [page: PreviewPage]

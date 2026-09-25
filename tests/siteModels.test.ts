@@ -64,15 +64,29 @@ function allTexts(seg: SegmentSiteModels): [string, string][] {
 // ─── Estrutura ───────────────────────────────────────────────────────────────
 
 describe('registro de segmentos', () => {
-  it('fisioterapia é carregada sob demanda e slug desconhecido dá null', async () => {
-    expect(Object.keys(SITE_MODEL_SEGMENTS)).toEqual(['fisioterapia'])
+  it('fisioterapia e barbearia são carregadas sob demanda e slug desconhecido dá null', async () => {
+    expect(Object.keys(SITE_MODEL_SEGMENTS)).toEqual(['fisioterapia', 'barbearia'])
     expect(isSiteModelSegment('fisioterapia')).toBe(true)
-    expect(isSiteModelSegment('barbearia')).toBe(false)
+    expect(isSiteModelSegment('barbearia')).toBe(true)
+    expect(isSiteModelSegment('barbershop')).toBe(false)
+    expect(isSiteModelSegment('barber')).toBe(false)
     expect(isSiteModelSegment('toString')).toBe(false)
     expect(await loadSiteModels('fisioterapia')).toBe(fisioterapia)
     expect(await loadSiteModels('nao-existe')).toBeNull()
     // sitemap: uma rota pública por segmento registrado
-    expect(siteModelPaths()).toEqual(['/site-para-fisioterapia'])
+    expect(siteModelPaths()).toEqual(['/site-para-fisioterapia', '/site-para-barbearia'])
+  })
+
+  it('cada slug carrega o arquivo de mesmo nome (convenção do export da API)', async () => {
+    for (const slug of Object.keys(SITE_MODEL_SEGMENTS)) {
+      expect((await loadSiteModels(slug))?.segment).toBe(slug)
+    }
+    const types = await Promise.all(Object.keys(SITE_MODEL_SEGMENTS).map(async s => (await loadSiteModels(s))!.segmentType))
+    expect(new Set(types).size).toBe(types.length)
+  })
+
+  it('fisioterapia continua com o editor no catálogo', () => {
+    expect(segment.previewOnly).toBeUndefined()
   })
 
   it('o slug público aponta para o segmento real do banco (segment_types.name)', () => {

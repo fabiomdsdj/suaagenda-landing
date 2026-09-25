@@ -20,7 +20,8 @@
     >
       Quero um site assim
     </button>
-    <p class="mt-3 text-xs text-gray-500">Isto é uma prévia: nada do que você editou aqui é salvo ou enviado.</p>
+    <p v-if="editable" class="mt-3 text-xs text-gray-500">Isto é uma prévia: nada do que você editou aqui é salvo ou enviado.</p>
+    <p v-else class="mt-3 text-xs text-gray-500">Textos, fotos, preços e contatos do modelo são de exemplo: no painel você troca pelos seus.</p>
   </aside>
 </template>
 
@@ -28,14 +29,16 @@
 import type { SegmentTypeName, SiteModelSegmentId } from '~/data/siteModels/types'
 import type { ConversionStart } from '~/composables/useSiteConfigurator'
 
-defineProps<{
+withDefaults(defineProps<{
   segment: SiteModelSegmentId
   segmentType: SegmentTypeName
   segmentLabel: string
   modelId: string
   modelLabel: string
   price?: string
-}>()
+  /** false = catálogo só de visualização (nada foi editado na página). */
+  editable?: boolean
+}>(), { price: undefined, editable: true })
 
 defineEmits<{ start: [payload: ConversionStart] }>()
 </script>

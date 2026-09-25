@@ -26,11 +26,14 @@ import type { ThemeFontId, ThemePresetId, ThemeRadiusId } from '~/utils/theme'
  * (GET /service-templates/:segmentType). O id numérico não entra aqui: ele
  * muda entre bancos.
  *   fisioterapia → physio
+ *   barbearia    → barber
  * O `modelo` (SiteModel.id) é só da landing: o sistema não tem entidade de
- * modelo de site, e service_templates é uma lista plana por segmento.
+ * modelo de site, e service_templates é uma lista plana por segmento. No
+ * cadastro, a API aplica o tema e os textos do modelo ao site do cliente
+ * (utils/siteModelSeed.ts → scripts/sync-site-models.sh → API).
  */
-export type SiteModelSegmentId = 'fisioterapia'
-export type SegmentTypeName = 'physio'
+export type SiteModelSegmentId = 'fisioterapia' | 'barbearia'
+export type SegmentTypeName = 'physio' | 'barber'
 
 export interface SiteModelTheme {
   preset: ThemePresetId
@@ -123,6 +126,12 @@ export interface SegmentSiteModels {
   segmentType: SegmentTypeName
   /** Igual ao `segment_types.label` (prod: "Fisioterapia"). */
   label: string
+  /**
+   * true = catálogo só de visualização: a página mostra os modelos, o preview
+   * e o CTA, sem o editor. A personalização fica no admin. Ausente = com
+   * editor (fisioterapia, comportamento da etapa 4).
+   */
+  previewOnly?: boolean
   models: [SiteModel, SiteModel, SiteModel]
   seo: SiteModelSeo
 }

@@ -103,6 +103,9 @@ export default defineNuxtConfig({
       // Admin (cadastro/checkout). Vazio = https://app.suaagenda.link
       // (utils/soSite.js ADMIN_BASE e o default do /precos).
       adminBaseUrl: process.env.NUXT_PUBLIC_ADMIN_BASE_URL || "",
+      // Domínio dos sites publicados (<subdomínio>.<siteDomain>), mostrado no
+      // preview do catálogo como "seusite.<siteDomain>" (utils/sitePreview.ts).
+      siteDomain: process.env.NUXT_PUBLIC_SITE_DOMAIN || "suaagenda.link",
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',

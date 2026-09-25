@@ -2,12 +2,15 @@
      preview em tempo real, e o CTA. Dono do estado (useSiteConfigurator) e das
      imagens locais (useLocalImage). Nada é salvo nem enviado.
      A página que o usa (bancada e /site-para-[segmento]) só passa o segmento
-     (e o preço do plano) e trata o `start` do CTA. -->
+     (e o preço do plano) e trata o `start` do CTA.
+     editable=false (segmento previewOnly): catálogo só de visualização —
+     modelos, preview e CTA, sem o editor; a personalização é no admin. -->
 <template>
   <div class="cfg-root">
     <section aria-labelledby="cfg-models-title">
       <h2 id="cfg-models-title" class="text-xl font-bold text-white">Escolha um modelo</h2>
-      <p class="mt-1 text-sm text-gray-400">Todos já vêm com textos, serviços e horários de exemplo. Depois é só colocar os seus dados.</p>
+      <p v-if="editable" class="mt-1 text-sm text-gray-400">Todos já vêm com textos, serviços e horários de exemplo. Depois é só colocar os seus dados.</p>
+      <p v-else class="mt-1 text-sm text-gray-400" data-catalog-note>Veja como cada modelo fica. O modelo escolhido vira a base do seu site, e você personaliza tudo pelo painel depois de contratar.</p>
       <ModelPicker
         class="mt-4"
         :models="config.models"
@@ -28,31 +31,35 @@
           :theme="config.theme.value"
           :primary-color="config.identity.primaryColor"
           :viewport-height="previewHeight"
+          :address="demoAddress"
         />
       </div>
 
       <div class="min-w-0 lg:order-1">
-        <div class="mb-3 flex items-center justify-between gap-3">
-          <h2 class="text-lg font-bold text-white">Personalize</h2>
-          <button
-            type="button"
-            class="cfg-btn cfg-btn--ghost"
-            :disabled="!config.dirty.value"
-            data-action="reset"
-            @click="resetAll"
-          >
-            Desfazer alterações
-          </button>
-        </div>
-        <EditorPanel :config="config" :logo="logo" :hero="hero" />
+        <template v-if="editable">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h2 class="text-lg font-bold text-white">Personalize</h2>
+            <button
+              type="button"
+              class="cfg-btn cfg-btn--ghost"
+              :disabled="!config.dirty.value"
+              data-action="reset"
+              @click="resetAll"
+            >
+              Desfazer alterações
+            </button>
+          </div>
+          <EditorPanel :config="config" :logo="logo" :hero="hero" />
+        </template>
         <ConversionCard
-          class="mt-6"
+          :class="{ 'mt-6': editable }"
           :segment="segment.segment"
           :segment-type="segment.segmentType"
           :segment-label="segment.label"
           :model-id="config.modelId.value"
           :model-label="config.model.value.label"
           :price="price"
+          :editable="editable"
           @start="payload => emit('start', payload)"
         />
       </div>
@@ -80,7 +87,11 @@ const props = withDefaults(defineProps<{
   previewHeight?: string
   /** Preço do plano já formatado ("R$ 39,90"), para o CTA. */
   price?: string
-}>(), { initialModelId: undefined, canBook: false, previewHeight: undefined, price: undefined })
+  /** false = catálogo só de visualização (sem editor). */
+  editable?: boolean
+  /** Endereço de demonstração na barra do preview ("seusite.suaagenda.link"). */
+  demoAddress?: string
+}>(), { initialModelId: undefined, canBook: false, previewHeight: undefined, price: undefined, editable: true, demoAddress: undefined })
 
 const emit = defineEmits<{ start: [payload: ConversionStart]; modelChange: [modelId: string] }>()
 

@@ -14,7 +14,7 @@
 //
 // O mock de planos tem trialDays=15: aqui o CTA do Só Site cai no WhatsApp
 // (fallback de utils/soSite.js). O caminho self-service (cadastro → checkout)
-// vale quando o plano não tem trial.
+// vale quando o plano não tem trial (planMode 'paid', usado na barbearia).
 //
 // Sai com 1 se qualquer verificação falhar.
 import { createRequire } from 'node:module'
@@ -25,8 +25,10 @@ const puppeteer = require(process.env.PUPPETEER_PATH || 'puppeteer')
 const BASE = process.env.E2E_BASE || 'http://127.0.0.1:3201'
 const MOCK_PORT = Number(process.env.E2E_MOCK_PORT || 3998)
 const PAGE = `${BASE}/site-para-fisioterapia`
+const BARBER = `${BASE}/site-para-barbearia`
 const wa = text => `https://wa.me/5511941649284?text=${encodeURIComponent(text)}`
 const ctaText = (label, id) => `Quero contratar o Só Site. Segmento: Fisioterapia (physio). Modelo: ${label} (${id}).`
+const barberCtaText = (label, id) => `Quero contratar o Só Site. Segmento: Barbearia (barber). Modelo: ${label} (${id}).`
 
 let failures = 0
 function check(name, ok, detail = '') {
@@ -44,13 +46,14 @@ async function waitTrue(page, fn, arg, timeout = 5000) {
 }
 
 // ── Mock de /plans/public (formato real do plan.controller) ─────────────────
-let planMode = 'trial' // 'trial' | 'empty'
+let planMode = 'trial' // 'trial' | 'empty' | 'paid' (sem trial → cadastro)
 const SO_SITE = { id: 11, name: 'Só Site', price: '39.90', isCustomPricing: false, trialDays: 15, sortOrder: 15,
   limits: { site: 'true', 'module.whitelabel': 'true', 'module.scheduling': 'false' } }
 const mock = http.createServer((req, res) => {
   res.setHeader('content-type', 'application/json')
   if (req.url.split('?')[0] !== '/plans/public') { res.statusCode = 404; return res.end('{}') }
-  res.end(JSON.stringify({ success: true, data: planMode === 'trial' ? [SO_SITE] : [] }))
+  const data = planMode === 'trial' ? [SO_SITE] : planMode === 'paid' ? [{ ...SO_SITE, trialDays: null }] : []
+  res.end(JSON.stringify({ success: true, data }))
 })
 await new Promise(r => mock.listen(MOCK_PORT, '127.0.0.1', r))
 
@@ -85,7 +88,7 @@ try {
   check('/so-site: preço, sem "grátis" e sem cadastro de trial', so.includes('R$ 39,90') && !/grátis|auth\/register/.test(so))
   check('/so-site: CTA principal no WhatsApp de vendas', so.includes(`href="${wa('Quero contratar o Só Site')}"`))
 
-  for (const slug of ['xyz', 'barbearia']) {
+  for (const slug of ['xyz', 'barbershop', 'barber']) {
     const r = await fetch(`${BASE}/site-para-${slug}`)
     check(`/site-para-${slug} responde 404 real`, r.status === 404, `status ${r.status}`)
   }
@@ -93,6 +96,27 @@ try {
   const sm = await fetch(`${BASE}/__sitemap__/sites.xml`)
   const smXml = await sm.text()
   check('sitemap "sites" lista a página', sm.status === 200 && smXml.includes('<loc>https://suaagenda.link/site-para-fisioterapia</loc>'), `status ${sm.status}`)
+  check('sitemap "sites" lista /site-para-barbearia', smXml.includes('<loc>https://suaagenda.link/site-para-barbearia</loc>'))
+
+  // ── Barbearia: SSR ────────────────────────────────────────────────────────
+  const bres = await fetch(BARBER)
+  const bhtml = await bres.text()
+  check('barbearia: página responde 200', bres.status === 200, `status ${bres.status}`)
+  check('barbearia: SSR tem h1, title, description e canonical',
+    bhtml.includes('Site para barbearias e barbeiros</h1>')
+    && bhtml.includes('<title>Site para barbearia e barbeiro | SuaAgenda</title>')
+    && bhtml.includes('name="description" content="Escolha um modelo de site para barbearia')
+    && bhtml.includes('<link rel="canonical" href="https://suaagenda.link/site-para-barbearia">'))
+  check('barbearia: 3 modelos, Clássica selecionada no preview',
+    ['classica', 'premium', 'autonomo'].every(id => bhtml.includes(`data-model="${id}"`))
+    && /data-model="classica"[^>]*aria-checked="true"|aria-checked="true"[^>]*data-model="classica"/.test(bhtml)
+    && bhtml.includes('Barbearia Tradição'))
+  check('barbearia: catálogo só de visualização (sem editor)',
+    !/data-section=|data-field=|data-preset=|data-action="reset"/.test(bhtml) && bhtml.includes('data-catalog-note'))
+  check('barbearia: endereço de demonstração seusite.suaagenda.link', /data-preview-address[\s\S]*seusite\.suaagenda\.link/.test(bhtml))
+  check('barbearia: SSR sem vocabulário de fisioterapia', !/fisioterap|paciente/i.test(bhtml.replace(/<script[\s\S]*?<\/script>/g, '')))
+  check('barbearia: CTA final (trial) no WhatsApp com barber + classica',
+    bhtml.includes(`href="${wa(barberCtaText('Clássica', 'classica')).replace(/&/g, '&amp;')}"`))
   const idx = await (await fetch(`${BASE}/sitemap_index.xml`)).text()
   check('sitemap_index inclui o "sites"', idx.includes('/__sitemap__/sites.xml'))
 
@@ -148,6 +172,41 @@ try {
   await p2.goto(`${PAGE}?modelo=inexistente`, { waitUntil: 'networkidle2' })
   check('?modelo inválido cai no Clínica', !!(await p2.$('[data-model="clinica"][aria-checked="true"]')))
 
+  // ── Barbearia: troca de modelo e cadastro (plano sem trial) ───────────────
+  planMode = 'paid'
+  const b = await browser.newPage()
+  watchErrors(b)
+  await b.setViewport({ width: 1440, height: 900 })
+  await b.goto(BARBER, { waitUntil: 'networkidle2', timeout: 60_000 })
+  await b.waitForSelector('[data-model="classica"][aria-checked="true"]')
+  const regOf = async () => new URL(await b.$eval('[data-cta-final]', a => a.href))
+  let reg = await regOf()
+  check('barbearia: CTA vai ao cadastro com segmentType=barber&siteModel=classica',
+    reg.pathname === '/admin/auth/register' && reg.searchParams.get('segmentType') === 'barber'
+    && reg.searchParams.get('siteModel') === 'classica' && reg.searchParams.get('billingCycle') === 'monthly', reg.href)
+  await sleep(300)
+  await b.click('[data-model="premium"]')
+  check('barbearia: trocar para Premium muda o preview', await waitTrue(b, () =>
+    document.querySelector('[data-preview-frame]').innerText.includes('Nobre Barbearia')))
+  check('barbearia: ?modelo=premium acompanha', await waitTrue(b, () => new URL(location.href).searchParams.get('modelo') === 'premium'))
+  reg = await regOf()
+  check('barbearia: CTA acompanha o modelo (siteModel=premium)', reg.searchParams.get('siteModel') === 'premium' && reg.searchParams.get('segmentType') === 'barber', reg.href)
+  await b.click('[data-model="autonomo"]')
+  check('barbearia: Barbeiro Autônomo no preview', await waitTrue(b, () =>
+    document.querySelector('[data-preview-frame]').innerText.includes('Thiago Barber')))
+  await b.goto(`${BARBER}?modelo=premium`, { waitUntil: 'networkidle2' })
+  check('barbearia: ?modelo=premium abre no Premium', !!(await b.$('[data-model="premium"][aria-checked="true"]')))
+  const navs = []
+  b.on('request', r => { if (r.isNavigationRequest() && r.url().includes('/admin/auth/register')) navs.push(r.url()) })
+  await b.setRequestInterception(true)
+  b.on('request', r => (r.url().includes('/admin/auth/register') ? r.abort() : r.continue()))
+  await b.click('[data-action="start"]')
+  await sleep(800)
+  const started = navs[0] ? new URL(navs[0]) : null
+  check('barbearia: botão do card leva ao cadastro com barber + premium',
+    !!started && started.searchParams.get('segmentType') === 'barber' && started.searchParams.get('siteModel') === 'premium', navs.join(' '))
+  planMode = 'trial'
+
   // ── Sem plano (API fora / sem Só Site): WhatsApp, sem preço ───────────────
   planMode = 'empty'
   await p2.goto(PAGE, { waitUntil: 'networkidle2' })
@@ -160,7 +219,7 @@ try {
   const m = await browser.newPage()
   watchErrors(m)
   await m.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true })
-  for (const route of ['/site-para-fisioterapia', '/so-site', '/termos', '/privacidade', '/']) {
+  for (const route of ['/site-para-fisioterapia', '/site-para-barbearia', '/so-site', '/termos', '/privacidade', '/']) {
     await m.goto(`${BASE}${route}`, { waitUntil: 'networkidle2', timeout: 60_000 })
     await sleep(300)
     const { sw, cw, sx } = await m.evaluate(() => {

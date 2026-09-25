@@ -99,6 +99,18 @@ export interface PreviewSiteData {
   units: PreviewUnit[]
 }
 
+// ─── Endereço de demonstração ────────────────────────────────────────────────
+
+/**
+ * Endereço mostrado na moldura do catálogo: "seusite.<domínio dos sites>".
+ * O domínio vem da config (runtimeConfig.public.siteDomain); aceita com ou
+ * sem protocolo/barra e cai em suaagenda.link se vier vazio.
+ */
+export function demoSiteAddress(siteDomain?: string | null): string {
+  const domain = (siteDomain || '').trim().replace(/^https?:\/\//, '').replace(/\/+$/, '') || 'suaagenda.link'
+  return `seusite.${domain}`
+}
+
 // ─── Imagem ──────────────────────────────────────────────────────────────────
 
 /** Cloud da landing (nuxt.config.ts → image.cloudinary.baseURL). */
