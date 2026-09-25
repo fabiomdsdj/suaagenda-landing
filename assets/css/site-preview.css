@@ -1,0 +1,677 @@
+/* assets/css/site-preview.css
+ *
+ * Preview "site já pronto" (components/site-preview). Espelha o visual do
+ * site real do white-label SEM tocar em nada global da landing:
+ *
+ *  - tudo mora sob o namespace .sp-*; nada vai para o :root e nenhum token
+ *    Tailwind da landing é redefinido (o @theme dela já usa --color-primary);
+ *  - as variáveis são as MESMAS do WL (--background, --surface, --text,
+ *    --muted, --border, --primary, --button, --card-radius, --heading-font…),
+ *    geradas por themeToCssVars() de utils/theme.ts e aplicadas em linha no
+ *    .sp-root (PreviewSite.vue). Os valores abaixo, com especificidade zero,
+ *    são só o fallback do preset "moderno" — iguais ao :where(:root) do WL;
+ *  - as classes reproduzem os utilitários que o markup do WL usa (tamanhos,
+ *    sombras e cores do Tailwind v4), sem reaproveitar bg-page/text-ink;
+ *  - o .sp-root é o container (container-type: inline-size). sm/md/lg/xl do
+ *    WL viram @container sp (min-width: 40/48/64/80rem): o preview muda de
+ *    layout pela largura da moldura, não da janela.
+ *
+ * Fontes: os mesmos @fontsource do white-label/assets/css/main.css
+ * (scripts/sync-theme.sh --check confere que toda família de THEME_FONTS está
+ * aqui). O @font-face só baixa o arquivo quando a família é usada.
+ */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/playfair-display/latin-600.css';
+@import '@fontsource/playfair-display/latin-700.css';
+@import '@fontsource/lato/latin-400.css';
+@import '@fontsource/lato/latin-700.css';
+@import '@fontsource/oswald/latin-500.css';
+@import '@fontsource/oswald/latin-600.css';
+@import '@fontsource/oswald/latin-700.css';
+@import '@fontsource/roboto/latin-400.css';
+@import '@fontsource/roboto/latin-500.css';
+@import '@fontsource/roboto/latin-700.css';
+@import '@fontsource/cormorant-garamond/latin-600.css';
+@import '@fontsource/cormorant-garamond/latin-700.css';
+@import '@fontsource/montserrat/latin-400.css';
+@import '@fontsource/montserrat/latin-500.css';
+@import '@fontsource/montserrat/latin-600.css';
+@import '@fontsource/montserrat/latin-700.css';
+@import '@fontsource/anton/latin-400.css';
+@import '@fontsource/alfa-slab-one/latin-400.css';
+@import '@fontsource/lora/latin-400.css';
+@import '@fontsource/lora/latin-500.css';
+@import '@fontsource/lora/latin-600.css';
+@import '@fontsource/lora/latin-700.css';
+@import '@fontsource/libre-baskerville/latin-400.css';
+@import '@fontsource/libre-baskerville/latin-700.css';
+@import '@fontsource/source-sans-3/latin-400.css';
+@import '@fontsource/source-sans-3/latin-500.css';
+@import '@fontsource/source-sans-3/latin-600.css';
+@import '@fontsource/source-sans-3/latin-700.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-600.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+@import '@fontsource/dm-sans/latin-400.css';
+@import '@fontsource/dm-sans/latin-500.css';
+@import '@fontsource/dm-sans/latin-600.css';
+@import '@fontsource/dm-sans/latin-700.css';
+
+/* ─── Tokens (fallback = preset "moderno", como o :where(:root) do WL) ─────── */
+
+:where(.sp-root) {
+  --background: #f9fafb;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e7e8e9;
+  --primary: #3b82f6;
+  --primary-contrast: #ffffff;
+  --secondary: #8b5cf6;
+  --hero-text: #ffffff;
+  --button: #3b82f6;
+  --button-text: #ffffff;
+  --button-hover: #3472d8;
+  --link: #3b82f6;
+  --footer: #0e1421;
+  --input-bg: #ffffff;
+  --input-text: #111827;
+  --input-border: #d4d5d8;
+  --placeholder: #6b7280;
+  --focus-ring: #3b82f6;
+  --heading-font: 'Poppins', system-ui, sans-serif;
+  --body-font: 'Inter', system-ui, sans-serif;
+  --heading-synthesis: auto;
+  --card-radius: 12px;
+  --button-radius: 8px;
+}
+
+/* Valores fixos do Tailwind v4 que o markup do WL usa. Locais ao preview. */
+.sp-root {
+  --sp-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --sp-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --sp-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --sp-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --sp-green-400: oklch(79.2% 0.209 151.711);
+  --sp-green-500: oklch(72.3% 0.219 149.579);
+  --sp-green-600: oklch(62.7% 0.194 149.214);
+  --sp-gray-200: oklch(92.8% 0.006 264.531);
+  --sp-gray-300: oklch(87.2% 0.01 258.338);
+  --sp-gray-400: oklch(70.7% 0.022 261.325);
+  --sp-gray-500: oklch(55.1% 0.027 264.364);
+  --sp-gray-600: oklch(44.6% 0.03 256.802);
+  --sp-gray-700: oklch(37.3% 0.034 259.733);
+  --sp-gray-800: oklch(27.8% 0.033 256.848);
+  --sp-ink-80: color-mix(in oklab, var(--text) 80%, transparent);
+  --sp-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  container: sp / inline-size;
+  font-family: var(--body-font);
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--background);
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+/* ─── Reset local (o mesmo preflight do Tailwind que o WL recebe) ────────── */
+
+.sp-root *,
+.sp-root ::before,
+.sp-root ::after {
+  box-sizing: border-box;
+  border: 0 solid;
+  margin: 0;
+  padding: 0;
+}
+.sp-root :where(h1, h2, h3, h4, h5, h6) { font-size: inherit; font-weight: inherit; }
+.sp-root :where(ol, ul) { list-style: none; }
+.sp-root :where(a) { color: inherit; text-decoration: inherit; }
+.sp-root :where(img, svg) { display: block; vertical-align: middle; }
+.sp-root :where(img) { max-width: 100%; height: auto; }
+.sp-root :where(button, input, select) {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background-color: transparent;
+  border-radius: 0;
+  opacity: 1;
+}
+.sp-root :where(button) { cursor: pointer; }
+.sp-root :where(input)::placeholder { color: var(--placeholder); opacity: 1; }
+.sp-root :where(address) { font-style: normal; }
+
+/* h1/h2/h3 usam a fonte de título (layer utilities do main.css do WL). */
+.sp-root :where(h1, h2, h3) {
+  font-family: var(--heading-font);
+  font-synthesis-weight: var(--heading-synthesis);
+}
+
+/* ─── Estrutura ─────────────────────────────────────────────────────────── */
+
+.sp-layout { display: flex; flex-direction: column; min-height: 100%; background-color: var(--background); color: var(--text); font-family: var(--body-font); }
+.sp-main { flex: 1; width: 100%; }
+.sp-page { background-color: var(--background); }
+
+/* `container mx-auto px-4` */
+.sp-container { width: 100%; margin-inline: auto; padding-inline: 1rem; }
+@container sp (min-width: 40rem) { .sp-container { max-width: 40rem; } }
+@container sp (min-width: 48rem) { .sp-container { max-width: 48rem; } }
+@container sp (min-width: 64rem) { .sp-container { max-width: 64rem; } }
+@container sp (min-width: 80rem) { .sp-container { max-width: 80rem; } }
+@container sp (min-width: 96rem) { .sp-container { max-width: 96rem; } }
+/* max-w-* depois do container: vence o max-width dele, como no WL. */
+.sp-max-3xl { max-width: 48rem; }
+.sp-max-4xl { max-width: 56rem; margin-inline: auto; }
+.sp-max-5xl { max-width: 64rem; }
+
+/* Espaçamentos que o markup do WL repete. */
+.sp-py-12 { padding-block: 3rem; }
+.sp-py-16 { padding-block: 4rem; }
+.sp-py-20 { padding-block: 5rem; }
+.sp-pb-16 { padding-bottom: 4rem; }
+.sp-mb-3 { margin-bottom: 0.75rem; }
+.sp-mb-4 { margin-bottom: 1rem; }
+.sp-mb-6 { margin-bottom: 1.5rem; }
+.sp-mt-3 { margin-top: 0.75rem; }
+.sp-mt-8 { margin-top: 2rem; }
+.sp-center { text-align: center; }
+.sp-block { display: block; }
+.sp-text-xs { font-size: 0.75rem; line-height: 1rem; }
+.sp-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-muted { color: var(--muted); }
+.sp-ink-80 { color: var(--sp-ink-80); }
+.sp-shadow-lg { box-shadow: var(--sp-shadow-lg); }
+
+.sp-icon-3 { width: 0.75rem; height: 0.75rem; flex-shrink: 0; }
+.sp-icon-3-5 { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
+.sp-icon-4 { width: 1rem; height: 1rem; flex-shrink: 0; }
+.sp-icon-5 { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+
+/* Grade 1 → 2 (md) → 3 (lg) colunas, gap-6. */
+.sp-grid-3 { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1.5rem; }
+@container sp (min-width: 48rem) { .sp-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container sp (min-width: 64rem) { .sp-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Título de seção com barrinha da marca (serviços, profissionais, cidades). */
+.sp-section-title { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; color: var(--text); }
+.sp-section-title__bar { display: inline-block; flex-shrink: 0; width: 0.25rem; height: 1.5rem; border-radius: 0.25rem; background-color: var(--primary); }
+.sp-section-title__count { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; color: var(--muted); }
+@container sp (min-width: 48rem) { .sp-section-title { font-size: 1.25rem; line-height: 1.75rem; } }
+
+.sp-h2-3xl { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: var(--text); }
+
+/* Quadradinho de ícone na cor da marca (banner, diferenciais, unidades). */
+.sp-icon-tile {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+  background-color: color-mix(in srgb, var(--primary) 15%, var(--surface));
+  color: var(--primary);
+}
+
+/* ─── Botões ────────────────────────────────────────────────────────────── */
+
+.sp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--button-radius);
+  background-color: var(--button); color: var(--button-text);
+  font-weight: 500;
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 150ms;
+}
+.sp-btn:hover { background-color: var(--button-hover); }
+.sp-btn--lg { padding: 0.75rem 1.5rem; font-weight: 600; }
+.sp-btn--xl { padding: 1rem 2rem; font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; box-shadow: var(--sp-shadow-xl); }
+
+/* Verde fixo do WhatsApp (bg-green-500/600, texto branco) — igual ao WL. */
+.sp-btn-whatsapp {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--button-radius);
+  background-color: var(--sp-green-500); color: #fff;
+  font-weight: 500;
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 150ms;
+}
+.sp-btn-whatsapp:hover { background-color: var(--sp-green-600); }
+.sp-btn-whatsapp--lg { display: inline-flex; padding: 0.625rem 1.25rem; }
+.sp-btn-whatsapp--hero { display: inline-flex; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 600; box-shadow: var(--sp-shadow-lg); }
+.sp-btn-whatsapp--xl { display: inline-flex; padding: 1rem 2rem; font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; box-shadow: var(--sp-shadow-xl); }
+
+.sp-btn-outline {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--link); border-radius: var(--button-radius);
+  color: var(--link); font-weight: 600;
+  transition: opacity 150ms var(--sp-ease);
+}
+.sp-btn-outline:hover { opacity: 0.8; }
+.sp-link-strong { color: var(--link); font-weight: 500; }
+.sp-link-strong:hover { opacity: 0.8; }
+
+/* ─── Header (components/common/Header.vue) ─────────────────────────────── */
+
+.sp-header { position: sticky; top: 0; z-index: 50; background-color: var(--surface); box-shadow: var(--sp-shadow-md); }
+.sp-header__bar { display: flex; align-items: center; justify-content: space-between; height: 4rem; }
+.sp-header__brand { display: flex; align-items: center; gap: 0.75rem; }
+.sp-header__logo { height: 2.5rem; width: auto; object-fit: contain; }
+.sp-header__name { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--link); }
+.sp-header__nav { display: none; align-items: center; gap: 1.5rem; }
+.sp-header__link { color: var(--sp-ink-80); font-weight: 500; transition: color 150ms var(--sp-ease); }
+.sp-header__link:hover { color: var(--link); }
+.sp-header__toggle { padding: 0.5rem; color: var(--sp-ink-80); }
+.sp-header__toggle:hover { color: var(--link); }
+.sp-header__toggle-icon { font-size: 1.5rem; line-height: 2rem; }
+.sp-header__mobile { padding-block: 1rem; border-top: 1px solid var(--border); }
+.sp-header__mobile-nav { display: flex; flex-direction: column; gap: 1rem; }
+@container sp (min-width: 48rem) {
+  .sp-header__nav { display: flex; }
+  .sp-header__toggle,
+  .sp-header__mobile { display: none; }
+}
+.sp-slide-down-enter-active,
+.sp-slide-down-leave-active { transition: all 0.3s ease; }
+.sp-slide-down-enter-from,
+.sp-slide-down-leave-to { opacity: 0; transform: translateY(-10px); }
+
+/* ─── Hero (components/Hero.vue) ────────────────────────────────────────── */
+
+.sp-hero { position: relative; overflow: hidden; min-height: 520px; }
+.sp-hero--image { color: #fff; }
+.sp-hero--gradient { color: var(--hero-text); }
+.sp-hero__bg { position: absolute; inset: 0; z-index: 0; }
+.sp-hero__slide { position: relative; width: 100%; height: 100%; }
+.sp-hero__img { width: 100%; height: 100%; object-fit: cover; }
+.sp-hero__overlay { position: absolute; inset: 0; background-color: rgb(0 0 0 / 0.45); }
+.sp-hero__gradient { width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); }
+.sp-hero__content { position: relative; z-index: 10; display: flex; flex-direction: column; justify-content: center; min-height: 520px; }
+.sp-hero__inner { max-width: 48rem; margin-inline: auto; text-align: center; }
+.sp-hero__title {
+  margin-bottom: 1rem;
+  font-size: 1.875rem; line-height: 2.25rem; font-weight: 700;
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.12));
+}
+.sp-hero__subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem; line-height: 1.75rem; opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}
+@container sp (min-width: 48rem) {
+  .sp-hero__title { margin-bottom: 1.5rem; font-size: 3rem; line-height: 1; }
+  .sp-hero__subtitle { margin-bottom: 2rem; font-size: 1.25rem; line-height: 1.75rem; }
+}
+
+/* Barra de busca (hero da home e do Como chegar). */
+.sp-search { overflow: hidden; border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-xl); }
+.sp-search--narrow { max-width: 28rem; margin-inline: auto; }
+.sp-search__row { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 1rem; }
+.sp-search__icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; color: var(--muted); }
+.sp-search__input { flex: 1; min-width: 0; padding-block: 0.75rem; background-color: transparent; color: var(--text); font-size: 0.875rem; line-height: 1.25rem; outline: none; }
+.sp-search__input::placeholder { color: var(--muted); }
+@container sp (min-width: 48rem) { .sp-search__input:not(.sp-search__input--sm) { font-size: 1rem; line-height: 1.5rem; } }
+
+/* ─── Início (pages/index.vue) ──────────────────────────────────────────── */
+
+.sp-breadcrumb { padding-top: 1.5rem; padding-bottom: 0.5rem; }
+.sp-breadcrumb__list { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+.sp-breadcrumb__link:hover { color: var(--link); }
+
+.sp-home-banner { padding-block: 1rem; }
+.sp-home-banner__box {
+  padding: 1rem; border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--surface));
+  background-color: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+.sp-home-banner__row { display: flex; align-items: flex-start; gap: 0.75rem; }
+.sp-home-banner__text { flex: 1; min-width: 0; }
+.sp-home-banner__title { margin-bottom: 0.25rem; font-size: 1rem; line-height: 1.5rem; font-weight: 700; color: var(--text); }
+.sp-home-banner__sub { font-size: 0.875rem; line-height: 1.625; color: var(--muted); }
+@container sp (min-width: 48rem) {
+  .sp-home-banner__box { padding: 1.25rem; }
+  .sp-home-banner__title { font-size: 1.125rem; line-height: 1.75rem; }
+}
+
+.sp-divider { border-top: 2px solid var(--border); }
+
+/* Bloco de texto SEO (home e Como chegar): .prose.prose-theme do WL. */
+.sp-seo-block { padding: 2rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); }
+.sp-seo-block__title { margin-bottom: 1.5rem; font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text); }
+.sp-seo-block__text { font-size: 1rem; line-height: 1.75; color: var(--muted); }
+.sp-seo-block__text > p { margin-block: 1.25em; line-height: 1.625; color: var(--muted); }
+.sp-seo-block__text > :first-child { margin-top: 0; }
+.sp-seo-block__text > :last-child { margin-bottom: 0; }
+@container sp (min-width: 48rem) {
+  .sp-seo-block { padding: 2.5rem; }
+  .sp-seo-block__title { font-size: 1.875rem; line-height: 2.25rem; }
+}
+
+/* ─── Filtros + serviços (pages/index.vue + ServiceCard.vue) ────────────── */
+
+.sp-filters { padding-block: 1.25rem; }
+.sp-filters__row { display: flex; flex-direction: column; flex-wrap: wrap; gap: 0.75rem; }
+@container sp (min-width: 40rem) { .sp-filters__row { flex-direction: row; } }
+.sp-filter { position: relative; flex: 1; }
+.sp-filter--category { min-width: 160px; }
+.sp-filter--price { min-width: 110px; }
+.sp-filter--sort { min-width: 140px; }
+.sp-filter__icon { pointer-events: none; position: absolute; inset-block: 0; left: 0.75rem; display: flex; align-items: center; color: var(--muted); }
+.sp-filter__icon svg { width: 1rem; height: 1rem; }
+.sp-filter__control {
+  width: 100%;
+  padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+  border: 1px solid var(--border); border-radius: var(--button-radius);
+  background-color: var(--surface); color: var(--text);
+  font-size: 0.875rem; line-height: 1.25rem;
+  outline: none;
+}
+.sp-filter__control::placeholder { color: var(--muted); }
+.sp-filter__control--select { padding-right: 1rem; appearance: none; cursor: pointer; }
+
+.sp-services { padding-bottom: 4rem; }
+.sp-services__group { margin-bottom: 2.5rem; }
+
+.sp-service {
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  background-color: var(--surface);
+  box-shadow: var(--sp-shadow-md);
+  transition: all 300ms var(--sp-ease);
+}
+.sp-service:hover { box-shadow: var(--sp-shadow-xl); }
+.sp-service__media {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+  height: 12rem; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+}
+.sp-service__img { width: 100%; height: 100%; object-fit: cover; transition: transform 300ms var(--sp-ease); }
+.sp-service:hover .sp-service__img { transform: scale(1.05); }
+.sp-service__placeholder-icon { width: 2.5rem; height: 2.5rem; color: color-mix(in oklab, var(--muted) 50%, transparent); }
+.sp-service__placeholder-text { font-size: 0.75rem; line-height: 1rem; color: color-mix(in oklab, var(--muted) 60%, transparent); }
+.sp-service__body { padding: 1.5rem; }
+.sp-service__name { margin-bottom: 0.5rem; font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: var(--text); transition: opacity 150ms var(--sp-ease); }
+.sp-service:hover .sp-service__name { opacity: 0.9; }
+.sp-service__description {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted);
+}
+.sp-service__row { display: flex; align-items: center; justify-content: space-between; }
+.sp-service__price-col { display: flex; flex-direction: column; }
+.sp-service__price { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--link); }
+.sp-service__duration { display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+.sp-service__duration svg { width: 1rem; height: 1rem; }
+.sp-service__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.sp-service__tag {
+  display: flex; align-items: center; gap: 0.25rem;
+  padding: 0.25rem 0.5rem; border-radius: 9999px;
+  background-color: color-mix(in oklab, var(--text) 5%, transparent); color: var(--muted);
+  font-size: 0.75rem; line-height: 1rem;
+}
+.sp-service__tag svg { width: 0.75rem; height: 0.75rem; }
+.sp-service__cta { display: flex; width: 100%; margin-top: 1rem; }
+
+.sp-empty { padding-block: 5rem; text-align: center; }
+.sp-empty__title { margin-bottom: 0.5rem; font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: var(--text); }
+
+/* ─── Profissionais (ProfessionalsCarousel.vue) ─────────────────────────── */
+
+.sp-pros { padding-block: 2.5rem; }
+.sp-pros__head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+.sp-pros__title { font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; color: var(--text); }
+@container sp (min-width: 48rem) { .sp-pros__title { font-size: 1.25rem; line-height: 1.75rem; } }
+/* Swiper (slides-per-view auto, space-between 16, free-mode) → rolagem. */
+.sp-pros__track { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
+.sp-pros__track::-webkit-scrollbar { display: none; }
+.sp-pros__slide { flex: 0 0 16rem; width: 16rem; }
+.sp-pro {
+  display: flex; flex-direction: row; align-items: center; gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border); border-radius: var(--card-radius);
+  background-color: var(--surface); box-shadow: var(--sp-shadow-sm);
+  cursor: pointer;
+  transition: box-shadow 150ms var(--sp-ease);
+}
+.sp-pro:hover { box-shadow: var(--sp-shadow-md); }
+.sp-pro__avatar-wrap { position: relative; flex-shrink: 0; }
+.sp-pro__avatar { width: 3.5rem; height: 3.5rem; border-radius: 9999px; border: 2px solid var(--primary); object-fit: cover; }
+.sp-pro__initials {
+  display: flex; align-items: center; justify-content: center;
+  width: 3.5rem; height: 3.5rem; border-radius: 9999px;
+  background-color: var(--primary); color: var(--primary-contrast);
+  font-size: 1.125rem; line-height: 1.75rem; font-weight: 700;
+}
+.sp-pro__info { display: flex; flex-direction: column; gap: 0.125rem; min-width: 0; }
+.sp-pro__name {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  font-size: 0.875rem; line-height: 1.25; font-weight: 600; color: var(--text);
+}
+
+/* ─── "Onde estamos" (site/BusinessContact.vue + site/UnitHours.vue) ───── */
+
+.sp-contact { padding-block: 2.5rem; }
+.sp-contact__title { margin-bottom: 1.5rem; font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text); }
+@container sp (min-width: 48rem) { .sp-contact__title { font-size: 1.875rem; line-height: 2.25rem; } }
+.sp-contact__card { padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); }
+.sp-contact__card > :not(:last-child) { margin-bottom: 0.75rem; }
+.sp-contact__unit { font-weight: 700; color: var(--text); }
+.sp-contact__address { font-size: 0.875rem; line-height: 1.375; color: var(--sp-ink-80); }
+.sp-contact__zip { display: block; font-size: 0.75rem; line-height: 1rem; color: var(--muted); }
+.sp-contact__phone { font-size: 0.875rem; line-height: 1.25rem; }
+.sp-contact__tel { color: var(--link); }
+.sp-contact__tel:hover { text-decoration: underline; }
+.sp-contact__more { margin-top: 1.5rem; }
+.sp-eyebrow { margin-bottom: 0.25rem; font-size: 0.75rem; line-height: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; color: var(--muted); }
+
+.sp-hours { font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+.sp-hours > :not(:last-child) { margin-bottom: 0.125rem; }
+.sp-hours__row { display: flex; flex-wrap: wrap; column-gap: 0.5rem; }
+.sp-hours__days { font-weight: 500; color: var(--sp-ink-80); }
+.sp-hours.sp-text-xs { font-size: 0.75rem; line-height: 1rem; }
+
+/* ─── Sobre (pages/sobre.vue) ───────────────────────────────────────────── */
+
+.sp-about-hero { position: relative; overflow: hidden; padding-block: 5rem; background-color: color-mix(in srgb, var(--primary) 10%, var(--background)); }
+.sp-about-hero__inner { position: relative; z-index: 10; text-align: center; }
+.sp-about-hero__badge {
+  display: inline-block; margin-bottom: 1rem; padding: 0.375rem 1rem; border-radius: 9999px;
+  background-color: color-mix(in srgb, var(--primary) 15%, var(--background)); color: var(--link);
+  font-size: 0.75rem; line-height: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.sp-about-hero__title { margin-bottom: 1.5rem; font-size: 2.25rem; line-height: 1.25; font-weight: 700; color: var(--text); }
+@container sp (min-width: 48rem) { .sp-about-hero__title { font-size: 3rem; } }
+.sp-about-hero__intro { max-width: 48rem; margin-inline: auto; font-size: 1.25rem; line-height: 1.625; color: var(--muted); }
+.sp-about-hero__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; margin-top: 2rem; }
+
+.sp-about-stats { position: relative; z-index: 20; margin-top: -2rem; }
+.sp-about-stats__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+@container sp (min-width: 48rem) { .sp-about-stats__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sp-about-stat { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-md); text-align: center; }
+.sp-about-stat__value { margin-bottom: 0.25rem; font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: var(--link); }
+.sp-about-stat__label { font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+
+.sp-about-intro { display: grid; align-items: center; gap: 3rem; }
+@container sp (min-width: 48rem) { .sp-about-intro { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.sp-about-intro__text { line-height: 1.625; color: var(--muted); }
+.sp-about-intro__text > :not(:last-child),
+.sp-stack-4 > :not(:last-child) { margin-bottom: 1rem; }
+.sp-diff { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); }
+.sp-diff__title { margin-bottom: 0.25rem; font-weight: 600; color: var(--text); }
+.sp-diff__text { font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+
+.sp-tint-5 { background-color: color-mix(in srgb, var(--primary) 5%, var(--background)); }
+.sp-center-head { margin-bottom: 2.5rem; text-align: center; }
+.sp-center-head__sub { max-width: 36rem; margin-inline: auto; color: var(--muted); }
+
+.sp-about-services { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1rem; }
+@container sp (min-width: 40rem) { .sp-about-services { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container sp (min-width: 64rem) { .sp-about-services { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sp-about-service {
+  padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--card-radius);
+  background-color: var(--surface); box-shadow: var(--sp-shadow-sm);
+  transition: all 150ms var(--sp-ease);
+}
+.sp-about-service:hover { border-color: var(--primary); box-shadow: var(--sp-shadow-md); }
+.sp-about-service__row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.sp-about-service__main { flex: 1; min-width: 0; }
+.sp-about-service__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--text); transition: color 150ms var(--sp-ease); }
+.sp-about-service:hover .sp-about-service__name { color: var(--link); }
+.sp-about-service__desc {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted);
+}
+.sp-about-service__price-col { flex-shrink: 0; text-align: right; }
+.sp-about-service__price { font-size: 0.875rem; line-height: 1.25rem; font-weight: 700; color: var(--link); }
+
+.sp-about-team { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+@container sp (min-width: 48rem) { .sp-about-team { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@container sp (min-width: 64rem) { .sp-about-team { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sp-about-member { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); text-align: center; transition: box-shadow 150ms var(--sp-ease); }
+.sp-about-member:hover { box-shadow: var(--sp-shadow-md); }
+.sp-about-member__avatar {
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  width: 4rem; height: 4rem; margin: 0 auto 0.75rem; border-radius: 9999px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 60%, white), var(--primary));
+  color: var(--primary-contrast); font-size: 1.5rem; line-height: 2rem; font-weight: 700;
+}
+.sp-about-member__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sp-about-member__name { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; color: var(--text); }
+
+.sp-about-units { display: grid; gap: 1.5rem; }
+@container sp (min-width: 48rem) { .sp-about-units { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container sp (min-width: 64rem) { .sp-about-units { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sp-about-unit { padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); }
+.sp-about-unit__head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.sp-about-unit__name { font-weight: 700; color: var(--text); }
+.sp-about-unit__address { font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+.sp-about-unit__address > :not(:last-child) { margin-bottom: 0.375rem; }
+.sp-about-unit__line { display: flex; align-items: center; gap: 0.5rem; }
+.sp-about-unit__line--top { align-items: flex-start; }
+.sp-about-unit__icon { color: var(--muted); }
+.sp-about-unit__line--top .sp-about-unit__icon { margin-top: 0.125rem; }
+.sp-about-unit__cta { display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 1rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--link); transition: opacity 150ms var(--sp-ease); }
+.sp-about-unit__cta--wa { gap: 0.375rem; }
+.sp-about-unit__cta:hover { opacity: 0.8; }
+.sp-cta__sub { margin-bottom: 2rem; font-size: 1.125rem; line-height: 1.75rem; color: var(--muted); }
+
+/* ─── Como chegar (pages/localizacao.vue) ───────────────────────────────── */
+
+.sp-loc-hero { padding-block: 3.5rem; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: var(--hero-text); }
+.sp-loc-hero__title { margin-bottom: 0.75rem; font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; }
+.sp-loc-hero__sub { margin-bottom: 2rem; font-size: 1.125rem; line-height: 1.75rem; opacity: 0.9; }
+@container sp (min-width: 48rem) {
+  .sp-loc-hero { padding-block: 5rem; }
+  .sp-loc-hero__title { font-size: 3rem; line-height: 1; }
+}
+
+/* O WL desenha tiles do Leaflet aqui; o preview mostra só a área do mapa. */
+.sp-loc-map { position: relative; overflow: hidden; height: 420px; border-block: 1px solid var(--border); box-shadow: var(--sp-shadow-lg); }
+@container sp (min-width: 48rem) { .sp-loc-map { border: 1px solid var(--border); border-radius: 1rem; } }
+.sp-loc-map__canvas {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.sp-loc-map__pin { width: 2.5rem; height: 2.5rem; color: var(--primary); filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.12)); }
+.sp-loc-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.sp-loc-chip {
+  display: flex; align-items: center; gap: 0.375rem;
+  padding: 0.375rem 0.75rem; border: 1px solid var(--border); border-radius: 9999px;
+  background-color: var(--surface); color: var(--sp-ink-80);
+  font-size: 0.75rem; line-height: 1rem;
+  transition: box-shadow 150ms var(--sp-ease);
+}
+.sp-loc-chip:hover { box-shadow: var(--sp-shadow-sm); }
+
+.sp-loc-filter { padding-block: 1.25rem; }
+.sp-loc-filter__row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sp-pill {
+  padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 9999px;
+  background-color: var(--surface); color: var(--muted);
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
+  transition: all 150ms var(--sp-ease);
+}
+.sp-pill:hover { border-color: var(--muted); }
+.sp-pill--active,
+.sp-pill--active:hover { border-color: transparent; background-color: var(--button); color: var(--button-text); }
+
+.sp-loc-card { overflow: hidden; border: 1px solid var(--border); border-radius: var(--card-radius); background-color: var(--surface); box-shadow: var(--sp-shadow-sm); cursor: pointer; transition: all 150ms var(--sp-ease); }
+.sp-loc-card__head { padding: 1rem 1.25rem; background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 9%, var(--surface)), color-mix(in srgb, var(--secondary) 9%, var(--surface))); }
+.sp-loc-card__head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+.sp-loc-card__name { font-size: 1rem; line-height: 1.25; font-weight: 700; color: var(--text); }
+.sp-loc-card__badge { flex-shrink: 0; padding: 0.125rem 0.5rem; border-radius: 9999px; background-color: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--link); font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
+.sp-loc-card__body { padding: 1rem 1.25rem; }
+.sp-loc-card__body > :not(:last-child) { margin-bottom: 0.625rem; }
+.sp-loc-card__line { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted); }
+.sp-loc-card__line--top { align-items: flex-start; }
+.sp-loc-card__icon { color: var(--muted); }
+.sp-loc-card__line--top .sp-loc-card__icon { margin-top: 0.125rem; }
+.sp-loc-card__address { line-height: 1.375; }
+.sp-loc-card__tel:hover { text-decoration: underline; }
+.sp-loc-card__map-link { display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: var(--link); }
+
+.sp-loc-cities { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.sp-loc-cities__title { margin-bottom: 0.75rem; font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; color: var(--text); }
+.sp-loc-cities__row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sp-loc-city {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.375rem 0.75rem; border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--surface)); border-radius: 9999px;
+  background-color: color-mix(in srgb, var(--primary) 8%, var(--surface)); color: var(--link);
+  font-size: 0.875rem; line-height: 1.25rem;
+}
+
+/* ─── Rodapé (components/common/Footer.vue) ─────────────────────────────── */
+
+.sp-footer { padding-block: 3rem; background-color: var(--footer); color: #fff; }
+.sp-footer__social { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center; }
+.sp-footer__social-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+.sp-footer__social-link {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1.25rem; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 1rem;
+  background-color: rgb(255 255 255 / 0.05); color: var(--sp-gray-300);
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
+}
+.sp-footer__block { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--sp-gray-800); }
+.sp-footer__block-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.sp-footer__heading { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sp-gray-400); }
+.sp-footer__heading-icon,
+.sp-footer__muted-icon { color: var(--sp-gray-500); }
+.sp-footer__units { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1rem; }
+@container sp (min-width: 40rem) { .sp-footer__units { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container sp (min-width: 48rem) { .sp-footer__units { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@container sp (min-width: 64rem) { .sp-footer__units { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sp-footer__unit {
+  padding: 1rem; border: 1px solid var(--sp-gray-800); border-radius: 0.5rem;
+  background-color: color-mix(in oklab, var(--sp-gray-800) 50%, transparent);
+  transition: all 150ms var(--sp-ease);
+}
+.sp-footer__unit:hover { border-color: var(--sp-gray-600); background-color: var(--sp-gray-800); }
+.sp-footer__unit-name { display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.375rem; font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; color: var(--sp-gray-200); }
+.sp-footer__unit:hover .sp-footer__unit-name { color: #fff; }
+.sp-footer__unit-address { font-size: 0.75rem; line-height: 1rem; color: var(--sp-gray-500); }
+.sp-footer__unit-address > :not(:last-child) { margin-bottom: 0.125rem; }
+.sp-footer__gray-600 { color: var(--sp-gray-600); }
+.sp-footer__unit-phone { display: flex; align-items: center; gap: 0.25rem; padding-top: 0.25rem; color: var(--sp-gray-500); }
+.sp-footer__seo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+@container sp (min-width: 48rem) { .sp-footer__seo { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sp-footer__seo-heading { display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.75rem; font-size: 0.75rem; line-height: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sp-gray-400); }
+.sp-footer__seo-list > :not(:last-child) { margin-bottom: 0.25rem; }
+.sp-footer__seo-link { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem; line-height: 1.625; color: var(--sp-gray-500); transition: color 150ms var(--sp-ease); }
+.sp-footer__seo-link:hover { color: var(--sp-gray-300); }
+.sp-footer__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1.5rem; }
+.sp-footer__chips-label { margin-right: 0.25rem; font-size: 0.75rem; line-height: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sp-gray-600); }
+.sp-footer__chip { padding: 0.125rem 0.75rem; border: 1px solid var(--sp-gray-700); border-radius: 9999px; font-size: 0.75rem; line-height: 1rem; color: var(--sp-gray-600); transition: all 150ms var(--sp-ease); }
+.sp-footer__chip:hover { border-color: var(--sp-gray-500); color: var(--sp-gray-300); }
+.sp-footer__bottom { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--sp-gray-800); text-align: center; color: var(--sp-gray-400); }
+.sp-footer__powered { margin-top: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; }
+.sp-footer__powered-link { transition: color 150ms var(--sp-ease); }
+.sp-footer__powered-link:hover { color: #fff; }

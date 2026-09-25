@@ -1,0 +1,90 @@
+{
+  "_comment": "Fixture de fidelidade do preview (etapa 2). Formato CRU da API pública do WL: o mesmo JSON alimenta o white-label real (scripts/site-preview-fidelity/mock-api.cjs) e o preview da landing (previewFromWlPayload). Não é um modelo de segmento; sem imagens para o print ser determinístico.",
+  "website": {
+    "id": 1,
+    "title": "Espaço Exemplo",
+    "subdomain": "fixture",
+    "logo": null,
+    "favicon": null,
+    "primaryColor": "#0f766e",
+    "secondaryColor": "#0ea5e9",
+    "theme": { "preset": "clean", "font": "classica", "radius": "md" },
+    "heroText": "Cuidado de perto, no seu ritmo",
+    "heroSubText": "Atendimento com hora marcada no Centro",
+    "heroImages": [],
+    "description": "O Espaço Exemplo atende com hora marcada, em ambiente tranquilo e com equipe dedicada. Este texto existe só para a fixture de fidelidade do preview.",
+    "whatsapp": "11987654321",
+    "instagram": null,
+    "facebook": null,
+    "twitter": null,
+    "youtube": null,
+    "tiktok": null,
+    "threads": null,
+    "locationsServed": [],
+    "modules": ["whitelabel"],
+    "tenantWeb": {
+      "id": 1,
+      "officeName": "Espaço Exemplo",
+      "segment": { "id": 9, "name": "physio", "label": "Fisioterapia", "icon": null, "color": null },
+      "signatures": [{ "planId": 11, "isActive": true }]
+    }
+  },
+  "services": [
+    {
+      "id": 1, "name": "Avaliação inicial", "description": "Primeira conversa e avaliação para entender o que você precisa.",
+      "price": "150.00", "isActive": true,
+      "duration": { "id": 4, "name": "1 hora", "milliseconds": 3600000 },
+      "categoryServices": [{ "id": 10, "name": "Atendimento", "image": null }]
+    },
+    {
+      "id": 2, "name": "Sessão individual", "description": "Sessão de 50 minutos com acompanhamento individual.",
+      "price": "120.00", "isActive": true,
+      "duration": { "id": 3, "name": "50 minutos", "milliseconds": 3000000 },
+      "categoryServices": [{ "id": 10, "name": "Atendimento", "image": null }]
+    },
+    {
+      "id": 3, "name": "Pacote com 10 sessões", "description": "Dez sessões para usar no seu ritmo, com horário marcado.",
+      "price": "950.00", "isActive": true,
+      "duration": { "id": 3, "name": "50 minutos", "milliseconds": 3000000 },
+      "categoryServices": [{ "id": 11, "name": "Pacotes", "image": null }]
+    },
+    {
+      "id": 4, "name": "Aula em grupo", "description": "Turmas pequenas, com no máximo quatro pessoas por horário.",
+      "price": "80.00", "isActive": true,
+      "duration": { "id": 2, "name": "45 minutos", "milliseconds": 2700000 },
+      "categoryServices": [{ "id": 11, "name": "Pacotes", "image": null }, { "id": 10, "name": "Atendimento", "image": null }]
+    },
+    {
+      "id": 5, "name": "Retorno", "description": null,
+      "price": "90.00", "isActive": true,
+      "duration": { "id": 1, "name": "30 minutos", "milliseconds": 1800000 },
+      "categoryServices": []
+    },
+    {
+      "id": 6, "name": "Serviço desativado", "description": "Não deve aparecer.",
+      "price": "10.00", "isActive": false,
+      "duration": { "id": 1, "name": "30 minutos", "milliseconds": 1800000 },
+      "categoryServices": []
+    }
+  ],
+  "employees": [
+    { "id": 1, "firstName": "Ana", "lastName": "Souza", "fullName": "Ana Souza", "avatar": null },
+    { "id": 2, "firstName": "Bruno", "lastName": "Lima", "fullName": "Bruno Lima", "avatar": null },
+    { "id": 3, "firstName": "Carla", "lastName": "Dias Moreira", "fullName": "Carla Dias Moreira", "avatar": null }
+  ],
+  "units": [
+    {
+      "id": 1, "name": "Espaço Exemplo — Centro", "status": "active",
+      "address": "Rua das Flores", "number": "120", "neighborhood": "Centro", "city": "Campinas", "state": "SP", "zipCode": "13010-000",
+      "phone": "(19) 3232-1000", "email": null, "latitude": null, "longitude": null,
+      "availabilities": [
+        { "dayOfWeek": 1, "startTime": "08:00:00", "endTime": "19:00:00" },
+        { "dayOfWeek": 2, "startTime": "08:00:00", "endTime": "19:00:00" },
+        { "dayOfWeek": 3, "startTime": "08:00:00", "endTime": "19:00:00" },
+        { "dayOfWeek": 4, "startTime": "08:00:00", "endTime": "19:00:00" },
+        { "dayOfWeek": 5, "startTime": "08:00:00", "endTime": "19:00:00" },
+        { "dayOfWeek": 6, "startTime": "08:00:00", "endTime": "12:00:00" }
+      ]
+    }
+  ]
+}
