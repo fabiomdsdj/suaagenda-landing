@@ -12,6 +12,10 @@
 //   E2E_MOCK_PORT  porta do mock de planos (padrão 3998)
 //   CHROME_PATH    padrão /usr/bin/google-chrome
 //
+// O mock de planos tem trialDays=15: aqui o CTA do Só Site cai no WhatsApp
+// (fallback de utils/soSite.js). O caminho self-service (cadastro → checkout)
+// vale quando o plano não tem trial.
+//
 // Sai com 1 se qualquer verificação falhar.
 import { createRequire } from 'node:module'
 import http from 'node:http'

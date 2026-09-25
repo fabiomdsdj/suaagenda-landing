@@ -1,7 +1,8 @@
 <!-- Chamada para o cadastro, ao lado do configurador. Sem promessa de
      resultado e sem URL inventada: só emite `start` com o segmento e o modelo.
-     Quem leva à contratação (WhatsApp de vendas, com segmento e modelo) é a
-     página pública /site-para-[segmento]; o preço vem do plano. -->
+     Quem leva à contratação (cadastro → checkout, com segmento e modelo; ou
+     WhatsApp como fallback) é a página pública /site-para-[segmento]; o preço
+     vem do plano. -->
 <template>
   <aside class="rounded-2xl border border-green-400/25 bg-green-400/[.04] p-5" aria-labelledby="cfg-conversion-title">
     <h2 id="cfg-conversion-title" class="text-lg font-bold text-white">Gostou desse modelo? Seu site pode começar assim.</h2>

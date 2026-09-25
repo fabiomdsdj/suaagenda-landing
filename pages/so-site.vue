@@ -40,12 +40,13 @@
             :href="cta.href"
             :target="cta.kind === 'whatsapp' ? '_blank' : undefined"
             rel="noopener"
+            data-cta="primary"
             class="bg-green-400 hover:bg-green-300 text-black font-bold px-8 py-4 rounded-xl transition-colors"
           >
             {{ ctaLabel }}
           </a>
           <a
-            :href="whatsappHref"
+            :href="duvidasHref"
             target="_blank"
             rel="noopener"
             class="border border-white/10 hover:border-white/25 text-white px-8 py-4 rounded-xl transition-colors"
@@ -109,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { findSoSitePlan, soSiteCta, formatBRL, WHATSAPP_VENDAS } from '~/utils/soSite.js'
+import { findSoSitePlan, soSiteCta, formatBRL, whatsappHref, ADMIN_BASE } from '~/utils/soSite.js'
 
 definePageMeta({ layout: 'landing' })
 
@@ -127,10 +128,12 @@ const { data: plan } = await useAsyncData('so-site-plan', async () => {
 })
 
 const price    = computed(() => (plan.value ? formatBRL(plan.value.price) : ''))
-// Pagamento imediato, sem teste grátis: contratação pelo WhatsApp de vendas.
-const cta      = soSiteCta()
+// Pagamento imediato, sem teste grátis: cadastro → checkout do Asaas no admin.
+// Sem plano (API fora) ou com trial no banco, o CTA cai no WhatsApp de vendas.
+const adminBase = (config.public.adminBaseUrl as string) || ADMIN_BASE
+const cta      = computed(() => soSiteCta(plan.value, { adminBase }))
 const ctaLabel = 'Quero meu site'
-const whatsappHref = `https://wa.me/${WHATSAPP_VENDAS}?text=${encodeURIComponent('Tenho dúvidas sobre o Só Site')}`
+const duvidasHref = whatsappHref('Tenho dúvidas sobre o Só Site')
 
 // Só o que o produto entrega hoje (painel "Meu site" + site público).
 const beneficios = [
@@ -143,7 +146,7 @@ const beneficios = [
 ]
 
 const passos = [
-  'Crie sua conta e escolha o segmento do seu negócio.',
+  'Crie sua conta, escolha o segmento e conclua o pagamento no cartão.',
   'Personalize o site no painel: logo, cores, fotos e textos.',
   'Divulgue seu link. Mudou algo? Você mesmo atualiza.',
 ]

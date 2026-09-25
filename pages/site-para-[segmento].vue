@@ -6,9 +6,11 @@
          (telefone/endereço fictícios fora dos resultados do Google).
        - O slug público mapeia para o segmento REAL (segment_types.name,
          data/siteModels/types.ts): fisioterapia → physio.
-       - CTA = WhatsApp de vendas (utils/soSite.js): Só Site é pagamento
-         imediato e não há contratação paga self-service. A mensagem leva o
-         segmento real e o modelo. O preço vem de /plans/public.
+       - CTA = cadastro self-service do admin (utils/soSite.js): conta →
+         checkout do Asaas → plano ativo, sem teste grátis. A URL leva o
+         plano, o segmento real (segmentType) e o modelo (siteModel), que o
+         cadastro grava. Sem plano ou com trial no banco, cai no WhatsApp.
+         O WhatsApp fica como contato secundário. Preço de /plans/public.
        - ?modelo=<id> abre direto no modelo e acompanha a troca. -->
 <template>
   <div class="text-[15px]" style="--cfg-sticky-top:5.5rem">
@@ -67,15 +69,20 @@
           <h2 class="text-2xl font-bold text-white">Seu site de {{ segment.label.toLowerCase() }} no ar.</h2>
           <p v-if="plan" class="mt-2 text-gray-400">{{ price }}/mês</p>
         </div>
-        <a
-          :href="cta.href"
-          target="_blank"
-          rel="noopener"
-          class="flex-shrink-0 bg-green-400 hover:bg-green-300 text-black font-bold px-8 py-4 rounded-xl transition-colors"
-          data-cta-final
-        >
-          Criar meu site
-        </a>
+        <div class="flex flex-col items-center gap-3 flex-shrink-0">
+          <a
+            :href="cta.href"
+            :target="cta.kind === 'whatsapp' ? '_blank' : undefined"
+            rel="noopener"
+            class="bg-green-400 hover:bg-green-300 text-black font-bold px-8 py-4 rounded-xl transition-colors"
+            data-cta-final
+          >
+            Criar meu site
+          </a>
+          <a :href="duvidasHref" target="_blank" rel="noopener" class="text-sm text-gray-400 hover:text-white" data-cta-whatsapp>
+            Tirar dúvidas no WhatsApp
+          </a>
+        </div>
       </div>
     </section>
 
@@ -85,7 +92,7 @@
 <script setup lang="ts">
 import SiteConfigurator from '~/components/site-configurator/SiteConfigurator.vue'
 import { loadSiteModels, siteModelPath } from '~/data/siteModels'
-import { findSoSitePlan, soSiteCta, siteModelCtaText, formatBRL } from '~/utils/soSite.js'
+import { findSoSitePlan, soSiteCta, siteModelCtaText, formatBRL, whatsappHref, ADMIN_BASE } from '~/utils/soSite.js'
 import type { ConversionStart } from '~/composables/useSiteConfigurator'
 
 definePageMeta({ layout: 'landing' })
@@ -116,15 +123,26 @@ const { data: plan } = await useAsyncData('site-para-plan', async () => {
 
 const price = computed(() => (plan.value ? formatBRL(plan.value.price) : ''))
 
-function ctaFor(id: string) {
-  return soSiteCta(siteModelCtaText({
+const adminBase = (config.public.adminBaseUrl as string) || ADMIN_BASE
+
+function whatsappText(id: string) {
+  return siteModelCtaText({
     segmentLabel: segment!.label,
     segmentType:  segment!.segmentType,
     modelLabel:   segment!.models.find(m => m.id === id)?.label ?? id,
     modelId:      id,
-  }))
+  })
 }
-const cta = computed(() => ctaFor(modelId.value))
+function ctaFor(id: string) {
+  return soSiteCta(plan.value, {
+    adminBase,
+    segmentType: segment!.segmentType,
+    siteModel:   id,
+    text:        whatsappText(id),
+  })
+}
+const cta         = computed(() => ctaFor(modelId.value))
+const duvidasHref = computed(() => whatsappHref(whatsappText(modelId.value).replace('Quero contratar', 'Tenho dúvidas sobre')))
 
 function onModelChange(id: string) {
   modelId.value = id
@@ -133,7 +151,9 @@ function onModelChange(id: string) {
 }
 
 function onStart(payload: ConversionStart) {
-  window.open(ctaFor(payload.modelId).href, '_blank', 'noopener')
+  const target = ctaFor(payload.modelId)
+  if (target.kind === 'whatsapp') window.open(target.href, '_blank', 'noopener')
+  else window.location.assign(target.href)
 }
 
 const url     = `https://suaagenda.link${siteModelPath(segment.segment)}`

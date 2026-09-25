@@ -152,6 +152,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { paysNow } from '~/utils/soSite.js'
 
 // ── Props ───────────────────────────────────────────────────────────────────
 const props = withDefaults(defineProps<{
@@ -224,8 +225,9 @@ function isEnterprise(plan: any) { return !!plan.isCustomPricing }
 // Trial é por plano (plans.trialDays; null = sem trial, ex.: Growth).
 function trialDaysOf(plan: any)  { const n = Number(plan.trialDays); return n > 0 ? n : 0 }
 function hasTrial(plan: any)     { return !isFree(plan) && !isEnterprise(plan) && trialDaysOf(plan) > 0 }
-// Só Free e pago com trial passam pelo cadastro; o resto vai para contato.
-function canSelfSignup(plan: any) { return isFree(plan) || hasTrial(plan) }
+// Free, pago com trial e Só Site sem trial (cadastro → checkout do Asaas,
+// utils/soSite.js) passam pelo cadastro; o resto vai para contato.
+function canSelfSignup(plan: any) { return isFree(plan) || hasTrial(plan) || paysNow(plan) }
 
 // ── Feature labels (keys reais da tabela `features`) ────────────────────────
 const FEATURE_LABELS: Record<string, (v: string | number) => string> = {
@@ -326,13 +328,15 @@ function selectPlan(plano: any) { selectedPlanId.value = plano.id }
 function ctaLabel(plano: any) {
   if (isFree(plano))       return '🎁 Começar grátis'
   if (hasTrial(plano))     return `✂️ Começar ${trialDaysOf(plano)} dias grátis`
+  if (paysNow(plano))      return 'Quero meu site'
   return '💬 Falar com a gente'
 }
 
 function buildUrl(plano: any): string {
   const params = new URLSearchParams({
     planId:       String(plano.id),
-    billingCycle: billingCycle.value,
+    // Só Site é sempre mensal (como em /so-site), qualquer que seja o toggle.
+    billingCycle: paysNow(plano) ? 'monthly' : billingCycle.value,
   })
   return `${props.redirectBase}/admin/auth/register?${params.toString()}`
 }

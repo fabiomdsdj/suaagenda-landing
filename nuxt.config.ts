@@ -100,6 +100,9 @@ export default defineNuxtConfig({
       // (diretório de barbearias). Override em runtime: NUXT_PUBLIC_PLANS_API_BASE.
       plansApiBase: process.env.NUXT_PUBLIC_PLANS_API_BASE
         || (process.env.NODE_ENV === "production" ? "https://api.suaagenda.link" : (process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3011")),
+      // Admin (cadastro/checkout). Vazio = https://app.suaagenda.link
+      // (utils/soSite.js ADMIN_BASE e o default do /precos).
+      adminBaseUrl: process.env.NUXT_PUBLIC_ADMIN_BASE_URL || "",
       apiKey: process.env.NUXT_PUBLIC_API_KEY || "",
       scrapingToken: process.env.NUXT_PUBLIC_SCRAPING_TOKEN ?? '',
       weeklyRegistrationGoal: process.env.NUXT_PUBLIC_WEEKLY_REGISTRATION_GOAL || '0',

@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { paysNow } from '../utils/soSite.js'
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SCAN_DIRS = ['pages', 'layouts', 'components', 'composables']
@@ -62,7 +63,8 @@ function loadClassifiers() {
     assert.ok(m, `função ${name} não encontrada`)
     return m[0].replace(': any', '')
   }).join('\n')
-  return new Function(`${fnSrc}; return { ${names.join(', ')} }`)()
+  // PlanSelector importa paysNow de utils/soSite.js (Só Site sem trial).
+  return new Function('paysNow', `${fnSrc}; return { ${names.join(', ')} }`)(paysNow)
 }
 
 // Formato real de /plans/public (isTrial zerado pelas migrations 20260704*;
@@ -75,6 +77,12 @@ const PLANS = {
   advanced: { id: 5,  price: 0,      isTrial: false, isCustomPricing: true,  trialDays: null },
   growth:   { id: 6,  price: 349.9,  isTrial: false, isCustomPricing: false, trialDays: null },
   growthAv: { id: 9,  price: 0,      isTrial: false, isCustomPricing: true,  trialDays: null },
+  // Só Site (site sem agenda): com trialDays no banco ainda é trial; sem
+  // trialDays é pagamento imediato (cadastro → checkout do Asaas).
+  soSiteTrial: { id: 11, price: '39.90', isTrial: false, isCustomPricing: false, trialDays: 15,
+    limits: { site: 'true', 'module.whitelabel': 'true', 'module.scheduling': 'false' } },
+  soSite:      { id: 11, price: '39.90', isTrial: false, isCustomPricing: false, trialDays: null,
+    limits: { site: 'true', 'module.whitelabel': 'true', 'module.scheduling': 'false' } },
   // isTrial legado ligado não pode virar trial nem grátis
   legacy:   { id: 99, price: 199.9,  isTrial: true,  isCustomPricing: false, trialDays: null },
 }
@@ -109,10 +117,17 @@ test('trial vem de plan.trialDays: Solo/Small/Medium 15, Growth e sob consulta s
   }
   assert.equal(canSelfSignup(PLANS.free), true)
 
+  // Só Site sem trial: cadastro self-service (contratação pendente → checkout)
+  assert.equal(hasTrial(PLANS.soSite), false)
+  assert.equal(canSelfSignup(PLANS.soSite), true)
+  assert.equal(canSelfSignup(PLANS.soSiteTrial), true)
+
   const src = fs.readFileSync(path.join(ROOT, 'components/PlanSelector.vue'), 'utf8')
   assert.doesNotMatch(src, /props\.trialDays|trialDays:\s+\d/, 'trial não pode ser fixo no componente')
   assert.match(src, /v-if="hasTrial\(plano\)" class="ps-trial-chip"/)
   assert.match(src, /if \(canSelfSignup\(plano\)\) \{\s*window\.location\.href = buildUrl\(plano\)/)
+  // Só Site sem trial vai ao cadastro sempre mensal; os outros planos seguem o toggle
+  assert.match(src, /billingCycle: paysNow\(plano\) \? 'monthly' : billingCycle\.value,/)
 })
 
 test('nenhum texto de trial fixo (7/30 dias grátis) e nenhuma config de trialDays global', () => {

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findSoSitePlan, isSoSitePlan, soSiteCta, siteModelCtaText, formatBRL } from '../utils/soSite.js'
+import { findSoSitePlan, isSoSitePlan, soSiteCta, siteModelCtaText, formatBRL, paysNow, soSiteSignupUrl } from '../utils/soSite.js'
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -43,6 +43,7 @@ test('sem plano Só Site no catálogo → null (página cai no WhatsApp)', () =>
   assert.equal(findSoSitePlan({ data: [plan(2, 79.9, COM_AGENDA)] }), null)
   assert.equal(findSoSitePlan(null), null)
   assert.equal(soSiteCta(null).kind, 'whatsapp')
+  assert.equal(soSiteCta(null, { segmentType: 'physio', siteModel: 'clinica' }).kind, 'whatsapp')
 })
 
 test('preço exibido é o do plano (mudar no banco muda a página)', () => {
@@ -50,13 +51,38 @@ test('preço exibido é o do plano (mudar no banco muda a página)', () => {
   assert.equal(formatBRL(findSoSitePlan({ data: [plan(11, 44.9, SO_SITE)] }).price), 'R$ 44,90')
 })
 
-test('Só Site é pagamento imediato: CTA sempre WhatsApp de vendas, mesmo com trialDays no plano', () => {
+const SEM_TRIAL = { ...findSoSitePlan(CATALOGO), trialDays: null }
+
+test('Só Site sem trialDays = pagamento imediato → CTA no cadastro self-service', () => {
+  assert.equal(paysNow(SEM_TRIAL), true)
+  assert.equal(paysNow({ ...SEM_TRIAL, trialDays: 0 }), true)
+  assert.deepEqual(soSiteCta(SEM_TRIAL), {
+    kind: 'signup',
+    href: 'https://app.suaagenda.link/admin/auth/register?planId=11&billingCycle=monthly',
+  })
+})
+
+test('plano ainda com trialDays > 0 no banco → WhatsApp (o cadastro daria trial)', () => {
   const p = findSoSitePlan(CATALOGO)
-  assert.equal(p.trialDays, 15) // o banco ainda pode ter trialDays; a oferta ignora
-  assert.deepEqual(soSiteCta(), {
+  assert.equal(p.trialDays, 15)
+  assert.equal(paysNow(p), false)
+  assert.deepEqual(soSiteCta(p), {
     kind: 'whatsapp',
     href: `https://wa.me/5511941649284?text=${encodeURIComponent('Quero contratar o Só Site')}`,
   })
+})
+
+test('URL do cadastro leva plano, segmento real e modelo; adminBase configurável', () => {
+  assert.equal(
+    soSiteSignupUrl(SEM_TRIAL, { segmentType: 'physio', siteModel: 'clinica' }),
+    'https://app.suaagenda.link/admin/auth/register?planId=11&billingCycle=monthly&segmentType=physio&siteModel=clinica',
+  )
+  assert.equal(
+    soSiteCta(SEM_TRIAL, { adminBase: 'http://localhost:3000/', segmentType: 'physio', siteModel: 'reabilitacao' }).href,
+    'http://localhost:3000/admin/auth/register?planId=11&billingCycle=monthly&segmentType=physio&siteModel=reabilitacao',
+  )
+  // modelo sem segmento não vai (o modelo só existe dentro de um segmento)
+  assert.doesNotMatch(soSiteSignupUrl(SEM_TRIAL, { siteModel: 'clinica' }), /siteModel/)
 })
 
 test('a página não tem preço escrito no código e usa /plans/public', () => {
@@ -67,13 +93,13 @@ test('a página não tem preço escrito no código e usa /plans/public', () => {
   assert.match(page, /findSoSitePlan/)
 })
 
-test('páginas /site-para-*: WhatsApp com o segmento real (segment_types) e o modelo', () => {
+test('páginas /site-para-*: fallback de WhatsApp com o segmento real (segment_types) e o modelo', () => {
   const text = siteModelCtaText({ segmentLabel: 'Fisioterapia', segmentType: 'physio', modelLabel: 'Reabilitação', modelId: 'reabilitacao' })
   assert.equal(text, 'Quero contratar o Só Site. Segmento: Fisioterapia (physio). Modelo: Reabilitação (reabilitacao).')
-  assert.equal(soSiteCta(text).href, `https://wa.me/5511941649284?text=${encodeURIComponent(text)}`)
+  assert.equal(soSiteCta(null, { text }).href, `https://wa.me/5511941649284?text=${encodeURIComponent(text)}`)
 })
 
-test('oferta Só Site não anuncia teste grátis nem manda ao cadastro de trial', () => {
+test('oferta Só Site não anuncia teste grátis; a URL do cadastro só sai de utils/soSite.js (que checa trialDays)', () => {
   for (const file of ['pages/so-site.vue', 'pages/site-para-[segmento].vue', 'components/site-configurator/ConversionCard.vue']) {
     const src = fs.readFileSync(path.join(ROOT, file), 'utf8')
     assert.doesNotMatch(src, /dias grátis|trialDays|auth\/register/, file)
