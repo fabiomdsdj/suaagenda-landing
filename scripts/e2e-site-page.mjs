@@ -139,12 +139,12 @@ try {
   const histBefore = await page.evaluate(() => history.length)
   await page.click('[data-model="reabilitacao"]')
   check('trocar de modelo muda o preview', await waitTrue(page, () =>
-    document.querySelector('[data-preview-frame]').innerText.includes('Pós-operatório de joelho')))
+    document.querySelector('[data-preview-frame]').innerText.includes('Recuperação Intensiva (10 sessões)')))
   check('?modelo= acompanha a troca, sem entrada nova no histórico', await waitTrue(page, () =>
     new URL(location.href).searchParams.get('modelo') === 'reabilitacao')
     && (await page.evaluate(() => history.length)) === histBefore)
   check('CTA final acompanha o modelo',
-    (await page.$eval('[data-cta-final]', a => a.href)) === wa(ctaText('Reabilitação', 'reabilitacao')))
+    (await page.$eval('[data-cta-final]', a => a.href)) === wa(ctaText('Pós-Operatória', 'reabilitacao')))
   check('card de conversão mostra preço, sem teste grátis', (await page.$eval('[data-cta-price]', el =>
     el.textContent.replace(/\s+/g, ' ').trim())) === 'R$ 39,90/mês')
 
@@ -165,7 +165,7 @@ try {
   await page.click('[data-action="start"]')
   const opened = await page.evaluate(() => window.__opened)
   check('CTA do card abre o WhatsApp com segmento real e modelo',
-    opened.length === 1 && opened[0].url === wa(ctaText('Reabilitação', 'reabilitacao')) && opened[0].target === '_blank',
+    opened.length === 1 && opened[0].url === wa(ctaText('Pós-Operatória', 'reabilitacao')) && opened[0].target === '_blank',
     JSON.stringify(opened))
 
   const p2 = await browser.newPage()

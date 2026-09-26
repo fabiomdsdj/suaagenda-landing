@@ -1,5 +1,6 @@
 <!-- Editor do configurador, em blocos que um dono de negócio entende:
-     Seu negócio · Visual · Textos · Serviços · Profissional · Contato.
+     Seu negócio · Visual · Textos · Serviços · Pacotes (só nos modelos que
+     têm) · Profissional · Contato.
      Não guarda estado: lê do `config` (useSiteConfigurator) e muda só pelos
      setters dele, que validam tudo. As imagens vêm prontas do useLocalImage
      (o SiteConfigurator liga a URL delas à identidade). -->
@@ -242,6 +243,7 @@
             </div>
           </li>
         </ul>
+        <p class="text-xs text-gray-500" data-example-prices>Os preços do modelo são valores de exemplo. Coloque os seus.</p>
         <div class="flex flex-wrap items-center justify-between gap-2">
           <button
             type="button"
@@ -256,6 +258,61 @@
             {{ content.services.length }} de {{ SITE_MAX_SERVICES }}{{ config.canAddService.value ? '' : ' — limite do modelo' }}
           </span>
         </div>
+      </div>
+    </details>
+
+    <!-- ── Pacotes ─────────────────────────────────────────────────── -->
+    <!-- O site mostra cada pacote como um serviço da categoria "Pacotes". -->
+    <details v-if="content.packages?.length" class="cfg-section" data-section="pacotes">
+      <summary class="cfg-summary">
+        <span class="cfg-summary__title">Pacotes</span>
+        <span class="cfg-summary__hint">Quais pacotes de sessões você oferece?</span>
+      </summary>
+      <div class="cfg-section__body">
+        <ul class="space-y-3">
+          <li
+            v-for="(pkg, i) in content.packages"
+            :key="`${config.modelId.value}-${pkg.id}`"
+            class="rounded-xl border border-white/10 bg-white/[.02] p-3"
+            data-package-row
+          >
+            <TextField
+              :label="`Pacote ${i + 1}`"
+              :model-value="pkg.name"
+              :maxlength="LIMITS.packageName"
+              placeholder="Nome do pacote"
+              data-field="packageName"
+              @update:model-value="v => config.updatePackage(i, { name: v })"
+            />
+            <div class="mt-2 flex items-end gap-2">
+              <div class="cfg-field w-28 shrink-0">
+                <label :for="`${uid}-pkg-${i}`" class="cfg-label">{{ pkg.period === 'month' ? 'Sessões/mês' : 'Sessões' }}</label>
+                <!-- Valor inválido (vazio, 0, > limite) não entra; ao sair, o campo volta ao valor em vigor. -->
+                <input
+                  :id="`${uid}-pkg-${i}`"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  :max="SITE_MAX_PACKAGE_SESSIONS"
+                  step="1"
+                  :value="pkg.sessions"
+                  class="cfg-input"
+                  data-field="packageSessions"
+                  @input="e => config.updatePackage(i, { sessions: (e.target as HTMLInputElement).value })"
+                  @blur="e => { (e.target as HTMLInputElement).value = String(pkg.sessions) }"
+                >
+              </div>
+              <PriceField
+                class="w-32 shrink-0"
+                :label="pkg.period === 'month' ? 'Preço/mês' : 'Preço do pacote'"
+                :model-value="pkg.price"
+                data-field="packagePrice"
+                @update:model-value="v => config.updatePackage(i, { price: v })"
+              />
+            </div>
+          </li>
+        </ul>
+        <p class="text-xs text-gray-500">Valores de exemplo. No site, cada pacote aparece na categoria Pacotes, com o número de sessões no nome.</p>
       </div>
     </details>
 
@@ -367,6 +424,7 @@ import TextField from './fields/TextField.vue'
 import PriceField from './fields/PriceField.vue'
 import ImageField from './fields/ImageField.vue'
 import { CONFIGURATOR_LIMITS as LIMITS, SITE_MAX_SERVICES, type SiteConfigurator } from '~/composables/useSiteConfigurator'
+import { SITE_MAX_PACKAGE_SESSIONS } from '~/data/siteModels/types'
 import type { LocalImage } from '~/composables/useLocalImage'
 import { THEME_FONT_IDS, THEME_FONTS, THEME_PRESET_IDS, THEME_PRESETS, THEME_RADII, THEME_RADIUS_IDS, HEX_COLOR_RE, normalizeHex, presetBrandColors, presetPreviewTheme } from '~/utils/theme'
 import { normalizeBrWhatsapp } from '~/utils/sitePreview'

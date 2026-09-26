@@ -144,9 +144,10 @@ try {
   check('modelo Clínica aparece', text.includes('Avaliação fisioterapêutica') && text.includes('Pilates em grupo'))
 
   await page.click('[data-model="reabilitacao"]')
-  check('Reabilitação muda os serviços', await waitTrue(page, () => {
+  check('Pós-Operatória muda os serviços (e mostra os pacotes)', await waitTrue(page, () => {
     const t = document.querySelector('[data-preview-frame]').innerText
-    return t.includes('Pós-operatório de joelho') && !t.includes('Pilates em grupo')
+    return t.includes('Fisioterapia para recuperação de joelho') && t.includes('Recuperação Intensiva (10 sessões)')
+      && !t.includes('Pilates em grupo')
   }))
 
   await page.click('[data-model="profissional"]')
@@ -170,7 +171,7 @@ try {
   await page.waitForSelector('[data-preview-frame] .sp-hero')
 
   await page.click('[data-model="reabilitacao"]')
-  await waitTrue(page, () => document.querySelector('[data-preview-frame]').innerText.includes('Pós-operatório de joelho'))
+  await waitTrue(page, () => document.querySelector('[data-preview-frame]').innerText.includes('Fisioterapia para recuperação de joelho'))
   check('nome permanece ao trocar de modelo',
     (await page.$eval('[data-preview-frame] .sp-header__name', el => el.textContent.trim())) === 'Studio Fisio Fabio')
 
@@ -202,14 +203,15 @@ try {
   await openSection(page, 'servicos')
   const rows = () => page.$$eval('[data-service-row]', els => els.length)
   const cards = () => page.$$eval('[data-preview-frame] .sp-service', els => els.length)
-  check('serviços do modelo no editor e no site', (await rows()) === 6 && (await cards()) === 6)
+  // 8 serviços no editor; no site, 8 + 4 pacotes (categoria Pacotes)
+  check('serviços do modelo no editor e no site', (await rows()) === 8 && (await cards()) === 12, `${await rows()} linhas, ${await cards()} cards`)
   const cats = await page.$$eval('[data-field="serviceCategory"]', els => els.map(s => s.value))
-  check('categoria de cada serviço no editor', cats.join() === 'pos-operatorio,pos-operatorio,pos-operatorio,pos-operatorio,reabilitacao,pacotes', cats.join())
+  check('categoria de cada serviço no editor', cats.join() === 'avaliacao,pos-operatorio,pos-operatorio,pos-operatorio,pos-operatorio,terapias,terapias,avaliacao', cats.join())
   await page.select('[data-service-row]:nth-child(5) [data-field="serviceCategory"]', 'pacotes')
   check('trocar categoria agrupa o serviço no site', await waitTrue(page, () => {
     const groups = [...document.querySelectorAll('[data-preview-frame] .sp-services__group')]
     const sizes = groups.map(g => g.querySelectorAll('.sp-service').length).sort()
-    return sizes.join() === '2,4'
+    return sizes.join() === '2,2,3,5'
   }))
 
   await typeInto(page, '[data-service-row]:first-child [data-field="serviceName"] input', 'Avaliação de joelho')
@@ -231,8 +233,23 @@ try {
 
   await page.click('[data-service-row]:last-child [data-action="remove-service"]')
   check('remover serviço', await waitTrue(page, () =>
-    document.querySelectorAll('[data-service-row]').length === 5
-    && document.querySelectorAll('[data-preview-frame] .sp-service').length === 5))
+    document.querySelectorAll('[data-service-row]').length === 7
+    && document.querySelectorAll('[data-preview-frame] .sp-service').length === 11))
+
+  // ── Pacotes ───────────────────────────────────────────────────────────
+  await openSection(page, 'pacotes')
+  check('pacotes no editor', (await page.$$eval('[data-package-row]', els => els.length)) === 4)
+  await typeInto(page, '[data-package-row]:first-child [data-field="packageSessions"]', '6')
+  check('editar sessões do pacote muda o nome no site', await waitTrue(page, () =>
+    document.querySelector('[data-preview-frame]').innerText.includes('Recuperação Inicial (6 sessões)')))
+  await typeInto(page, '[data-package-row]:first-child [data-field="packagePrice"] input', '777,00')
+  check('editar preço do pacote', await waitTrue(page, () =>
+    document.querySelector('[data-preview-frame]').innerText.replace(/\s+/g, ' ').includes('R$ 777,00')))
+  await typeInto(page, '[data-package-row]:first-child [data-field="packageSessions"]', '0')
+  await page.$eval('[data-package-row]:first-child [data-field="packageSessions"]', el => el.blur())
+  check('sessões inválidas não entram (volta ao valor em vigor)', await waitTrue(page, () =>
+    document.querySelector('[data-package-row] [data-field="packageSessions"]').value === '6'
+    && document.querySelector('[data-preview-frame]').innerText.includes('Recuperação Inicial (6 sessões)')))
 
   for (let i = 0; i < 10; i++) {
     const disabled = await page.$eval('[data-action="add-service"]', b => b.disabled)
@@ -240,11 +257,11 @@ try {
     await page.click('[data-action="add-service"]')
   }
   await sleep(200)
-  check('adicionar até 12', (await rows()) === 12 && (await cards()) === 12, `${await rows()} linhas, ${await cards()} cards`)
+  check('adicionar até 12', (await rows()) === 12 && (await cards()) === 16, `${await rows()} linhas, ${await cards()} cards`)
   const addDisabled = await page.$eval('[data-action="add-service"]', b => b.disabled)
   await page.$eval('[data-action="add-service"]', b => b.click()) // clique forçado
   await sleep(200)
-  check('13º serviço bloqueado', addDisabled && (await rows()) === 12 && (await cards()) === 12)
+  check('13º serviço bloqueado', addDisabled && (await rows()) === 12 && (await cards()) === 16)
 
   // ── Imagem ────────────────────────────────────────────────────────────
   const photoInput = await page.$('input[data-image-input="photo"]')
@@ -308,7 +325,7 @@ try {
   await page.click('[data-action="reset"]')
   check('desfazer volta ao modelo', await waitTrue(page, () => {
     const t = document.querySelector('[data-preview-frame]').innerText
-    return t.includes('Clínica Movimento') && !t.includes('Avaliação de joelho')
+    return t.includes('Recupera Fisioterapia') && !t.includes('Avaliação de joelho')
       && !document.querySelector('[data-preview-frame] img[src^="blob:"]')
   }))
 

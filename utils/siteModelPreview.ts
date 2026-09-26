@@ -5,6 +5,7 @@
 // para o formato que o white-label recebe da API (PreviewSiteData).
 import type { SegmentSiteModels, SiteContent, SiteModel } from '~/data/siteModels/types'
 import type { PreviewSiteData } from './sitePreview'
+import { servicesWithPackages } from './sitePackages'
 
 export interface PlaceholderValues {
   negocio: string
@@ -53,7 +54,8 @@ export function siteModelToPreview(
     segment: { name: segment.segmentType, label: segment.label },
     whatsapp: c.whatsapp,
     canBook: options.canBook ?? false,
-    services: c.services.map((s, i) => {
+    // Pacotes entram como serviços da categoria deles (o WL não tem seção de pacotes).
+    services: servicesWithPackages(c).map((s, i) => {
       const cat = c.categories.find(k => k.id === s.categoryId)
       return {
         id: i + 1,

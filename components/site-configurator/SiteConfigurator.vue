@@ -33,6 +33,8 @@
           :viewport-height="previewHeight"
           :address="demoAddress"
         />
+        <!-- Fora da moldura: o preview espelha o site real e não leva esse aviso. -->
+        <p class="mt-2 text-xs text-gray-500" data-example-note>Preços, nomes e contatos do modelo são exemplos. Você coloca os seus.</p>
       </div>
 
       <div class="min-w-0 lg:order-1">

@@ -16,6 +16,13 @@
 //   professionals→ Employee (nome e foto; `role` NÃO aparece no site hoje)
 //   unit         → Unit + UnitAvailability ("Onde estamos", /localizacao)
 //   whatsapp     → website.whatsapp (CTAs do "Só Site")
+//   packages     → Service da categoria do pacote (o WL não tem seção de
+//                  pacotes); no sistema completo, Package (API)
+//   highlight, steps, testimonials, faq, aboutProfessional, cta → ainda sem
+//                  lugar no WL: ficam só nos dados do preset
+//
+// "Preset" = um SiteModel. Um segmento pode ter presets de nicho (ex.:
+// fisioterapia → Pós-Operatória, id 'reabilitacao'); não há entidade à parte.
 import type { ThemeFontId, ThemePresetId, ThemeRadiusId } from '~/utils/theme'
 
 /**
@@ -87,6 +94,67 @@ export interface SiteUnit {
   hours: SiteHours[]
 }
 
+/**
+ * Pacote de sessões. Mesma forma do `Package` da API (name, totalSessions,
+ * price, durationDays — hoje sem rota nem tela), para virar configuração do
+ * tenant no futuro. O WL não tem seção de pacotes: no preview, cada pacote
+ * vira um serviço da categoria `categoryId` (utils/sitePackages.ts).
+ */
+export interface SitePackage {
+  /** kebab-case, único no modelo. */
+  id: string
+  name: string
+  /** Sessões do pacote (period 'total') ou por mês (period 'month'). */
+  sessions: number
+  period: 'total' | 'month'
+  description: string
+  /** Valor de EXEMPLO do pacote inteiro (ou do mês). Mesmas regras de SiteService.price. */
+  price: number
+  /** Duração de cada sessão, da tabela `durations` (SITE_DURATIONS_MIN). */
+  sessionMin: number
+  categoryId: string
+}
+
+/** Bloco de texto curto (seção "Especialidade", passo do "Como funciona"). */
+export interface SiteTextBlock {
+  title: string
+  body: string
+}
+
+/** Depoimento SEMPRE de exemplo: a profissional troca pelos reais. */
+export interface SiteTestimonial {
+  demo: true
+  author: string
+  text: string
+}
+
+export interface SiteFaqItem {
+  q: string
+  a: string
+}
+
+/**
+ * Apresentação da profissional. Vazio por padrão: formação, registro no
+ * conselho e especialidades são dados dela, o modelo não inventa.
+ */
+export interface SiteAboutProfessional {
+  name: string
+  /** public_id da foto (SITE_MODEL_IMAGE_RE) ou null. */
+  photo: string | null
+  bio: string
+  education: string
+  /** Registro profissional (ex.: CREFITO), quando se aplica. */
+  registry: string
+  specialties: string[]
+}
+
+/** Textos dos botões de chamada (principal e WhatsApp) e do CTA final. */
+export interface SiteCallToAction {
+  title: string
+  primary: string
+  secondary: string
+}
+
 export interface SiteContent {
   businessName: string
   tagline: string
@@ -100,6 +168,20 @@ export interface SiteContent {
   unit: SiteUnit
   /** Celular BR, 11 dígitos (DDD + 9 + 8), sem +55. */
   whatsapp: string
+
+  // ── Opcionais do preset ────────────────────────────────────────────────────
+  // Só `packages` chega ao preview hoje (como serviços). Os demais ficam nos
+  // dados para quando o WL tiver essas seções: o preview espelha o site real e
+  // não mostra o que ele não renderiza.
+  packages?: SitePackage[]
+  /** Seção "Especialidade": explicação do tipo de atendimento. */
+  highlight?: SiteTextBlock
+  /** "Como funciona", em ordem. */
+  steps?: SiteTextBlock[]
+  testimonials?: SiteTestimonial[]
+  faq?: SiteFaqItem[]
+  aboutProfessional?: SiteAboutProfessional
+  cta?: SiteCallToAction
 }
 
 export interface SiteModel {
@@ -117,7 +199,7 @@ export interface SiteModelSeo {
   h1: string
   intro: string
   sections: { h2: string; body: string }[]
-  faq: { q: string; a: string }[]
+  faq: SiteFaqItem[]
 }
 
 /** Placeholders do EditorPanel: o "Ex.: …" de cada campo, por segmento. */
@@ -158,8 +240,15 @@ export interface SegmentSiteModels {
 /** Durações da tabela `durations` (seed 20250516001623), em minutos. */
 export const SITE_DURATIONS_MIN = [15, 30, 45, 60, 90, 120, 150, 180] as const
 
-/** services.price é DECIMAL(6,2). */
+/**
+ * services.price é DECIMAL(6,2). Os preços dos modelos são de EXEMPLO: o
+ * preview mostra (o WL sempre mostra preço), mas eles não vão para o sistema
+ * (utils/siteModelSeed.ts não os exporta).
+ */
 export const SITE_MAX_PRICE = 9999.99
+
+/** Sessões de um pacote (1…SITE_MAX_PACKAGE_SESSIONS). */
+export const SITE_MAX_PACKAGE_SESSIONS = 60
 
 /**
  * Limites de texto. Os de banco/admin são duros; os demais são de layout
@@ -175,6 +264,10 @@ export const SITE_TEXT_LIMITS = {
   serviceDescription: 140, // services.description varchar 255; card corta em 2 linhas
   professionalName: 60,
   professionalRole: 60,
+  packageName: 40,      // + " (10 sessões)" cabe em serviceName
+  blockTitle: 60,
+  blockBody: 300,
+  faqAnswer: 400,
   label: 30,
   pitch: 120,
   seoTitle: 60,

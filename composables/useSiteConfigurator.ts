@@ -11,7 +11,7 @@
 //     escolhido. A troca de modelo substitui tudo.
 //
 // Um campo da identidade que o visitante NÃO mexeu segue o modelo: trocar da
-// Reabilitação para a Profissional sem ter editado o nome mostra o nome do
+// Pós-Operatória para a Profissional sem ter editado o nome mostra o nome do
 // modelo Profissional. O visual (estilo, cor, fonte, cantos) é um grupo: mexeu
 // em qualquer um, o visual inteiro é do visitante.
 //
@@ -22,11 +22,13 @@
 import { computed, reactive, readonly, ref, shallowRef } from 'vue'
 import {
   SITE_DURATIONS_MIN,
+  SITE_MAX_PACKAGE_SESSIONS,
   SITE_MAX_PRICE,
   SITE_TEXT_LIMITS,
   type SegmentSiteModels,
   type SiteContent,
   type SiteModel,
+  type SitePackage,
   type SiteService,
 } from '~/data/siteModels/types'
 import {
@@ -55,6 +57,7 @@ export const CONFIGURATOR_LIMITS = {
   tagline: SITE_TEXT_LIMITS.tagline,
   about: SITE_TEXT_LIMITS.about,
   serviceName: SITE_TEXT_LIMITS.serviceName,
+  packageName: SITE_TEXT_LIMITS.packageName,
   professionalName: SITE_TEXT_LIMITS.professionalName,
   professionalRole: SITE_TEXT_LIMITS.professionalRole,
   phone: 20,
@@ -91,6 +94,8 @@ export type PreviewDevice = 'mobile' | 'desktop'
 export type SiteTextField = 'heroText' | 'tagline' | 'about'
 /** Preço aceita número ou o texto digitado ("150,00"). */
 export type ServicePatch = Partial<{ name: string; price: number | string; categoryId: string }>
+/** Sessões aceitam número ou o texto digitado ("10"). */
+export type PackagePatch = Partial<{ name: string; sessions: number | string; price: number | string }>
 export type ProfessionalPatch = Partial<{ name: string; role: string }>
 export type ContactPatch = Partial<{
   phone: string
@@ -151,6 +156,12 @@ export function parsePrice(value: unknown): number | null {
   if (!Number.isFinite(n)) return null
   n = Math.round(n * 100) / 100
   return n > 0 && n <= SITE_MAX_PRICE ? n : null
+}
+
+/** Quantidade de sessões digitada → inteiro de 1 a SITE_MAX_PACKAGE_SESSIONS, ou null. */
+export function parseSessions(value: unknown): number | null {
+  const n = typeof value === 'number' ? value : typeof value === 'string' && /^\s*\d+\s*$/.test(value) ? Number(value) : NaN
+  return Number.isInteger(n) && n >= 1 && n <= SITE_MAX_PACKAGE_SESSIONS ? n : null
 }
 
 function isOneOf<T extends string>(list: readonly T[], value: unknown): value is T {
@@ -367,6 +378,31 @@ export function useSiteConfigurator(segment: SegmentSiteModels, options: UseSite
     return content.value.services.length - 1
   }
 
+  // ── pacotes ──
+  // Só nos modelos que têm pacotes. Editáveis: nome, sessões e preço; a
+  // lista (quantos pacotes) é a do modelo.
+
+  function updatePackage(index: number, patch: PackagePatch): boolean {
+    const list = content.value.packages
+    if (!list || !Number.isInteger(index) || !list[index] || !patch || typeof patch !== 'object') return false
+    const next: Partial<SitePackage> = {}
+    if ('name' in patch) {
+      const name = cleanText(patch.name, CONFIGURATOR_LIMITS.packageName)
+      if (name !== null) next.name = name
+    }
+    if ('sessions' in patch) {
+      const sessions = parseSessions(patch.sessions)
+      if (sessions !== null) next.sessions = sessions
+    }
+    if ('price' in patch) {
+      const price = parsePrice(patch.price)
+      if (price !== null) next.price = price
+    }
+    if (!Object.keys(next).length) return false
+    patchContent((c) => { Object.assign(c.packages![index], next) })
+    return true
+  }
+
   // ── profissionais ──
 
   function updateProfessional(index: number, patch: ProfessionalPatch): boolean {
@@ -457,6 +493,7 @@ export function useSiteConfigurator(segment: SegmentSiteModels, options: UseSite
     updateService,
     removeService,
     addService,
+    updatePackage,
     updateProfessional,
     updateContact,
   }

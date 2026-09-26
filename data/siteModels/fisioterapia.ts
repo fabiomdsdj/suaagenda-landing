@@ -78,37 +78,52 @@ const fisioterapia: SegmentSiteModels = {
       },
     },
 
-    // ── 2. Reabilitação: pós-operatório ─────────────────────────────────────
+    // ── 2. Pós-Operatória (preset de nicho) ─────────────────────────────────
+    // O id continua 'reabilitacao': links ?modelo=reabilitacao, websites.siteModel
+    // e a base da API (siteModelSeeds.json) usam esse id.
+    // Tudo aqui é ponto de partida editável: preços são de EXEMPLO, a
+    // profissional, a apresentação dela e os depoimentos são para trocar.
     {
       id: 'reabilitacao',
-      label: 'Reabilitação',
-      pitch: 'Foco em pós-operatório e reabilitação, com pacote de sessões.',
+      label: 'Pós-Operatória',
+      pitch: 'Para quem acompanha a recuperação depois de cirurgias, com avaliação, sessões e pacotes.',
       theme: { preset: 'moderno', font: 'geometrica', radius: 'lg' },
       content: {
-        businessName: 'Clínica Movimento',
-        heroText: 'Recupere seus movimentos e retome sua rotina.',
-        tagline: 'Fisioterapia pós-operatória e reabilitação em {cidade}, com acompanhamento de perto em cada fase.',
+        businessName: 'Recupera Fisioterapia',
+        heroText: 'Fisioterapia pós-operatória com acompanhamento de perto',
+        tagline: 'Fisioterapia pós-operatória em {cidade}: sessões individuais e um plano de recuperação ajustado a cada fase.',
         heroImage: `${IMG}/reabilitacao/hero`,
         about: [
-          'Na {negocio}, a reabilitação é feita em sessões individuais, acompanhando de perto cada fase da sua recuperação.',
-          'Seguimos as orientações da sua equipe médica e ajustamos os exercícios conforme a sua evolução.',
+          'Na {negocio}, a recuperação depois da cirurgia é acompanhada em sessões individuais, começando por uma avaliação.',
+          'O plano segue as orientações da sua equipe médica e é ajustado conforme a sua evolução.',
         ],
         categories: [
+          { id: 'avaliacao', name: 'Avaliação', image: `${IMG}/reabilitacao/categoria-avaliacao` },
           { id: 'pos-operatorio', name: 'Pós-operatório', image: `${IMG}/reabilitacao/categoria-pos-operatorio` },
-          { id: 'reabilitacao', name: 'Reabilitação', image: `${IMG}/reabilitacao/categoria-reabilitacao` },
+          { id: 'terapias', name: 'Terapias complementares', image: `${IMG}/reabilitacao/categoria-terapias` },
           { id: 'pacotes', name: 'Pacotes', image: `${IMG}/reabilitacao/categoria-pacotes` },
         ],
         services: [
-          { name: 'Avaliação pós-operatória', description: 'Primeira sessão para entender a cirurgia, as orientações médicas e montar o plano.', price: 180, durationMin: 60, categoryId: 'pos-operatorio' },
-          { name: 'Pós-operatório de joelho', description: 'Sessões voltadas a movimento e força após cirurgias de joelho, como a de ligamento.', price: 150, durationMin: 60, categoryId: 'pos-operatorio' },
-          { name: 'Pós-operatório de ombro', description: 'Exercícios progressivos após cirurgias de ombro, respeitando cada fase.', price: 150, durationMin: 60, categoryId: 'pos-operatorio' },
-          { name: 'Drenagem linfática pós-cirúrgica', description: 'Técnica manual para o período pós-cirúrgico, conforme a orientação do seu médico.', price: 130, durationMin: 45, categoryId: 'pos-operatorio' },
-          { name: 'Reabilitação de quadril e coluna', description: 'Sessão individual com exercícios para mobilidade, força e equilíbrio.', price: 150, durationMin: 60, categoryId: 'reabilitacao' },
-          { name: 'Pacote de 10 sessões', description: 'Dez sessões de fisioterapia pós-operatória para usar ao longo do tratamento.', price: 950, durationMin: 60, categoryId: 'pacotes' },
+          { name: 'Avaliação fisioterapêutica pós-operatória', description: 'Primeira consulta para entender a cirurgia, as orientações médicas e montar o plano de sessões.', price: 200, durationMin: 60, categoryId: 'avaliacao' },
+          { name: 'Sessão de fisioterapia pós-operatória', description: 'Sessão individual com exercícios e técnicas ajustados à fase da sua recuperação.', price: 150, durationMin: 45, categoryId: 'pos-operatorio' },
+          { name: 'Fisioterapia para recuperação de joelho', description: 'Exercícios progressivos de movimento e força após cirurgias de joelho, conforme a orientação médica.', price: 150, durationMin: 45, categoryId: 'pos-operatorio' },
+          { name: 'Fisioterapia para recuperação de ombro', description: 'Sessões para retomar a mobilidade do ombro com segurança, respeitando cada fase.', price: 150, durationMin: 45, categoryId: 'pos-operatorio' },
+          { name: 'Fisioterapia pós-cirurgia de coluna', description: 'Acompanhamento individual após cirurgias de coluna, seguindo as orientações da sua equipe médica.', price: 150, durationMin: 45, categoryId: 'pos-operatorio' },
+          { name: 'Drenagem linfática pós-operatória', description: 'Técnica manual para o período pós-cirúrgico, feita conforme a liberação do seu médico.', price: 140, durationMin: 60, categoryId: 'terapias' },
+          { name: 'Terapia manual', description: 'Técnicas manuais como complemento das sessões, de acordo com a avaliação.', price: 130, durationMin: 45, categoryId: 'terapias' },
+          { name: 'Reavaliação de evolução', description: 'Consulta para revisar a evolução e ajustar o plano de sessões e os exercícios de casa.', price: 150, durationMin: 45, categoryId: 'avaliacao' },
         ],
+        // No site atual, cada pacote vira um serviço da categoria "Pacotes"
+        // (utils/sitePackages.ts). Preços de exemplo.
+        packages: [
+          { id: 'recuperacao-inicial', name: 'Recuperação Inicial', sessions: 5, period: 'total', description: 'Para o começo do acompanhamento, logo depois da liberação médica.', price: 700, sessionMin: 45, categoryId: 'pacotes' },
+          { id: 'recuperacao-intensiva', name: 'Recuperação Intensiva', sessions: 10, period: 'total', description: 'Para um acompanhamento mais frequente, com sessões mais próximas umas das outras.', price: 1350, sessionMin: 45, categoryId: 'pacotes' },
+          { id: 'recuperacao-completa', name: 'Recuperação Completa', sessions: 15, period: 'total', description: 'Para um acompanhamento prolongado, com reavaliações ao longo do caminho.', price: 1950, sessionMin: 45, categoryId: 'pacotes' },
+          { id: 'manutencao', name: 'Manutenção', sessions: 4, period: 'month', description: 'Para dar continuidade ao acompanhamento depois da fase principal.', price: 520, sessionMin: 45, categoryId: 'pacotes' },
+        ],
+        // Nome e foto de exemplo (o WL mostra nome e foto dos profissionais).
         professionals: [
-          { name: 'Dr. Rafael Nunes', role: 'Fisioterapeuta traumato-ortopédico', avatar: `${IMG}/reabilitacao/profissional-rafael` },
-          { name: 'Dra. Beatriz Campos', role: 'Fisioterapeuta de reabilitação', avatar: `${IMG}/reabilitacao/profissional-beatriz` },
+          { name: 'Dra. Beatriz Campos', role: 'Fisioterapeuta', avatar: `${IMG}/reabilitacao/profissional-beatriz` },
         ],
         unit: {
           street: 'Av. das Acácias, 1800',
@@ -121,6 +136,32 @@ const fisioterapia: SegmentSiteModels = {
           ],
         },
         whatsapp: '19900000002',
+
+        // ── Dados do preset ainda sem seção no WL (não aparecem no preview) ──
+        highlight: {
+          title: 'Fisioterapia no pós-operatório',
+          body: 'Depois de uma cirurgia, a fisioterapia acompanha a retomada gradual dos movimentos e das atividades do dia a dia. Tudo começa com uma avaliação e segue as orientações da sua equipe médica, com exercícios ajustados a cada fase.',
+        },
+        steps: [
+          { title: 'Avaliação', body: 'Conversamos sobre a cirurgia, as orientações médicas e a sua rotina, e fazemos a avaliação física.' },
+          { title: 'Planejamento do acompanhamento', body: 'Com a avaliação, montamos o plano de sessões e combinamos a frequência.' },
+          { title: 'Sessões', body: 'Sessões individuais, com exercícios e técnicas escolhidos para a fase da sua recuperação.' },
+          { title: 'Acompanhamento da evolução', body: 'Reavaliamos periodicamente e ajustamos o plano e os exercícios de casa.' },
+        ],
+        testimonials: [
+          { demo: true, author: 'Nome do paciente', text: 'Depoimento de exemplo. Troque por um relato real, publicado com a autorização do paciente.' },
+          { demo: true, author: 'Nome do paciente', text: 'Depoimento de exemplo. Conte como foi o acompanhamento na visão de quem foi atendido.' },
+        ],
+        faq: [
+          { q: 'Quando posso começar a fisioterapia depois da cirurgia?', a: 'Depende da cirurgia e da liberação da sua equipe médica. Na avaliação, conversamos sobre as orientações que você recebeu e combinamos o início das sessões.' },
+          { q: 'O que levar na avaliação?', a: 'Exames, relatório ou orientações da cirurgia, o pedido médico se tiver, e uma roupa confortável que permita movimentar a região operada.' },
+          { q: 'Quantas sessões vou precisar?', a: 'Varia de pessoa para pessoa. O número de sessões é definido depois da avaliação e revisto conforme a sua evolução.' },
+          { q: 'Qual a diferença entre os pacotes?', a: 'A quantidade de sessões e a frequência. Na avaliação, indicamos o pacote que combina com o seu plano de acompanhamento.' },
+          { q: 'Quais são as formas de pagamento?', a: 'Fale com a gente pelo WhatsApp para saber as formas de pagamento e como funciona o reembolso.' },
+        ],
+        // Vazio de propósito: formação, registro e especialidades são dados da profissional.
+        aboutProfessional: { name: '', photo: null, bio: '', education: '', registry: '', specialties: [] },
+        cta: { title: 'Agende sua avaliação pós-operatória', primary: 'Agendar avaliação', secondary: 'Falar pelo WhatsApp' },
       },
     },
 
@@ -178,7 +219,7 @@ const fisioterapia: SegmentSiteModels = {
     title: 'Site para fisioterapeutas e clínicas | SuaAgenda',
     description: 'Escolha um modelo de site para fisioterapia com serviços, valores, equipe, endereço e WhatsApp já preenchidos. Personalize e publique.',
     h1: 'Site para fisioterapeutas e clínicas de fisioterapia',
-    intro: 'Veja três modelos de site feitos para fisioterapia: clínica com equipe, reabilitação e atendimento individual. Cada um já vem com serviços, textos e horários de exemplo para você trocar pelos seus.',
+    intro: 'Veja três modelos de site feitos para fisioterapia: clínica com equipe, pós-operatória e atendimento individual. Cada um já vem com serviços, textos e horários de exemplo para você trocar pelos seus.',
     sections: [
       {
         h2: 'Modelos pensados para a rotina da fisioterapia',
@@ -186,7 +227,7 @@ const fisioterapia: SegmentSiteModels = {
       },
       {
         h2: 'Serviços com valor e duração',
-        body: 'Cada serviço aparece com descrição, valor e tempo de sessão, do jeito que o paciente vê no site publicado.',
+        body: 'Cada serviço aparece com descrição, valor e tempo de sessão, do jeito que o paciente vê no site publicado. Os valores dos modelos são exemplos: você define os seus.',
       },
       {
         h2: 'Endereço, horário e WhatsApp à vista',

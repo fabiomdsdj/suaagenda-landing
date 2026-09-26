@@ -7,7 +7,8 @@ import { createSSRApp, effectScope, h, nextTick } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 import fisioterapia from '../data/siteModels/fisioterapia'
-import { SITE_DURATIONS_MIN, SITE_MAX_PRICE, type SiteContent } from '../data/siteModels/types'
+import { SITE_DURATIONS_MIN, SITE_MAX_PACKAGE_SESSIONS, SITE_MAX_PRICE, type SiteContent } from '../data/siteModels/types'
+import { servicesWithPackages } from '../utils/sitePackages'
 import {
   CONFIGURATOR_LIMITS,
   SITE_MAX_SERVICES,
@@ -15,6 +16,7 @@ import {
   cleanText,
   identityOf,
   parsePrice,
+  parseSessions,
   useSiteConfigurator,
 } from '../composables/useSiteConfigurator'
 import {
@@ -45,6 +47,12 @@ function expectValidContent(c: SiteContent) {
     expect(Number.isFinite(s.price) && s.price > 0 && s.price <= SITE_MAX_PRICE).toBe(true)
     expect(SITE_DURATIONS_MIN).toContain(s.durationMin)
     expect(categoryIds.has(s.categoryId)).toBe(true)
+  }
+  for (const p of c.packages ?? []) {
+    expect(p.name.length).toBeLessThanOrEqual(CONFIGURATOR_LIMITS.packageName)
+    expect(Number.isInteger(p.sessions) && p.sessions >= 1 && p.sessions <= SITE_MAX_PACKAGE_SESSIONS).toBe(true)
+    expect(Number.isFinite(p.price) && p.price > 0 && p.price <= SITE_MAX_PRICE).toBe(true)
+    expect(categoryIds.has(p.categoryId)).toBe(true)
   }
   for (const p of c.professionals) {
     expect(p.name).toBeTypeOf('string')
@@ -195,9 +203,10 @@ describe('useSiteConfigurator: troca de modelo', () => {
     const cfg = make()
     expect(cfg.selectModel('reabilitacao')).toBe(true)
     expect(cfg.modelId.value).toBe('reabilitacao')
-    expect(cfg.model.value.label).toBe('Reabilitação')
+    expect(cfg.model.value.label).toBe('Pós-Operatória')
     expect(cfg.content.value).toEqual(reabilitacao.content)
-    expect(cfg.preview.value.services.map(s => s.name)).toEqual(reabilitacao.content.services.map(s => s.name))
+    // serviços e, depois, os pacotes como serviços
+    expect(cfg.preview.value.services.map(s => s.name)).toEqual(servicesWithPackages(reabilitacao.content).map(s => s.name))
     // sem visual editado, o visual é o do novo modelo
     expect(cfg.theme.value).toEqual(reabilitacao.theme)
     expect(cfg.dirty.value).toBe(false)
@@ -222,7 +231,7 @@ describe('useSiteConfigurator: troca de modelo', () => {
     expect(cfg.preview.value.name).toBe('Studio Fisio Fabio')
     expect(cfg.preview.value.logo).toBe('blob:http://x/logo')
     expect(cfg.preview.value.heroImage).toBe('blob:http://x/hero')
-    expect(cfg.preview.value.description).toContain('Na Studio Fisio Fabio, a reabilitação')
+    expect(cfg.preview.value.description).toContain('Na Studio Fisio Fabio, a recuperação')
     // identidade editada = dirty mesmo com o conteúdo novo intacto
     expect(cfg.contentDirty.value).toBe(false)
     expect(cfg.dirty.value).toBe(true)
@@ -365,6 +374,61 @@ describe('useSiteConfigurator: visual, profissional e contato', () => {
 })
 
 // ─── Entradas inválidas ──────────────────────────────────────────────────────
+
+describe('useSiteConfigurator: pacotes (Pós-Operatória)', () => {
+  const makePosOp = () => useSiteConfigurator(fisioterapia, { initialModelId: 'reabilitacao' })
+
+  it('edita nome, sessões e preço; o preview mostra o pacote como serviço', () => {
+    const cfg = makePosOp()
+    expect(cfg.updatePackage(0, { name: 'Começo', sessions: '6', price: '800,00' })).toBe(true)
+    expect(cfg.content.value.packages![0]).toMatchObject({ id: 'recuperacao-inicial', name: 'Começo', sessions: 6, price: 800 })
+    const card = cfg.preview.value.services.find(s => s.name === 'Começo (6 sessões)')
+    expect(card?.price).toBe(800)
+    expect(card?.categories[0].name).toBe('Pacotes')
+    expect(cfg.contentDirty.value).toBe(true)
+    // o original do modelo não muda
+    expect(JSON.stringify(fisioterapia)).toBe(snapshot)
+    cfg.reset()
+    expect(cfg.content.value.packages).toEqual(reabilitacao.content.packages)
+  })
+
+  it('valores inválidos são recusados; modelo sem pacotes não quebra', () => {
+    const cfg = makePosOp()
+    const before = structuredClone(cfg.content.value)
+    for (const sessions of [0, -1, 1.5, SITE_MAX_PACKAGE_SESSIONS + 1, '', 'abc', '2e1', null, NaN]) {
+      expect(cfg.updatePackage(0, { sessions } as never)).toBe(false)
+    }
+    for (const price of [0, -10, 10_000, 'abc']) expect(cfg.updatePackage(0, { price })).toBe(false)
+    for (const index of [-1, 1.5, 99, NaN]) expect(cfg.updatePackage(index, { name: 'x' })).toBe(false)
+    expect(cfg.updatePackage(0, null as never)).toBe(false)
+    expect(cfg.content.value).toEqual(before)
+    expectValidContent(cfg.content.value)
+
+    const clin = make()
+    expect(clin.content.value.packages).toBeUndefined()
+    expect(clin.updatePackage(0, { name: 'x' })).toBe(false)
+  })
+
+  it('parseSessions', () => {
+    expect(parseSessions(10)).toBe(10)
+    expect(parseSessions(' 4 ')).toBe(4)
+    expect(parseSessions(SITE_MAX_PACKAGE_SESSIONS)).toBe(SITE_MAX_PACKAGE_SESSIONS)
+    expect(parseSessions('0')).toBeNull()
+    expect(parseSessions('4,5')).toBeNull()
+  })
+
+  it('o editor mostra a seção Pacotes só no modelo que tem pacotes', async () => {
+    const render = (initialModelId: string) => renderToString(createSSRApp({ render: () => h(SiteConfigurator, { segment: fisioterapia, initialModelId }) }))
+    const posOp = await render('reabilitacao')
+    expect((posOp.match(/data-package-row/g) ?? []).length).toBe(4)
+    expect(posOp).toContain('Recuperação Intensiva (10 sessões)')
+    expect(posOp).toContain('Manutenção (4 sessões/mês)')
+    expect(posOp).toContain('data-example-note')
+    const clin = await render('clinica')
+    expect(clin).not.toContain('data-section="pacotes"')
+    expect(clin).toContain('data-example-note')
+  })
+})
 
 describe('useSiteConfigurator: entradas inválidas (15)', () => {
   it('valores inválidos não quebram o modelo', () => {

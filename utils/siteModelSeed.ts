@@ -10,7 +10,10 @@
 // (heroText, heroSubText, description) — os mesmos campos que o admin edita em
 // Configuração do Site. NÃO vai: telefone, WhatsApp, endereço, horários,
 // profissionais e serviços de exemplo (dados fictícios) nem imagens (ainda não
-// enviadas ao Cloudinary do site).
+// enviadas ao Cloudinary do site). Pacotes e os dados do preset sem seção no
+// WL (highlight, steps, testimonials, faq, aboutProfessional, cta) também não
+// vão: quando o admin passar a inicializar o tenant pelo preset, é aqui que
+// eles entram (serviços e pacotes SEM preço — os preços são de exemplo).
 //
 // Sem import de runtime (só `import type`): o export roda em Node puro
 // (node --experimental-strip-types), fora do Nuxt.
